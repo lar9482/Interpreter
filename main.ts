@@ -1,2 +1,4 @@
-const number: number = 5;
-console.log('Hello World');
+import Interpreter from "./Interpreter";
+
+const interpreter: Interpreter = new Interpreter();
+interpreter.runProgram("./ProgramTests/add.decaf");
