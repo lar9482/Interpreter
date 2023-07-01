@@ -1,0 +1,20 @@
+def int gcd(int x, int y) {
+    while (y != 0) {
+        int temp;
+        temp = y;
+        y = x % y;
+        x = temp;
+    }
+    return x;
+}
+
+def int main() 
+{ 
+    int first_int;
+    int second_int;
+
+    first_int = 5444;
+    second_int = 64;
+
+    return gcd(first_int, second_int);
+}

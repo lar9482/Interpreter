@@ -1,0 +1,9 @@
+int x;
+int x[10];
+int x[0];
+
+bool y;
+bool y[10];
+
+void z;
+void z[513245413];

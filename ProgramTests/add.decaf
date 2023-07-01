@@ -1,0 +1,11 @@
+def int add(int x, int y) {
+    return x + y;
+}
+
+def int main() 
+{ 
+    print_int(add(10, 10));
+
+    print_str("\n");
+    return 0;
+}
