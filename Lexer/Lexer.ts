@@ -2,10 +2,16 @@ import Token from "../Tokens/Token";
 import { TokenType } from "../Tokens/TokenType";
 
 export default class Lexer {
+
     private basicSymbols: RegExp;
+    private complexSymbols: RegExp;
+    private whitespace: RegExp;
 
     constructor() {
         this.basicSymbols = new RegExp(/^[\(\{\[\]\}\)\,\;\=\+\-\*\/\%\<\>\!]/);
+        this.complexSymbols = new RegExp(/^(<=|>=|==|!=|&&|\|\|)/);
+        this.whitespace = new RegExp(/^[\n|\t|\r| ]/);
+
     }
 
     scanProgram(programBuffer: string): Token[] {
@@ -32,16 +38,49 @@ export default class Lexer {
 
         while (programLine.length > 0) {
 
-            if (programLine.match(this.basicSymbols)) {
-                const matchedLexeme: string = (programLine.match(this.basicSymbols) as RegExpMatchArray)[0];
-                lineTokens.push(
-                    this.resolveBasicSymbolTokens(matchedLexeme, currentLineNumber)
+            if (programLine.match(this.complexSymbols)) {
+
+                const token: Token = this.extractLexemeFromProgramLine(
+                    programLine,
+                    currentLineNumber,
+                    this.complexSymbols,
+                    this.resolveComplexSymbols
                 );
 
-                programLine = programLine.substring(matchedLexeme.length, programLine.length);
+                lineTokens.push(token);
+                programLine = programLine.substring(token.lexeme.length, programLine.length);
+            }
+
+            else if (programLine.match(this.basicSymbols)) {
+
+                const token: Token = this.extractLexemeFromProgramLine(
+                    programLine,
+                    currentLineNumber,
+                    this.basicSymbols,
+                    this.resolveBasicSymbolTokens
+                );
+                lineTokens.push(token);
+                programLine = programLine.substring(token.lexeme.length, programLine.length);
+            }
+
+            if (programLine.match(this.whitespace)) {
+                const whitespaceLexeme: string = (programLine.match(this.whitespace) as RegExpMatchArray)[0];
+                programLine = programLine.substring(whitespaceLexeme.length, programLine.length);
             }
         }
+
         return lineTokens;
+    }
+
+    extractLexemeFromProgramLine(
+        programLine: string,
+        currentLineNumber: number,
+        matchRegex: RegExp,
+        resolveToken: (matchedLexeme: string, currentLineNumber: number) => Token
+    ): Token {
+
+        const matchedLexeme: string = (programLine.match(matchRegex) as RegExpMatchArray)[0];
+        return resolveToken(matchedLexeme, currentLineNumber);;
     }
 
     resolveBasicSymbolTokens(lexeme: string, currentLineNumber: number): Token {
@@ -82,6 +121,25 @@ export default class Lexer {
                 return new Token(lexeme, TokenType.Token_Not, currentLineNumber);
             default:
                 throw new Error(`Lexer.resolveBasicSymbols: ${lexeme} is not resolvable`);
+        }
+    }
+
+    resolveComplexSymbols(lexeme: string, currentLineNumber: number) {
+        switch (lexeme) {
+            case "<=":
+                return new Token(lexeme, TokenType.Token_LessThanEqual, currentLineNumber);
+            case ">=":
+                return new Token(lexeme, TokenType.Token_MoreThanEqual, currentLineNumber);
+            case "==":
+                return new Token(lexeme, TokenType.Token_Equal, currentLineNumber);
+            case "!=":
+                return new Token(lexeme, TokenType.Token_NotEqual, currentLineNumber);
+            case "&&":
+                return new Token(lexeme, TokenType.Token_And, currentLineNumber);
+            case "||":
+                return new Token(lexeme, TokenType.Token_Or, currentLineNumber);
+            default:
+                throw new Error(`Lexer.resolveComplexSymbols: ${lexeme} is not resolvable`);
         }
     }
 }
