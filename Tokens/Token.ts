@@ -2,11 +2,11 @@ import { TokenType } from "./TokenType";
 
 export default class Token {
 
-    private lexeme: string;
-    private lineCount: number;
-    private tokenType: TokenType;
+    lexeme: string;
+    lineCount: number;
+    tokenType: TokenType;
 
-    constructor(lexeme: string, lineCount: number, tokenType: TokenType) {
+    constructor(lexeme: string, tokenType: TokenType, lineCount: number) {
         this.lexeme = lexeme;
         this.lineCount = lineCount;
         this.tokenType = tokenType;
