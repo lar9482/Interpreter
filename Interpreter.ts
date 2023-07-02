@@ -1,17 +1,18 @@
 import { readFileSync } from 'fs'
+import Token from './Tokens/Token';
 import Lexer from './Lexer/Lexer'
 
 export default class Interpreter {
 
-    private lexProgram(programBuffer: string) {
+    private lexProgram(programBuffer: string): Token[] {
         const lexer: Lexer = new Lexer();
-
-        lexer.scanProgram(programBuffer);
+        return lexer.scanProgram(programBuffer);
     }
 
     runProgram(programFile: string) {
-        
         const programBuffer: string = readFileSync(programFile, 'utf-8').toString();
-        this.lexProgram(programBuffer);
+        const tokenQueue: Token[] = this.lexProgram(programBuffer);
+
+        console.log(tokenQueue);
     }
 }
