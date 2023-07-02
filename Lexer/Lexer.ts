@@ -7,11 +7,18 @@ export default class Lexer {
     private complexSymbols: RegExp;
     private whitespace: RegExp;
 
+    private identifier: RegExp;
+    private stringLiteral: RegExp;
+    private decimalLiteral: RegExp;
+
     constructor() {
         this.basicSymbols = new RegExp(/^[\(\{\[\]\}\)\,\;\=\+\-\*\/\%\<\>\!]/);
         this.complexSymbols = new RegExp(/^(<=|>=|==|!=|&&|\|\|)/);
         this.whitespace = new RegExp(/^[\n|\t|\r| ]/);
 
+        this.identifier = new RegExp(/^[a-zA-Z]{1}[a-zA-Z0-9_]*/);
+        this.stringLiteral = new RegExp(/^"\n*[\x00-\x7F]*\t*\\*"/);
+        this.decimalLiteral = new RegExp(/^(-|)([0-9]+)/);
     }
 
     scanProgram(programBuffer: string): Token[] {
@@ -38,7 +45,34 @@ export default class Lexer {
 
         while (programLine.length > 0) {
 
-            if (programLine.match(this.complexSymbols)) {
+            if (programLine.match(this.whitespace)) {
+
+                const whitespaceLexeme: string = (programLine.match(this.whitespace) as RegExpMatchArray)[0];
+                programLine = programLine.substring(whitespaceLexeme.length, programLine.length);
+            }
+
+            if (programLine.match(this.identifier)) {
+
+                const token: Token = this.extractLexemeFromProgramLine(
+                    programLine,
+                    currentLineNumber,
+                    this.identifier,
+                    this.resolveIdentifiersAndReservedWords
+                );
+                lineTokens.push(token);
+                programLine = programLine.substring(token.lexeme.length, programLine.length);
+            }
+
+            else if (programLine.match(this.decimalLiteral)) {
+                const lexeme: string = (programLine.match(this.decimalLiteral) as RegExpMatchArray)[0];
+                const token: Token = new Token(lexeme, TokenType.Token_DecLiteral, currentLineNumber);
+
+                lineTokens.push(token);
+                programLine = programLine.substring(token.lexeme.length, programLine.length);
+            }
+
+
+            else if (programLine.match(this.complexSymbols)) {
 
                 const token: Token = this.extractLexemeFromProgramLine(
                     programLine,
@@ -63,9 +97,12 @@ export default class Lexer {
                 programLine = programLine.substring(token.lexeme.length, programLine.length);
             }
 
-            if (programLine.match(this.whitespace)) {
-                const whitespaceLexeme: string = (programLine.match(this.whitespace) as RegExpMatchArray)[0];
-                programLine = programLine.substring(whitespaceLexeme.length, programLine.length);
+            else if (programLine.match(this.stringLiteral)) {
+                const lexeme: string = (programLine.match(this.stringLiteral) as RegExpMatchArray)[0];
+                const token: Token = new Token(lexeme, TokenType.Token_StrLiteral, currentLineNumber);
+
+                lineTokens.push(token);
+                programLine = programLine.substring(token.lexeme.length, programLine.length);
             }
         }
 
@@ -140,6 +177,37 @@ export default class Lexer {
                 return new Token(lexeme, TokenType.Token_Or, currentLineNumber);
             default:
                 throw new Error(`Lexer.resolveComplexSymbols: ${lexeme} is not resolvable`);
+        }
+    }
+
+    resolveIdentifiersAndReservedWords(lexeme: string, currentLineNumber: number) {
+        switch (lexeme) {
+            case "def":
+                return new Token(lexeme, TokenType.Token_Def, currentLineNumber);
+            case "if":
+                return new Token(lexeme, TokenType.Token_If, currentLineNumber);
+            case "else":
+                return new Token(lexeme, TokenType.Token_Else, currentLineNumber);
+            case "while":
+                return new Token(lexeme, TokenType.Token_While, currentLineNumber);
+            case "return":
+                return new Token(lexeme, TokenType.Token_Return, currentLineNumber);
+            case "break":
+                return new Token(lexeme, TokenType.Token_Break, currentLineNumber);
+            case "continue":
+                return new Token(lexeme, TokenType.Token_Continue, currentLineNumber);
+            case "int":
+                return new Token(lexeme, TokenType.Token_Int, currentLineNumber);
+            case "bool":
+                return new Token(lexeme, TokenType.Token_Bool, currentLineNumber);
+            case "void":
+                return new Token(lexeme, TokenType.Token_Void, currentLineNumber);
+            case "true":
+                return new Token(lexeme, TokenType.Token_True, currentLineNumber);
+            case "false":
+                return new Token(lexeme, TokenType.Token_False, currentLineNumber);
+            default:
+                return new Token(lexeme, TokenType.Token_Identifier, currentLineNumber);
         }
     }
 }
