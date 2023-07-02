@@ -12,18 +12,33 @@ export default class Lexer {
     private decimalLiteral: RegExp;
 
     constructor() {
+        //Look for symbols that is one character long
+        //This will look for unary, binary, and grouping operators.
+        //( { [ ] } ) , ; = + - * / % < > !
         this.basicSymbols = new RegExp(/^[\(\{\[\]\}\)\,\;\=\+\-\*\/\%\<\>\!]/);
+
+        //Look for symbols that are two characters long.
+        //This will look for boolean operators basically.
+        //<=, >=, ==, !=, &&, ||
         this.complexSymbols = new RegExp(/^(<=|>=|==|!=|&&|\|\|)/);
+
+        //Look for whitespace(newlines, tabs, spaces)
         this.whitespace = new RegExp(/^[\n|\t|\r| ]/);
 
+        //Look for identifiers
+        //Strings that begin with an alphabetical character and
+        //contain any amount of alphanumeric characters as well as an underscore
         this.identifier = new RegExp(/^[a-zA-Z]{1}[a-zA-Z0-9_]*/);
+
+        //Look for string literals(Basically a stream of characters enclosed in double quotations)
         this.stringLiteral = new RegExp(/^"\n*[\x00-\x7F]*\t*\\*"/);
+
+        //Look for raw decimal literals
         this.decimalLiteral = new RegExp(/^(-|)([0-9]+)/);
     }
 
     scanProgram(programBuffer: string): Token[] {
         let queueOfTokens: Token[] = [];
-
         let currentLineNumber: number = 1;
         let programLines: string[] = programBuffer.split(/\n/);
 
@@ -40,7 +55,7 @@ export default class Lexer {
         return queueOfTokens;
     }
 
-    extractTokensFromProgramLine(programLine: string, currentLineNumber: number): Token[] {
+    private extractTokensFromProgramLine(programLine: string, currentLineNumber: number): Token[] {
         let lineTokens: Token[] = [];
 
         while (programLine.length > 0) {
@@ -109,7 +124,7 @@ export default class Lexer {
         return lineTokens;
     }
 
-    extractLexemeFromProgramLine(
+    private extractLexemeFromProgramLine(
         programLine: string,
         currentLineNumber: number,
         matchRegex: RegExp,
@@ -117,10 +132,10 @@ export default class Lexer {
     ): Token {
 
         const matchedLexeme: string = (programLine.match(matchRegex) as RegExpMatchArray)[0];
-        return resolveToken(matchedLexeme, currentLineNumber);;
+        return resolveToken(matchedLexeme, currentLineNumber);
     }
 
-    resolveBasicSymbolTokens(lexeme: string, currentLineNumber: number): Token {
+    private resolveBasicSymbolTokens(lexeme: string, currentLineNumber: number): Token {
         switch (lexeme) {
             case "(":
                 return new Token(lexeme, TokenType.Token_StartParen, currentLineNumber);
@@ -161,7 +176,7 @@ export default class Lexer {
         }
     }
 
-    resolveComplexSymbols(lexeme: string, currentLineNumber: number) {
+    private resolveComplexSymbols(lexeme: string, currentLineNumber: number) {
         switch (lexeme) {
             case "<=":
                 return new Token(lexeme, TokenType.Token_LessThanEqual, currentLineNumber);
@@ -180,7 +195,7 @@ export default class Lexer {
         }
     }
 
-    resolveIdentifiersAndReservedWords(lexeme: string, currentLineNumber: number) {
+    private resolveIdentifiersAndReservedWords(lexeme: string, currentLineNumber: number) {
         switch (lexeme) {
             case "def":
                 return new Token(lexeme, TokenType.Token_Def, currentLineNumber);
