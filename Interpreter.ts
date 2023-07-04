@@ -9,6 +9,10 @@ export default class Interpreter {
         return lexer.scanProgram(programBuffer);
     }
 
+    private parseProgram(tokenQueue: Token[]) {
+
+    }
+
     runProgram(programFile: string) {
         const programBuffer: string = readFileSync(programFile, 'utf-8').toString();
         const tokenQueue: Token[] = this.lexProgram(programBuffer);
