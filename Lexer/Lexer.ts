@@ -66,7 +66,7 @@ export default class Lexer {
                 programLine = programLine.substring(whitespaceLexeme.length, programLine.length);
             }
 
-            if (programLine.match(this.identifier)) {
+            else if (programLine.match(this.identifier)) {
 
                 const token: Token = this.extractLexemeFromProgramLine(
                     programLine,
@@ -118,6 +118,9 @@ export default class Lexer {
 
                 lineTokens.push(token);
                 programLine = programLine.substring(token.lexeme.length, programLine.length);
+            }
+            else {
+                throw new Error(`Lexer.extractTokensFromProgramLine: ${programLine} is not resolvable`);
             }
         }
 
