@@ -2,7 +2,7 @@ import { NodeType } from "./NodeType";
 import { DecafType } from "./DecafType";
 import AST from "./AST";
 
-export default class ProgramAST extends AST {
+export default class VarDeclAST extends AST {
     
     public name: string;
     public decafType: DecafType;

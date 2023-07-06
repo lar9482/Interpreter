@@ -45,5 +45,8 @@ export enum TokenType {
     //Literals
     Token_DecLiteral,
     Token_HexLiteral,
-    Token_StrLiteral
+    Token_StrLiteral,
+
+    //Ending
+    Token_Epsilon
 }
