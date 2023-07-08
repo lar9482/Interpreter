@@ -1,5 +1,6 @@
 import AST from "../AST/MainAST/AST";
 import { DecafType } from "../AST/MainAST/DecafType";
+import FuncDeclAST from "../AST/MainAST/FuncDeclAST";
 import { NodeType } from "../AST/MainAST/NodeType";
 import ProgramAST from "../AST/MainAST/ProgramAST";
 import VarDeclAST from "../AST/MainAST/VarDeclAST";
@@ -21,7 +22,8 @@ export default class Parser {
         const newProgramAST: ProgramAST = new ProgramAST(
             NodeType.PROGRAM,
             this.currentToken.lineCount,
-            []
+            [], //initializing list to hold variables
+            [] // initialising list to hold functions
         );
 
         if (this.currentToken.tokenType !== TokenType.Token_Epsilon) {
@@ -31,7 +33,7 @@ export default class Parser {
                 newProgramAST.variables.push(newAST as VarDeclAST);
             }
             else if (newAST.type === NodeType.FUNCDECL) {
-                //Implement this later
+                newProgramAST.functions.push(newAST as FuncDeclAST);
             }
 
             const subProgramAST: ProgramAST = this.parseProgram();
