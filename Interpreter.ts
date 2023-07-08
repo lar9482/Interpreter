@@ -30,6 +30,5 @@ export default class Interpreter {
         const tokenQueue: Token[] = this.lexProgram(programBuffer);
         
         this.parseProgram(tokenQueue);
-        console.log(tokenQueue);
     }
 }
