@@ -65,7 +65,7 @@ export default class Parser {
 
     private parseVar(): VarDeclAST  {
         const decafType: DecafType = this.parseType();
-        const identifier: Token = this.match([TokenType.Token_Identifier]);
+        const identifier: Token = this.match(TokenType.Token_Identifier);
         const number: number = this.parseVar_Prime();
 
         const newVarDeclAST: VarDeclAST = new VarDeclAST(
@@ -82,17 +82,17 @@ export default class Parser {
 
     private parseType(): DecafType {
         if (this.currentToken.tokenType === TokenType.Token_Int) {
-            this.match([TokenType.Token_Int]);
+            this.match(TokenType.Token_Int);
 
             return DecafType.INT;
         }
         else if (this.currentToken.tokenType === TokenType.Token_Bool) {
-            this.match([TokenType.Token_Bool]);
+            this.match(TokenType.Token_Bool);
 
             return DecafType.BOOL;
         }
         else if (this.currentToken.tokenType === TokenType.Token_Void) {
-            this.match([TokenType.Token_Void])
+            this.match(TokenType.Token_Void)
 
             return DecafType.VOID;
         }
@@ -103,17 +103,17 @@ export default class Parser {
 
     private parseVar_Prime(): number {
         if (this.currentToken.tokenType === TokenType.Token_StartBracket) {
-            this.match([TokenType.Token_StartBracket]);
+            this.match(TokenType.Token_StartBracket);
 
-            const decimalToken: Token = this.match([TokenType.Token_DecLiteral]);
+            const decimalToken: Token = this.match(TokenType.Token_DecLiteral);
 
-            this.match([TokenType.Token_CloseBracket]);
-            this.match([TokenType.Token_Semicolon]);
+            this.match(TokenType.Token_CloseBracket);
+            this.match(TokenType.Token_Semicolon);
 
             return parseInt(decimalToken.lexeme);
         }
         else if (this.currentToken.tokenType === TokenType.Token_Semicolon) {
-            this.match([TokenType.Token_Semicolon]);
+            this.match(TokenType.Token_Semicolon);
 
             return 0;
         }
@@ -123,15 +123,41 @@ export default class Parser {
         }
     }
 
-    private match(tokenTests: TokenType[]): Token {
-        if (tokenTests.includes(this.currentToken.tokenType)) {
+    private parseFunc() {
+        this.match(TokenType.Token_Def);
+
+        const functionReturnType: DecafType = this.parseType();
+        const identifierToken: Token = this.match(TokenType.Token_Identifier);
+        
+        this.match(TokenType.Token_StartParen);
+    }
+
+    private parseParamsOrNot() {
+
+    }
+
+    private parseParams() {
+
+    }
+
+    private parseParamsTail() {
+
+    }
+
+    private parseParam() {
+        
+    }
+
+
+    private match(expectedTokenType: TokenType): Token {
+        if (this.currentToken.tokenType === expectedTokenType) {
             const currentToken: Token = this.currentToken;
             this.currentToken = this.tokenQueue.shift() as Token;
 
             return currentToken;
         }
         else {
-            throw new Error(`${tokenTests} expected, but found ${this.currentToken}`);
+            throw new Error(`${expectedTokenType.toString()} expected, but found ${this.currentToken}`);
         }
     }
 }
