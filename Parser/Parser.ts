@@ -3,6 +3,7 @@ import BlockAST from "../AST/MainAST/BlockAST";
 import { DecafType } from "../AST/MainAST/DecafType";
 import FuncDeclAST from "../AST/MainAST/FuncDeclAST";
 import { NodeType } from "../AST/MainAST/NodeType";
+import ParameterAST from "../AST/MainAST/ParameterAST";
 import ProgramAST from "../AST/MainAST/ProgramAST";
 import VarDeclAST from "../AST/MainAST/VarDeclAST";
 import Token from "../Tokens/Token"
@@ -35,7 +36,8 @@ export default class Parser {
                 newProgramAST.variables.push(newAST as VarDeclAST);
             }
             else if (newAST.type === NodeType.FUNCDECL) {
-                newProgramAST.functions.push(newAST as FuncDeclAST);
+                const test = newAST as FuncDeclAST
+                newProgramAST.functions.push(test);
             }
 
             const subProgramAST: ProgramAST = this.parseProgram();
@@ -147,48 +149,96 @@ export default class Parser {
         
         this.match(TokenType.Token_StartParen);
 
-        this.parseParamsOrNot();
+        const parameterASTList: ParameterAST[] = this.parseParamsOrNot();
+
+        this.match(TokenType.Token_CloseParen);
 
         const newFuncDeclAST: FuncDeclAST = new FuncDeclAST(
             NodeType.FUNCDECL,
             defToken.lineCount,
             identifierToken.lexeme,
             functionReturnType,
+            parameterASTList,
 
-            //To implement later. (Parameter list and block)
-            [],
+            //To implement later. (block)
             new BlockAST(NodeType.BLOCK, 0)
         );
 
         return newFuncDeclAST;
     }
 
-    private parseParamsOrNot() {
+    private parseParamsOrNot(): ParameterAST[] {
+        
+        //ParamsOrNot -> Params
         if (this.currentToken.tokenType === TokenType.Token_Int
             || this.currentToken.tokenType === TokenType.Token_Bool
             || this.currentToken.tokenType === TokenType.Token_Void) {
+            return this.parseParams();
+        }
 
+        //Params -> ε
+        else if (this.currentToken.tokenType === TokenType.Token_CloseParen) {
+            return [];
+        }
+
+        else {
+            throw new Error("parseParamsOrNot: Didn't detect int, bool, void, or ) at the start");
+        }
+    }
+
+    private parseParams(): ParameterAST[] {
+        let parameterASTList: ParameterAST[] = [];
+
+        parameterASTList.push(
+            this.parseParam()
+        );
+
+        parameterASTList = parameterASTList.concat(
+            this.parseParamsTail()
+        );
+
+        return parameterASTList;
+    }
+
+    private parseParamsTail(): ParameterAST[] {
+        if (this.currentToken.tokenType === TokenType.Token_Comma) {
+            this.match(TokenType.Token_Comma);
+
+            let nestedParameterASTList: ParameterAST[] = [];
+
+            nestedParameterASTList.push(
+                this.parseParam()
+            );
+
+            nestedParameterASTList = nestedParameterASTList.concat(
+                this.parseParamsTail()
+            );
+
+            return nestedParameterASTList;
         }
 
         else if (this.currentToken.tokenType === TokenType.Token_CloseParen) {
 
+            return [];
         }
 
         else {
-
+            throw new Error("parseParamsOrNot: Didn't detect , or ) at the start");
         }
     }
 
-    private parseParams() {
+    private parseParam(): ParameterAST {
+        const type: DecafType = this.parseType();
+        const paramIdentifier: Token = this.match(TokenType.Token_Identifier);
 
-    }
+        const newParameterAST: ParameterAST = new ParameterAST(
+            NodeType.PARAMETER,
+            paramIdentifier.lineCount,
+            paramIdentifier.lexeme,
+            type
+        )
 
-    private parseParamsTail() {
-
-    }
-
-    private parseParam() {
-        
+        return newParameterAST;
     }
 
 

@@ -2,6 +2,7 @@ export enum NodeType {
     PROGRAM, 
     VARDECL, 
     FUNCDECL, 
+    PARAMETER,
     BLOCK,
     ASSIGNMENT, 
     CONDITIONAL, 
