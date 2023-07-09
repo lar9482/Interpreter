@@ -18,17 +18,16 @@ export default class Interpreter {
         return tokenQueue;
     }
 
-    private parseProgram(tokenQueue: Token[]) {
+    private parseProgram(tokenQueue: Token[]): ProgramAST {
         const parser: Parser = new Parser(tokenQueue);
         const AST: ProgramAST = parser.parseProgram();
 
-        console.log(AST);
+        return AST;
     }
 
     runProgram(programFile: string) {
         const programBuffer: string = readFileSync(programFile, 'utf-8').toString();
-        const tokenQueue: Token[] = this.lexProgram(programBuffer);
-        
-        this.parseProgram(tokenQueue);
+        const tokenQueue: Token[] = this.lexProgram(programBuffer);  
+        const AST: ProgramAST = this.parseProgram(tokenQueue);
     }
 }
