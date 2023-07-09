@@ -3,7 +3,7 @@ import Token from './Tokens/Token';
 import { TokenType } from './Tokens/TokenType';
 import Lexer from './Lexer/Lexer'
 import Parser from './Parser/Parser';
-import ProgramAST from './AST/MainAST/ProgramAST';
+import ProgramAST from './AST/ProgramAST';
 
 export default class Interpreter {
 
