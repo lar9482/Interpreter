@@ -5,6 +5,7 @@ import FuncDeclAST from "../AST/FuncDeclAST";
 import { NodeType } from "../AST/NodeType";
 import ParameterAST from "../AST/ParameterAST";
 import ProgramAST from "../AST/ProgramAST";
+import StmtAST from "../AST/StmtAST";
 import VarDeclAST from "../AST/VarDeclAST";
 import Token from "../Tokens/Token"
 import { TokenType } from "../Tokens/TokenType";
@@ -154,15 +155,15 @@ export default class Parser {
 
         this.match(TokenType.Token_CloseParen);
 
+        const blockAST: BlockAST = this.parseBlock();
+
         const newFuncDeclAST: FuncDeclAST = new FuncDeclAST(
             NodeType.FUNCDECL,
             defToken.lineCount,
             identifierToken.lexeme,
             functionReturnType,
             parameterASTList,
-
-            //To implement later. (block)
-            new BlockAST(NodeType.BLOCK, 0)
+            blockAST
         );
 
         return newFuncDeclAST;
@@ -248,9 +249,94 @@ export default class Parser {
         return newParameterAST;
     }
 
-    private parseBlock() {
+    private parseBlock(): BlockAST {
         //Block -> { VarBlock StmtBlock }
-        this.match(TokenType.Token_StartCurly);
+        const startBlockToken: Token = this.match(TokenType.Token_StartCurly);
+
+        const newVarDeclASTList: VarDeclAST[] = this.parseVarBlock();
+        const newStmtASTList: StmtAST[] = this.parseStmtBlock();
+
+        this.match(TokenType.Token_CloseCurly);
+
+        return new BlockAST(
+            NodeType.BLOCK, 
+            startBlockToken.lineCount, 
+            newVarDeclASTList, 
+            newStmtASTList
+        );
+    }
+
+    private parseVarBlock(): VarDeclAST[] {
+        //VarBlock -> Var VarBlock
+        if (this.currentToken.tokenType === TokenType.Token_Int
+         || this.currentToken.tokenType === TokenType.Token_Bool
+         || this.currentToken.tokenType === TokenType.Token_Void) {
+            
+            let newVarDeclASTList: VarDeclAST[] = [];
+
+            newVarDeclASTList.push(
+                this.parseVar()
+            );
+
+            newVarDeclASTList = newVarDeclASTList.concat(
+                this.parseVarBlock()
+            );
+            
+            return newVarDeclASTList;
+        }
+
+        //VarBlock -> ε
+        else if (this.currentToken.tokenType === TokenType.Token_CloseCurly ||
+            this.currentToken.tokenType === TokenType.Token_Identifier ||
+            this.currentToken.tokenType === TokenType.Token_If ||
+            this.currentToken.tokenType === TokenType.Token_While ||
+            this.currentToken.tokenType === TokenType.Token_Return ||
+            this.currentToken.tokenType === TokenType.Token_Break ||
+            this.currentToken.tokenType === TokenType.Token_Continue) {
+            
+            return [];
+        }
+
+        else {
+            throw new Error('parseVarBlock: expected int, bool, void, {, identifier, if, while, return, break, continue');
+        }
+    }
+
+    private parseStmtBlock(): StmtAST[] {
+
+        //StmtBlock -> Stmt StmtBlock
+        if (this.currentToken.tokenType === TokenType.Token_Identifier ||
+            this.currentToken.tokenType === TokenType.Token_If ||
+            this.currentToken.tokenType === TokenType.Token_While ||
+            this.currentToken.tokenType === TokenType.Token_Return ||
+            this.currentToken.tokenType === TokenType.Token_Break ||
+            this.currentToken.tokenType === TokenType.Token_Continue) {
+            
+            let newStmtASTList: StmtAST[] = [];
+
+            newStmtASTList.push(
+                this.parseStmt()
+            );
+
+            newStmtASTList = newStmtASTList.concat(
+                this.parseStmtBlock()
+            );
+
+            return newStmtASTList;
+        }
+        
+        //StmtBlock -> ε
+        else if (this.currentToken.tokenType === TokenType.Token_CloseCurly) {
+            return [];
+        }
+
+        else {
+            throw new Error('parseStmtBlock: expected {, identifier, if, while, return, break, continue')
+        }
+    }
+
+    private parseStmt(): StmtAST {
+        return new StmtAST(NodeType.ASSIGNMENT, 0);
     }
 
     private match(expectedTokenType: TokenType): Token {
