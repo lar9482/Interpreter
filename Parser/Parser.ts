@@ -188,6 +188,8 @@ export default class Parser {
     }
 
     private parseParams(): ParameterAST[] {
+        //Params -> Param ParamsTail
+
         let parameterASTList: ParameterAST[] = [];
 
         parameterASTList.push(
@@ -202,6 +204,8 @@ export default class Parser {
     }
 
     private parseParamsTail(): ParameterAST[] {
+
+        //ParamsTail -> , Param ParamsTail
         if (this.currentToken.tokenType === TokenType.Token_Comma) {
             this.match(TokenType.Token_Comma);
 
@@ -218,6 +222,7 @@ export default class Parser {
             return nestedParameterASTList;
         }
 
+        //ParamsTail -> ε
         else if (this.currentToken.tokenType === TokenType.Token_CloseParen) {
 
             return [];
@@ -229,6 +234,7 @@ export default class Parser {
     }
 
     private parseParam(): ParameterAST {
+        //Param -> Type ID
         const type: DecafType = this.parseType();
         const paramIdentifier: Token = this.match(TokenType.Token_Identifier);
 
@@ -242,6 +248,10 @@ export default class Parser {
         return newParameterAST;
     }
 
+    private parseBlock() {
+        //Block -> { VarBlock StmtBlock }
+        this.match(TokenType.Token_StartCurly);
+    }
 
     private match(expectedTokenType: TokenType): Token {
         if (this.currentToken.tokenType === expectedTokenType) {
