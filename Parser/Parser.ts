@@ -1,11 +1,11 @@
-import AST from "../AST/MainAST/AST";
-import BlockAST from "../AST/MainAST/BlockAST";
-import { DecafType } from "../AST/MainAST/DecafType";
-import FuncDeclAST from "../AST/MainAST/FuncDeclAST";
-import { NodeType } from "../AST/MainAST/NodeType";
-import ParameterAST from "../AST/MainAST/ParameterAST";
-import ProgramAST from "../AST/MainAST/ProgramAST";
-import VarDeclAST from "../AST/MainAST/VarDeclAST";
+import AST from "../AST/AST";
+import BlockAST from "../AST/BlockAST";
+import { DecafType } from "../AST/DecafType";
+import FuncDeclAST from "../AST/FuncDeclAST";
+import { NodeType } from "../AST/NodeType";
+import ParameterAST from "../AST/ParameterAST";
+import ProgramAST from "../AST/ProgramAST";
+import VarDeclAST from "../AST/VarDeclAST";
 import Token from "../Tokens/Token"
 import { TokenType } from "../Tokens/TokenType";
 
