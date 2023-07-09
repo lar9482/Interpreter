@@ -42,6 +42,7 @@ export default class Parser {
 
             const subProgramAST: ProgramAST = this.parseProgram();
             newProgramAST.variables = newProgramAST.variables.concat(subProgramAST.variables);
+            newProgramAST.functions = newProgramAST.functions.concat(subProgramAST.functions);
         }
 
         return newProgramAST;
