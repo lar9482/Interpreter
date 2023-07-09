@@ -1,4 +1,5 @@
 import AST from "../AST/MainAST/AST";
+import BlockAST from "../AST/MainAST/BlockAST";
 import { DecafType } from "../AST/MainAST/DecafType";
 import FuncDeclAST from "../AST/MainAST/FuncDeclAST";
 import { NodeType } from "../AST/MainAST/NodeType";
@@ -25,7 +26,8 @@ export default class Parser {
             [], //initializing list to hold variables
             [] // initialising list to hold functions
         );
-
+        
+        //Program -> VarOrFunc Program
         if (this.currentToken.tokenType !== TokenType.Token_Epsilon) {
             const newAST: AST = this.parseVarOrFunc();
 
@@ -44,6 +46,7 @@ export default class Parser {
     }
 
     private parseVarOrFunc(): AST {
+        //VarOrFunc -> Var
         if (this.currentToken.tokenType === TokenType.Token_Int
             || this.currentToken.tokenType === TokenType.Token_Bool
             || this.currentToken.tokenType === TokenType.Token_Void
@@ -54,10 +57,11 @@ export default class Parser {
             return newVarDeclAST;
         }
 
+        //VarOrFunc -> Func
         else if (this.currentToken.tokenType === TokenType.Token_Def) {
-            //Implement this later.
-
-            return new AST(NodeType.FUNCDECL, 1);
+            
+            const newFuncDeclAST: FuncDeclAST = this.parseFunc();
+            return newFuncDeclAST;
         }
         
         else {
@@ -66,6 +70,7 @@ export default class Parser {
     }
 
     private parseVar(): VarDeclAST  {
+        //Var -> Type ID Var_Prime
         const decafType: DecafType = this.parseType();
         const identifier: Token = this.match(TokenType.Token_Identifier);
         const number: number = this.parseVar_Prime();
@@ -83,16 +88,21 @@ export default class Parser {
     }
 
     private parseType(): DecafType {
+        //Type -> int
         if (this.currentToken.tokenType === TokenType.Token_Int) {
             this.match(TokenType.Token_Int);
 
             return DecafType.INT;
         }
+
+        //Type -> bool
         else if (this.currentToken.tokenType === TokenType.Token_Bool) {
             this.match(TokenType.Token_Bool);
 
             return DecafType.BOOL;
         }
+
+        //Type -> void
         else if (this.currentToken.tokenType === TokenType.Token_Void) {
             this.match(TokenType.Token_Void)
 
@@ -104,6 +114,7 @@ export default class Parser {
     }
 
     private parseVar_Prime(): number {
+        //Var_Prime -> [ DEC ] ;
         if (this.currentToken.tokenType === TokenType.Token_StartBracket) {
             this.match(TokenType.Token_StartBracket);
 
@@ -114,6 +125,8 @@ export default class Parser {
 
             return parseInt(decimalToken.lexeme);
         }
+
+        //Var_Prime -> ;
         else if (this.currentToken.tokenType === TokenType.Token_Semicolon) {
             this.match(TokenType.Token_Semicolon);
 
@@ -125,17 +138,45 @@ export default class Parser {
         }
     }
 
-    private parseFunc() {
-        this.match(TokenType.Token_Def);
+    private parseFunc(): FuncDeclAST {
+        //Func -> def Type ID ( ParamsOrNot ) Block
+        const defToken: Token = this.match(TokenType.Token_Def);
 
         const functionReturnType: DecafType = this.parseType();
         const identifierToken: Token = this.match(TokenType.Token_Identifier);
         
         this.match(TokenType.Token_StartParen);
+
+        this.parseParamsOrNot();
+
+        const newFuncDeclAST: FuncDeclAST = new FuncDeclAST(
+            NodeType.FUNCDECL,
+            defToken.lineCount,
+            identifierToken.lexeme,
+            functionReturnType,
+
+            //To implement later. (Parameter list and block)
+            [],
+            new BlockAST(NodeType.BLOCK, 0)
+        );
+
+        return newFuncDeclAST;
     }
 
     private parseParamsOrNot() {
+        if (this.currentToken.tokenType === TokenType.Token_Int
+            || this.currentToken.tokenType === TokenType.Token_Bool
+            || this.currentToken.tokenType === TokenType.Token_Void) {
 
+        }
+
+        else if (this.currentToken.tokenType === TokenType.Token_CloseParen) {
+
+        }
+
+        else {
+
+        }
     }
 
     private parseParams() {
