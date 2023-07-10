@@ -1,3 +1,5 @@
 export enum DecafType {
-    INT, BOOL, VOID
+    INT = "INT", 
+    BOOL = "BOOL", 
+    VOID = "VOID"
 }
