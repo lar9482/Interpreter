@@ -375,6 +375,7 @@ export default class Parser {
             this.currentToken.tokenType === TokenType.Token_HexLiteral ||
             this.currentToken.tokenType === TokenType.Token_True ||
             this.currentToken.tokenType === TokenType.Token_False ||
+            this.currentToken.tokenType === TokenType.Token_Minus ||
             this.currentToken.tokenType === TokenType.Token_Not) {
             
         }
