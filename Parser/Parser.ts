@@ -28,7 +28,7 @@ export default class Parser {
             [], //initializing list to hold variables
             [] // initialising list to hold functions
         );
-        
+
         //Program -> VarOrFunc Program
         if (this.currentToken.tokenType !== TokenType.Token_Epsilon) {
             const newAST: AST = this.parseVarOrFunc();
@@ -55,7 +55,7 @@ export default class Parser {
             || this.currentToken.tokenType === TokenType.Token_Bool
             || this.currentToken.tokenType === TokenType.Token_Void
         ) {
-            
+
             const newVarDeclAST: VarDeclAST = this.parseVar();
 
             return newVarDeclAST;
@@ -63,17 +63,17 @@ export default class Parser {
 
         //VarOrFunc -> Func
         else if (this.currentToken.tokenType === TokenType.Token_Def) {
-            
+
             const newFuncDeclAST: FuncDeclAST = this.parseFunc();
             return newFuncDeclAST;
         }
-        
+
         else {
             throw new Error("parseVarOrFunc: Didn't get int, bool, void, or def tokens");
         }
     }
 
-    private parseVar(): VarDeclAST  {
+    private parseVar(): VarDeclAST {
         //Var -> Type ID Var_Prime
         const decafType: DecafType = this.parseType();
         const identifier: Token = this.match(TokenType.Token_Identifier);
@@ -148,7 +148,7 @@ export default class Parser {
 
         const functionReturnType: DecafType = this.parseType();
         const identifierToken: Token = this.match(TokenType.Token_Identifier);
-        
+
         this.match(TokenType.Token_StartParen);
 
         const parameterASTList: ParameterAST[] = this.parseParamsOrNot();
@@ -170,7 +170,7 @@ export default class Parser {
     }
 
     private parseParamsOrNot(): ParameterAST[] {
-        
+
         //ParamsOrNot -> Params
         if (this.currentToken.tokenType === TokenType.Token_Int
             || this.currentToken.tokenType === TokenType.Token_Bool
@@ -259,9 +259,9 @@ export default class Parser {
         this.match(TokenType.Token_CloseCurly);
 
         return new BlockAST(
-            NodeType.BLOCK, 
-            startBlockToken.lineCount, 
-            newVarDeclASTList, 
+            NodeType.BLOCK,
+            startBlockToken.lineCount,
+            newVarDeclASTList,
             newStmtASTList
         );
     }
@@ -269,9 +269,9 @@ export default class Parser {
     private parseVarBlock(): VarDeclAST[] {
         //VarBlock -> Var VarBlock
         if (this.currentToken.tokenType === TokenType.Token_Int
-         || this.currentToken.tokenType === TokenType.Token_Bool
-         || this.currentToken.tokenType === TokenType.Token_Void) {
-            
+            || this.currentToken.tokenType === TokenType.Token_Bool
+            || this.currentToken.tokenType === TokenType.Token_Void) {
+
             let newVarDeclASTList: VarDeclAST[] = [];
 
             newVarDeclASTList.push(
@@ -281,7 +281,7 @@ export default class Parser {
             newVarDeclASTList = newVarDeclASTList.concat(
                 this.parseVarBlock()
             );
-            
+
             return newVarDeclASTList;
         }
 
@@ -293,7 +293,7 @@ export default class Parser {
             this.currentToken.tokenType === TokenType.Token_Return ||
             this.currentToken.tokenType === TokenType.Token_Break ||
             this.currentToken.tokenType === TokenType.Token_Continue) {
-            
+
             return [];
         }
 
@@ -311,7 +311,7 @@ export default class Parser {
             this.currentToken.tokenType === TokenType.Token_Return ||
             this.currentToken.tokenType === TokenType.Token_Break ||
             this.currentToken.tokenType === TokenType.Token_Continue) {
-            
+
             let newStmtASTList: StmtAST[] = [];
 
             newStmtASTList.push(
@@ -324,7 +324,7 @@ export default class Parser {
 
             return newStmtASTList;
         }
-        
+
         //StmtBlock -> ε
         else if (this.currentToken.tokenType === TokenType.Token_CloseCurly) {
             return [];
@@ -336,7 +336,53 @@ export default class Parser {
     }
 
     private parseStmt(): StmtAST {
+
+        //Stmt -> ID LocOrFunc ;
+        if (this.currentToken.tokenType === TokenType.Token_Identifier) {
+
+        }
+        //Stmt -> if ( Expr ) Block parseElseOrNot
+        else if (this.currentToken.tokenType === TokenType.Token_If) {
+
+        }
+        //Stmt -> while ( Expr ) Block
+        else if (this.currentToken.tokenType === TokenType.Token_While) {
+
+        }
+        //Stmt -> return parseReturnExprOrNot
+        else if (this.currentToken.tokenType === TokenType.Token_Return) {
+            this.match(TokenType.Token_Return);
+
+            this.parseReturnExprOrNot();
+        }
+        //Stmt -> break ;
+        else if (this.currentToken.tokenType === TokenType.Token_Break) {
+
+        }
+        //Stmt -> continue ;
+        else if (this.currentToken.tokenType === TokenType.Token_Continue) {
+
+        }
         return new StmtAST(NodeType.ASSIGNMENT, 0);
+    }
+
+    private parseReturnExprOrNot() {
+        //Testing if the token queue starts with a token that indicates the beginning of an expression.
+        if (this.currentToken.tokenType === TokenType.Token_StartParen ||
+            this.currentToken.tokenType === TokenType.Token_Identifier ||
+            this.currentToken.tokenType === TokenType.Token_DecLiteral ||
+            this.currentToken.tokenType === TokenType.Token_StrLiteral ||
+            this.currentToken.tokenType === TokenType.Token_HexLiteral ||
+            this.currentToken.tokenType === TokenType.Token_True ||
+            this.currentToken.tokenType === TokenType.Token_False ||
+            this.currentToken.tokenType === TokenType.Token_Not) {
+            
+        }
+
+        //returnExprOrNot -> ε
+        else if (this.currentToken.tokenType === TokenType.Token_Semicolon) {
+
+        }
     }
 
     private match(expectedTokenType: TokenType): Token {
