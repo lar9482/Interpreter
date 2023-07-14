@@ -1,0 +1,29 @@
+def int expression1() {
+    return 1 + 5 * 3;
+}
+
+def int expression2() {
+    return 1 + (5 * 3);
+}
+
+def int expression3() {
+    return (5 * 3) - (10 / 2);
+}
+
+def int expression4() {
+    return -5 * 3;
+}
+
+def int main() 
+{ 
+    print_int(expression1());
+    print_str("\n");
+    print_int(expression2());
+    print_str("\n");
+    print_int(expression3());
+    print_str("\n");
+    print_int(expression4());
+
+    print_str("\n");
+    return 0;
+}
