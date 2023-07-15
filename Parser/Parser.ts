@@ -5,7 +5,7 @@ import FuncDeclAST from "../AST/FuncDeclAST";
 import { NodeType } from "../AST/NodeType";
 import ParameterAST from "../AST/ParameterAST";
 import ProgramAST from "../AST/ProgramAST";
-import StmtAST from "../AST/StmtAST";
+import StmtAST from "../AST/StmtAST/StmtAST";
 import VarDeclAST from "../AST/VarDeclAST";
 import Token from "../Tokens/Token"
 import { TokenType } from "../Tokens/TokenType";
