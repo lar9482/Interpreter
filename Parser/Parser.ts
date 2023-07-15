@@ -1,10 +1,12 @@
 import AST from "../AST/AST";
 import BlockAST from "../AST/BlockAST";
 import { DecafType } from "../AST/DecafType";
+import ExprAST from "../AST/ExprAST/ExprAST";
 import FuncDeclAST from "../AST/FuncDeclAST";
 import { NodeType } from "../AST/NodeType";
 import ParameterAST from "../AST/ParameterAST";
 import ProgramAST from "../AST/ProgramAST";
+import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 import StmtAST from "../AST/StmtAST/StmtAST";
 import VarDeclAST from "../AST/VarDeclAST";
 import Token from "../Tokens/Token"
@@ -349,11 +351,20 @@ export default class Parser {
         else if (this.currentToken.tokenType === TokenType.Token_While) {
 
         }
-        //Stmt -> return parseReturnExprOrNot
+        //Stmt -> return parseReturnExprOrNot ; 
         else if (this.currentToken.tokenType === TokenType.Token_Return) {
-            this.match(TokenType.Token_Return);
+            const returnToken: Token = this.match(TokenType.Token_Return);
+            const returnExpr: ExprAST | undefined = this.parseReturnExprOrNot();
 
-            this.parseReturnExprOrNot();
+            this.match(TokenType.Token_Semicolon);
+            
+            const newReturnStmtAST: ReturnStmtAST = new ReturnStmtAST(
+                NodeType.RETURNSTMT,
+                returnToken.lineCount,
+                returnExpr
+            );
+
+            return newReturnStmtAST;
         }
         //Stmt -> break ;
         else if (this.currentToken.tokenType === TokenType.Token_Break) {
@@ -363,10 +374,11 @@ export default class Parser {
         else if (this.currentToken.tokenType === TokenType.Token_Continue) {
 
         }
+
         return new StmtAST(NodeType.ASSIGNMENT, 0);
     }
 
-    private parseReturnExprOrNot() {
+    private parseReturnExprOrNot(): ExprAST | undefined {
         //Testing if the token queue starts with a token that indicates the beginning of an expression.
         if (this.currentToken.tokenType === TokenType.Token_StartParen ||
             this.currentToken.tokenType === TokenType.Token_Identifier ||
@@ -378,14 +390,110 @@ export default class Parser {
             this.currentToken.tokenType === TokenType.Token_Minus ||
             this.currentToken.tokenType === TokenType.Token_Not) {
             
+            return this.parseExpr();
         }
 
         //returnExprOrNot -> ε
         else if (this.currentToken.tokenType === TokenType.Token_Semicolon) {
+            return undefined;
+        }
 
+        else {
+            throw new Error("parseReturnExprOrNot: Didn't detect (, ID, decimal, string, hexadecimal, true, false, -, !, or ; at the start");
         }
     }
 
+    private parseExpr(): ExprAST {
+
+        const exprTokens: Token[] = this.extractExprTokens();
+        return new ExprAST(NodeType.FUNCCALL, 0);
+    }
+
+    private extractExprTokens(): Token[] {
+        const exprTokens: Token[] = [];
+        let previousTokenType: TokenType = TokenType.Token_Epsilon;
+
+        while (
+            //Testing if the current token is a unary operation
+            this.currentToken.tokenType === TokenType.Token_Minus || 
+            this.currentToken.tokenType === TokenType.Token_Not ||
+
+            //Testing if the current token is a binary operation
+            this.currentToken.tokenType === TokenType.Token_Multiply ||
+            this.currentToken.tokenType === TokenType.Token_Divide || 
+            this.currentToken.tokenType === TokenType.Token_Modus || 
+            this.currentToken.tokenType === TokenType.Token_Plus ||
+            this.currentToken.tokenType === TokenType.Token_LessThan ||
+            this.currentToken.tokenType === TokenType.Token_LessThanEqual ||
+            this.currentToken.tokenType === TokenType.Token_MoreThanEqual ||
+            this.currentToken.tokenType === TokenType.Token_MoreThan ||
+            this.currentToken.tokenType === TokenType.Token_And ||
+            this.currentToken.tokenType === TokenType.Token_Or ||
+
+            //Testing if the current token is a container for sub-expressions
+            this.currentToken.tokenType === TokenType.Token_StartParen ||
+            this.currentToken.tokenType === TokenType.Token_CloseParen ||
+
+            //Testing if the current token is a container for a location or function call
+            this.currentToken.tokenType === TokenType.Token_Identifier ||
+            this.currentToken.tokenType === TokenType.Token_StartBracket ||
+            this.currentToken.tokenType === TokenType.Token_CloseBracket ||
+            this.currentToken.tokenType === TokenType.Token_Comma ||
+
+            //Testing if the current token is a representation of a literal
+            this.currentToken.tokenType === TokenType.Token_DecLiteral ||
+            this.currentToken.tokenType === TokenType.Token_HexLiteral ||
+            this.currentToken.tokenType === TokenType.Token_StrLiteral ||
+            this.currentToken.tokenType === TokenType.Token_True ||
+            this.currentToken.tokenType === TokenType.Token_False
+        ) {
+
+            //Attempting to assign context to '-' tokens.
+            if (this.currentToken.tokenType === TokenType.Token_Minus) {
+                if (
+                    //Testing if the previous token is at the start of the expression.
+                    previousTokenType === TokenType.Token_Epsilon || 
+
+                    //Testing if the previous token indicates the start of a sub-expression.
+                    previousTokenType === TokenType.Token_StartParen ||
+                    previousTokenType === TokenType.Token_StartBracket ||
+
+                    //Testing if the previous token is an operator
+                    previousTokenType === TokenType.Token_Not ||
+                    previousTokenType === TokenType.Token_Multiply ||
+                    previousTokenType === TokenType.Token_Divide || 
+                    previousTokenType === TokenType.Token_Modus || 
+                    previousTokenType === TokenType.Token_Plus ||
+                    previousTokenType === TokenType.Token_LessThan ||
+                    previousTokenType === TokenType.Token_LessThanEqual ||
+                    previousTokenType === TokenType.Token_MoreThanEqual ||
+                    previousTokenType === TokenType.Token_MoreThan ||
+                    previousTokenType === TokenType.Token_And ||
+                    previousTokenType === TokenType.Token_Or
+                ) {
+                    exprTokens.push(
+                        new Token('-', TokenType.Token_Negation, this.currentToken.lineCount)
+                    );
+                }
+                else {
+                    exprTokens.push(
+                        new Token('-', TokenType.Token_Subtraction, this.currentToken.lineCount)
+                    );
+                }
+            }
+            else {
+                exprTokens.push(
+                    this.currentToken
+                );
+            }
+            
+            previousTokenType = this.currentToken.tokenType;
+            this.currentToken = this.tokenQueue.shift() as Token;
+        }
+
+        return exprTokens;
+    }
+    
     private match(expectedTokenType: TokenType): Token {
         if (this.currentToken.tokenType === expectedTokenType) {
             const currentToken: Token = this.currentToken;

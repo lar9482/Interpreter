@@ -4,10 +4,10 @@ import StmtAST from "./StmtAST";
 
 export default class ReturnStmtAST extends StmtAST {
 
-    returnValue: ExprAST;
+    returnValue: ExprAST | undefined;
 
     constructor(type: NodeType, sourceLineNumber: number,
-        returnValue: ExprAST) {
+        returnValue: ExprAST | undefined) {
         super(type, sourceLineNumber);
 
         this.returnValue = returnValue;

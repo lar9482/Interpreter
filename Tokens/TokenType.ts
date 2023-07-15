@@ -48,5 +48,10 @@ export enum TokenType {
     Token_StrLiteral = "STR",
 
     //Ending
-    Token_Epsilon = "ε"
+    Token_Epsilon = "ε",
+
+    //Context tokens for Token_Minus
+    Token_Negation = 'NEG',
+    Token_Subtraction = 'SUB'
+
 }
