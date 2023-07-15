@@ -1,5 +1,5 @@
 def int expression1() {
-    return 1 + 5 * 3;
+    return -(5 * 3) - (10 / 2);
 }
 
 def int expression2() {
