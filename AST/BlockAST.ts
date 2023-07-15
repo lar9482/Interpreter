@@ -1,7 +1,7 @@
 import AST from "./AST";
 import { NodeType } from "./NodeType";
 import VarDeclAST from "./VarDeclAST";
-import StmtAST from "./StmtAST";
+import StmtAST from "./StmtAST/StmtAST";
 
 export default class BlockAST extends AST {
 

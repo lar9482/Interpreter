@@ -1,5 +1,5 @@
-import ExprAST from "./ExprAST";
-import { NodeType } from "./NodeType";
+import ExprAST from "../ExprAST/ExprAST";
+import { NodeType } from "../NodeType";
 import StmtAST from "./StmtAST";
 
 export default class ReturnStmtAST extends StmtAST {
