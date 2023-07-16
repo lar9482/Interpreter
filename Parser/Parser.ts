@@ -484,9 +484,14 @@ export default class Parser {
                     );
                 }
             }
+
+            //Do parenthesis balancing
             else if (localCurrentToken.tokenType === TokenType.Token_StartParen || 
                      localCurrentToken.tokenType === TokenType.Token_StartBracket) {
                 parenthesisStack.push(localCurrentToken);
+                exprTokens.push(
+                    localCurrentToken
+                );
             }
             else if (localCurrentToken.tokenType === TokenType.Token_CloseParen) {
                 if (parenthesisStack.length > 0 && parenthesisStack[parenthesisStack.length - 1].tokenType === TokenType.Token_StartParen) {
