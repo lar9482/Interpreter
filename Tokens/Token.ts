@@ -11,4 +11,10 @@ export default class Token {
         this.lineCount = lineCount;
         this.tokenType = tokenType;
     }
+
+    reAssign(token: Token) {
+        this.lexeme = token.lexeme;
+        this.lineCount = token.lineCount;
+        this.tokenType = token.tokenType;
+    }
 }
