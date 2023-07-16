@@ -17,9 +17,15 @@ export default class Parser {
     tokenQueue: Token[];
     currentToken: Token;
 
+    expressionTokenQueueStack: Token[][];
+    expressionCurrentTokenStack: Token[];
+
     constructor(tokenQueue: Token[]) {
         this.tokenQueue = tokenQueue;
         this.currentToken = this.tokenQueue.shift() as Token;
+
+        this.expressionCurrentTokenStack = [];
+        this.expressionTokenQueueStack = [];
     }
 
     parseProgram(): ProgramAST {
@@ -381,13 +387,9 @@ export default class Parser {
     private parseReturnExprOrNot(): ExprAST | undefined {
         //Testing if the token queue starts with a token that indicates the beginning of an expression.
         if (this.isStartOfExpr(this.currentToken)) {
-            
-            const parsedExprInfo: [ExprAST, Token[], Token] = this.parseExpr(this.currentToken, this.tokenQueue);
+            const newExprAST: ExprAST = this.parseExpr(this.currentToken, this.tokenQueue)
 
-            this.currentToken = parsedExprInfo[2];
-            this.tokenQueue = parsedExprInfo[1];
-
-            return parsedExprInfo[0];
+            return newExprAST;
         }
 
         //returnExprOrNot -> ε
@@ -400,21 +402,21 @@ export default class Parser {
         }
     }
 
-    private parseExpr(currentToken: Token, tokenQueue: Token[]): [ExprAST, Token[], Token] {
-
-        const extractedTokenInfo: [Token[], Token[], Token] = this.extractExprTokens(currentToken, tokenQueue);
-        const updatedCurrentToken: Token = extractedTokenInfo[2];
-        const updatedTokenQueue: Token[] = extractedTokenInfo[1];
-
-        const extractedTokens: Token[] = extractedTokenInfo[0];
+    private parseExpr(currentToken: Token, tokenQueue: Token[]): ExprAST {
+        const extractedExprTokens: Token[] = this.extractExprTokens(currentToken, tokenQueue);
+        const extractedCurrentExprToken: Token = extractedExprTokens.shift() as Token;
         
-        return [new ExprAST(NodeType.FUNCCALL, 0), updatedTokenQueue, updatedCurrentToken];
+        this.expressionCurrentTokenStack.push(
+            extractedCurrentExprToken
+        )
+        this.expressionTokenQueueStack.push(
+            extractedExprTokens
+        );
+
+        return new ExprAST(NodeType.FUNCCALL, 0);
     }
 
-    private extractExprTokens(currentToken: Token, tokenQueue: Token[]): [Token[], Token[], Token] {
-        let localCurrentToken: Token = JSON.parse(JSON.stringify(currentToken));
-        let localTokenQueue: Token[] = JSON.parse(JSON.stringify(tokenQueue));
-        
+    private extractExprTokens(localCurrentToken: Token, localTokenQueue: Token[]): Token[] {        
         const exprTokens: Token[] = [];
         const parenthesisStack: Token[] = [];
 
@@ -439,16 +441,18 @@ export default class Parser {
             //Do parenthesis balancing
             else if (localCurrentToken.tokenType === TokenType.Token_StartParen || 
                      localCurrentToken.tokenType === TokenType.Token_StartBracket) {
-                parenthesisStack.push(localCurrentToken);
+                parenthesisStack.push(
+                    new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
+                );
                 exprTokens.push(
-                    localCurrentToken
+                    new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                 );
             }
             else if (localCurrentToken.tokenType === TokenType.Token_CloseParen) {
                 if (parenthesisStack.length > 0 && parenthesisStack[parenthesisStack.length - 1].tokenType === TokenType.Token_StartParen) {
                     parenthesisStack.pop();
                     exprTokens.push(
-                        localCurrentToken
+                        new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                     );
                 }
                 else {
@@ -459,7 +463,7 @@ export default class Parser {
                 if (parenthesisStack.length > 0 && parenthesisStack[parenthesisStack.length - 1].tokenType === TokenType.Token_StartBracket) {
                     parenthesisStack.pop();
                     exprTokens.push(
-                        localCurrentToken
+                        new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                     );
                 }
                 else {
@@ -468,15 +472,15 @@ export default class Parser {
             }
             else {
                 exprTokens.push(
-                    localCurrentToken
+                    new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                 );
             }
             
             previousTokenType = localCurrentToken.tokenType;
-            localCurrentToken = localTokenQueue.shift() as Token;
+            localCurrentToken.reAssign(localTokenQueue.shift() as Token);
         }
 
-        return [exprTokens, localTokenQueue, localCurrentToken];
+        return exprTokens;
     }
     
     private match(expectedTokenType: TokenType): Token {
