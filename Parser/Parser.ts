@@ -347,7 +347,7 @@ export default class Parser {
 
         //Stmt -> ID LocOrFunc ;
         if (this.currentToken.tokenType === TokenType.Token_Identifier) {
-            
+
         }
         //Stmt -> if ( Expr ) Block parseElseOrNot
         else if (this.currentToken.tokenType === TokenType.Token_If) {
@@ -405,14 +405,14 @@ export default class Parser {
     private parseExpr(currentToken: Token, tokenQueue: Token[]): ExprAST {
         const extractedExprTokenQueue: Token[] = this.extractExprTokens(currentToken, tokenQueue);
         const extractedCurrentExprToken: Token = extractedExprTokenQueue.shift() as Token;
-        
+
         this.expressionCurrentTokenStack.push(
             extractedCurrentExprToken
         )
         this.expressionTokenQueueStack.push(
             extractedExprTokenQueue
         );
-        
+
         this.parseExprByShuntingYard(extractedCurrentExprToken, extractedExprTokenQueue);
 
         this.expressionCurrentTokenStack.pop();
@@ -438,7 +438,27 @@ export default class Parser {
         }
     }
 
-    private extractExprTokens(localCurrentToken: Token, localTokenQueue: Token[]): Token[] {        
+    private parseOperand(currentExprToken: Token, exprTokenQueue: Token[]): ExprAST {
+        if (currentExprToken.tokenType === TokenType.Token_DecLiteral ||
+        currentExprToken.tokenType === TokenType.Token_StrLiteral ||
+        currentExprToken.tokenType === TokenType.Token_HexLiteral ||
+        currentExprToken.tokenType === TokenType.Token_True ||
+        currentExprToken.tokenType === TokenType.Token_False) {
+
+            return new ExprAST(NodeType.ASSIGNMENT, 0);
+        } else if (currentExprToken.tokenType === TokenType.Token_Identifier) {
+
+            return new ExprAST(NodeType.ASSIGNMENT, 0);
+        } else {
+            throw new Error(`parseOperand: Cannot parse ${currentExprToken.tokenType}`);
+        }
+    }
+
+    private parseLiteral(currentExprToken: Token, exprTokenQueue: Token[]) {
+
+    }
+
+    private extractExprTokens(localCurrentToken: Token, localTokenQueue: Token[]): Token[] {
         const exprTokens: Token[] = [];
         const parenthesisStack: Token[] = [];
 
@@ -463,8 +483,8 @@ export default class Parser {
             //Basically, keep a record of the starting parenthesis and brackets in the parenthesis stack.
             //If the stack does not match up with the closing parenthesis or brackets, 
             //then its a sign that the sub-expressions has ended.
-            else if (localCurrentToken.tokenType === TokenType.Token_StartParen || 
-                     localCurrentToken.tokenType === TokenType.Token_StartBracket) {
+            else if (localCurrentToken.tokenType === TokenType.Token_StartParen ||
+                localCurrentToken.tokenType === TokenType.Token_StartBracket) {
                 parenthesisStack.push(
                     new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                 );
@@ -494,14 +514,14 @@ export default class Parser {
                     new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                 );
             }
-            
+
             previousTokenType = localCurrentToken.tokenType;
             localCurrentToken.reAssign(localTokenQueue.shift() as Token);
         }
 
         return exprTokens;
     }
-    
+
     private match(expectedTokenType: TokenType): Token {
         if (this.currentToken.tokenType === expectedTokenType) {
             const currentToken: Token = this.currentToken;
@@ -517,7 +537,7 @@ export default class Parser {
     private hasNegationContext(previousTokenType: TokenType) {
         return (
             //Testing if the previous token is at the start of the expression.
-            previousTokenType === TokenType.Token_Epsilon || 
+            previousTokenType === TokenType.Token_Epsilon ||
 
             //Testing if the previous token indicates the start of a sub-expression.
             previousTokenType === TokenType.Token_StartParen ||
@@ -526,8 +546,8 @@ export default class Parser {
             //Testing if the previous token is an operator
             previousTokenType === TokenType.Token_Not ||
             previousTokenType === TokenType.Token_Multiply ||
-            previousTokenType === TokenType.Token_Divide || 
-            previousTokenType === TokenType.Token_Modus || 
+            previousTokenType === TokenType.Token_Divide ||
+            previousTokenType === TokenType.Token_Modus ||
             previousTokenType === TokenType.Token_Plus ||
             previousTokenType === TokenType.Token_LessThan ||
             previousTokenType === TokenType.Token_LessThanEqual ||
@@ -555,13 +575,13 @@ export default class Parser {
     private isExprToken(localCurrentToken: Token): boolean {
         return (
             //Testing if the current token is a unary operation
-            localCurrentToken.tokenType === TokenType.Token_Minus || 
+            localCurrentToken.tokenType === TokenType.Token_Minus ||
             localCurrentToken.tokenType === TokenType.Token_Not ||
 
             //Testing if the current token is a binary operation
             localCurrentToken.tokenType === TokenType.Token_Multiply ||
-            localCurrentToken.tokenType === TokenType.Token_Divide || 
-            localCurrentToken.tokenType === TokenType.Token_Modus || 
+            localCurrentToken.tokenType === TokenType.Token_Divide ||
+            localCurrentToken.tokenType === TokenType.Token_Modus ||
             localCurrentToken.tokenType === TokenType.Token_Plus ||
             localCurrentToken.tokenType === TokenType.Token_LessThan ||
             localCurrentToken.tokenType === TokenType.Token_LessThanEqual ||
@@ -603,13 +623,13 @@ export default class Parser {
     private isExprOperator(currentToken: Token): boolean {
         return (
             //Testing if the current token is a unary operation
-            currentToken.tokenType === TokenType.Token_Minus || 
+            currentToken.tokenType === TokenType.Token_Minus ||
             currentToken.tokenType === TokenType.Token_Not ||
 
             //Testing if the current token is a binary operation
             currentToken.tokenType === TokenType.Token_Multiply ||
-            currentToken.tokenType === TokenType.Token_Divide || 
-            currentToken.tokenType === TokenType.Token_Modus || 
+            currentToken.tokenType === TokenType.Token_Divide ||
+            currentToken.tokenType === TokenType.Token_Modus ||
             currentToken.tokenType === TokenType.Token_Plus ||
             currentToken.tokenType === TokenType.Token_LessThan ||
             currentToken.tokenType === TokenType.Token_LessThanEqual ||
