@@ -380,17 +380,14 @@ export default class Parser {
 
     private parseReturnExprOrNot(): ExprAST | undefined {
         //Testing if the token queue starts with a token that indicates the beginning of an expression.
-        if (this.currentToken.tokenType === TokenType.Token_StartParen ||
-            this.currentToken.tokenType === TokenType.Token_Identifier ||
-            this.currentToken.tokenType === TokenType.Token_DecLiteral ||
-            this.currentToken.tokenType === TokenType.Token_StrLiteral ||
-            this.currentToken.tokenType === TokenType.Token_HexLiteral ||
-            this.currentToken.tokenType === TokenType.Token_True ||
-            this.currentToken.tokenType === TokenType.Token_False ||
-            this.currentToken.tokenType === TokenType.Token_Minus ||
-            this.currentToken.tokenType === TokenType.Token_Not) {
+        if (this.isStartOfExpr(this.currentToken)) {
             
-            return this.parseExpr(this.currentToken, this.tokenQueue);
+            const parsedExprInfo: [ExprAST, Token[], Token] = this.parseExpr(this.currentToken, this.tokenQueue);
+
+            this.currentToken = parsedExprInfo[2];
+            this.tokenQueue = parsedExprInfo[1];
+
+            return parsedExprInfo[0];
         }
 
         //returnExprOrNot -> ε
@@ -403,77 +400,31 @@ export default class Parser {
         }
     }
 
-    private parseExpr(localCurrentToken: Token, localTokenQueue: Token[]): ExprAST {
+    private parseExpr(currentToken: Token, tokenQueue: Token[]): [ExprAST, Token[], Token] {
 
-        const extractExprTokens: Token[]  = this.extractExprTokens(localCurrentToken, localTokenQueue);
+        const extractedTokenInfo: [Token[], Token[], Token] = this.extractExprTokens(currentToken, tokenQueue);
+        const updatedCurrentToken: Token = extractedTokenInfo[2];
+        const updatedTokenQueue: Token[] = extractedTokenInfo[1];
+
+        const extractedTokens: Token[] = extractedTokenInfo[0];
         
-        return new ExprAST(NodeType.FUNCCALL, 0);
+        return [new ExprAST(NodeType.FUNCCALL, 0), updatedTokenQueue, updatedCurrentToken];
     }
 
-    private extractExprTokens(localCurrentToken: Token, localTokenQueue: Token[]): Token[] {
+    private extractExprTokens(currentToken: Token, tokenQueue: Token[]): [Token[], Token[], Token] {
+        let localCurrentToken: Token = JSON.parse(JSON.stringify(currentToken));
+        let localTokenQueue: Token[] = JSON.parse(JSON.stringify(tokenQueue));
+        
         const exprTokens: Token[] = [];
         const parenthesisStack: Token[] = [];
 
         let previousTokenType: TokenType = TokenType.Token_Epsilon;
 
-        while (
-            //Testing if the current token is a unary operation
-            localCurrentToken.tokenType === TokenType.Token_Minus || 
-            localCurrentToken.tokenType === TokenType.Token_Not ||
-
-            //Testing if the current token is a binary operation
-            localCurrentToken.tokenType === TokenType.Token_Multiply ||
-            localCurrentToken.tokenType === TokenType.Token_Divide || 
-            localCurrentToken.tokenType === TokenType.Token_Modus || 
-            localCurrentToken.tokenType === TokenType.Token_Plus ||
-            localCurrentToken.tokenType === TokenType.Token_LessThan ||
-            localCurrentToken.tokenType === TokenType.Token_LessThanEqual ||
-            localCurrentToken.tokenType === TokenType.Token_MoreThanEqual ||
-            localCurrentToken.tokenType === TokenType.Token_MoreThan ||
-            localCurrentToken.tokenType === TokenType.Token_And ||
-            localCurrentToken.tokenType === TokenType.Token_Or ||
-
-            //Testing if the current token is a container for sub-expressions
-            localCurrentToken.tokenType === TokenType.Token_StartParen ||
-            localCurrentToken.tokenType === TokenType.Token_CloseParen ||
-
-            //Testing if the current token is a container for a location or function call
-            localCurrentToken.tokenType === TokenType.Token_Identifier ||
-            localCurrentToken.tokenType === TokenType.Token_StartBracket ||
-            localCurrentToken.tokenType === TokenType.Token_CloseBracket ||
-            localCurrentToken.tokenType === TokenType.Token_Comma ||
-
-            //Testing if the current token is a representation of a literal
-            localCurrentToken.tokenType === TokenType.Token_DecLiteral ||
-            localCurrentToken.tokenType === TokenType.Token_HexLiteral ||
-            localCurrentToken.tokenType === TokenType.Token_StrLiteral ||
-            localCurrentToken.tokenType === TokenType.Token_True ||
-            localCurrentToken.tokenType === TokenType.Token_False
-        ) {
+        while (this.isExprToken(localCurrentToken)) {
 
             //Attempting to assign context to '-' tokens.
             if (localCurrentToken.tokenType === TokenType.Token_Minus) {
-                if (
-                    //Testing if the previous token is at the start of the expression.
-                    previousTokenType === TokenType.Token_Epsilon || 
-
-                    //Testing if the previous token indicates the start of a sub-expression.
-                    previousTokenType === TokenType.Token_StartParen ||
-                    previousTokenType === TokenType.Token_StartBracket ||
-
-                    //Testing if the previous token is an operator
-                    previousTokenType === TokenType.Token_Not ||
-                    previousTokenType === TokenType.Token_Multiply ||
-                    previousTokenType === TokenType.Token_Divide || 
-                    previousTokenType === TokenType.Token_Modus || 
-                    previousTokenType === TokenType.Token_Plus ||
-                    previousTokenType === TokenType.Token_LessThan ||
-                    previousTokenType === TokenType.Token_LessThanEqual ||
-                    previousTokenType === TokenType.Token_MoreThanEqual ||
-                    previousTokenType === TokenType.Token_MoreThan ||
-                    previousTokenType === TokenType.Token_And ||
-                    previousTokenType === TokenType.Token_Or
-                ) {
+                if (this.hasNegationContext(previousTokenType)) {
                     exprTokens.push(
                         new Token('-', TokenType.Token_Negation, localCurrentToken.lineCount)
                     );
@@ -525,7 +476,7 @@ export default class Parser {
             localCurrentToken = localTokenQueue.shift() as Token;
         }
 
-        return exprTokens;
+        return [exprTokens, localTokenQueue, localCurrentToken];
     }
     
     private match(expectedTokenType: TokenType): Token {
@@ -538,5 +489,80 @@ export default class Parser {
         else {
             throw new Error(`${expectedTokenType.toString()} expected, but found ${this.currentToken}`);
         }
+    }
+
+    private hasNegationContext(previousTokenType: TokenType) {
+        return (
+            //Testing if the previous token is at the start of the expression.
+            previousTokenType === TokenType.Token_Epsilon || 
+
+            //Testing if the previous token indicates the start of a sub-expression.
+            previousTokenType === TokenType.Token_StartParen ||
+            previousTokenType === TokenType.Token_StartBracket ||
+
+            //Testing if the previous token is an operator
+            previousTokenType === TokenType.Token_Not ||
+            previousTokenType === TokenType.Token_Multiply ||
+            previousTokenType === TokenType.Token_Divide || 
+            previousTokenType === TokenType.Token_Modus || 
+            previousTokenType === TokenType.Token_Plus ||
+            previousTokenType === TokenType.Token_LessThan ||
+            previousTokenType === TokenType.Token_LessThanEqual ||
+            previousTokenType === TokenType.Token_MoreThanEqual ||
+            previousTokenType === TokenType.Token_MoreThan ||
+            previousTokenType === TokenType.Token_And ||
+            previousTokenType === TokenType.Token_Or
+        )
+    }
+
+    private isStartOfExpr(currentToken: Token) {
+        return (
+            currentToken.tokenType === TokenType.Token_StartParen ||
+            currentToken.tokenType === TokenType.Token_Identifier ||
+            currentToken.tokenType === TokenType.Token_DecLiteral ||
+            currentToken.tokenType === TokenType.Token_StrLiteral ||
+            currentToken.tokenType === TokenType.Token_HexLiteral ||
+            currentToken.tokenType === TokenType.Token_True ||
+            currentToken.tokenType === TokenType.Token_False ||
+            currentToken.tokenType === TokenType.Token_Minus ||
+            currentToken.tokenType === TokenType.Token_Not
+        );
+    }
+
+    private isExprToken(localCurrentToken: Token): boolean {
+        return (
+            //Testing if the current token is a unary operation
+            localCurrentToken.tokenType === TokenType.Token_Minus || 
+            localCurrentToken.tokenType === TokenType.Token_Not ||
+
+            //Testing if the current token is a binary operation
+            localCurrentToken.tokenType === TokenType.Token_Multiply ||
+            localCurrentToken.tokenType === TokenType.Token_Divide || 
+            localCurrentToken.tokenType === TokenType.Token_Modus || 
+            localCurrentToken.tokenType === TokenType.Token_Plus ||
+            localCurrentToken.tokenType === TokenType.Token_LessThan ||
+            localCurrentToken.tokenType === TokenType.Token_LessThanEqual ||
+            localCurrentToken.tokenType === TokenType.Token_MoreThanEqual ||
+            localCurrentToken.tokenType === TokenType.Token_MoreThan ||
+            localCurrentToken.tokenType === TokenType.Token_And ||
+            localCurrentToken.tokenType === TokenType.Token_Or ||
+
+            //Testing if the current token is a container for sub-expressions
+            localCurrentToken.tokenType === TokenType.Token_StartParen ||
+            localCurrentToken.tokenType === TokenType.Token_CloseParen ||
+
+            //Testing if the current token is a container for a location or function call
+            localCurrentToken.tokenType === TokenType.Token_Identifier ||
+            localCurrentToken.tokenType === TokenType.Token_StartBracket ||
+            localCurrentToken.tokenType === TokenType.Token_CloseBracket ||
+            localCurrentToken.tokenType === TokenType.Token_Comma ||
+
+            //Testing if the current token is a representation of a literal
+            localCurrentToken.tokenType === TokenType.Token_DecLiteral ||
+            localCurrentToken.tokenType === TokenType.Token_HexLiteral ||
+            localCurrentToken.tokenType === TokenType.Token_StrLiteral ||
+            localCurrentToken.tokenType === TokenType.Token_True ||
+            localCurrentToken.tokenType === TokenType.Token_False
+        );
     }
 }
