@@ -11,6 +11,10 @@ import StmtAST from "../AST/StmtAST/StmtAST";
 import VarDeclAST from "../AST/VarDeclAST";
 import Token from "../Tokens/Token"
 import { TokenType } from "../Tokens/TokenType";
+import LiteralAST from "../AST/ExprAST/LiteralAST";
+import IntLiteralAST from "../AST/ExprAST/IntLiteralAST";
+import BoolLiteralAST from "../AST/ExprAST/BoolLiteralAST";
+import StrLiteralAST from "../AST/ExprAST/StrLiteralAST";
 
 export default class Parser {
 
@@ -427,7 +431,9 @@ export default class Parser {
 
         while (exprTokenQueue.length > 0) {
             if (this.isStartofExpOperand(currentExprToken)) {
-                
+
+                const test = this.parseOperand(currentExprToken, exprTokenQueue);
+
             } else if (this.isExprOperator(currentExprToken)) {
 
             } else if (currentExprToken.tokenType === TokenType.Token_StartParen) {
@@ -439,23 +445,82 @@ export default class Parser {
     }
 
     private parseOperand(currentExprToken: Token, exprTokenQueue: Token[]): ExprAST {
+        //Operand -> Lit
         if (currentExprToken.tokenType === TokenType.Token_DecLiteral ||
         currentExprToken.tokenType === TokenType.Token_StrLiteral ||
         currentExprToken.tokenType === TokenType.Token_HexLiteral ||
         currentExprToken.tokenType === TokenType.Token_True ||
         currentExprToken.tokenType === TokenType.Token_False) {
 
-            return new ExprAST(NodeType.ASSIGNMENT, 0);
-        } else if (currentExprToken.tokenType === TokenType.Token_Identifier) {
+            return this.parseLiteral(currentExprToken, exprTokenQueue);
+        } 
+        //Operand -> ID LocOrFunc
+        else if (currentExprToken.tokenType === TokenType.Token_Identifier) {
 
-            return new ExprAST(NodeType.ASSIGNMENT, 0);
+            return new ExprAST(NodeType.LOCATION, 0);
         } else {
             throw new Error(`parseOperand: Cannot parse ${currentExprToken.tokenType}`);
         }
     }
 
-    private parseLiteral(currentExprToken: Token, exprTokenQueue: Token[]) {
+    private parseLiteral(currentExprToken: Token, exprTokenQueue: Token[]): LiteralAST {
+        //Lit -> DEC
+        if (currentExprToken.tokenType === TokenType.Token_DecLiteral) {
+            const intToken: Token = this.matchForNestedQueue(TokenType.Token_DecLiteral, currentExprToken, exprTokenQueue);
 
+            const newIntAST: IntLiteralAST = new IntLiteralAST(
+                NodeType.LITERAL,
+                intToken.lineCount,
+                DecafType.INT,
+                parseInt(intToken.lexeme)
+            );
+
+            return newIntAST;
+            
+        } 
+        //Lit -> True
+        else if (currentExprToken.tokenType === TokenType.Token_True) {
+            
+            const trueBoolToken: Token = this.matchForNestedQueue(TokenType.Token_True, currentExprToken, exprTokenQueue);
+
+            const newTrueBoolAST: BoolLiteralAST = new BoolLiteralAST(
+                NodeType.LITERAL,
+                trueBoolToken.lineCount,
+                DecafType.BOOL,
+                true
+            );
+
+            return newTrueBoolAST;
+        }
+        // Lit -> False 
+        else if (currentExprToken.tokenType === TokenType.Token_False) {
+            const falseBoolToken: Token = this.matchForNestedQueue(TokenType.Token_False, currentExprToken, exprTokenQueue);
+            
+            const newFalseBoolAST: BoolLiteralAST = new BoolLiteralAST(
+                NodeType.LITERAL,
+                falseBoolToken.lineCount,
+                DecafType.BOOL,
+                false
+            );
+
+            return newFalseBoolAST;
+        }
+        //Lit -> STR
+        else if (currentExprToken.tokenType === TokenType.Token_StrLiteral) {
+            const strToken: Token = this.matchForNestedQueue(TokenType.Token_StrLiteral, currentExprToken, exprTokenQueue);
+
+            const newStrLiteralAST: StrLiteralAST = new StrLiteralAST(
+                NodeType.LITERAL,
+                strToken.lineCount,
+                DecafType.STR,
+                strToken.lexeme
+            );
+
+            return newStrLiteralAST;
+
+        } else {
+            throw new Error(`parseLiteral: unable to parse ${currentExprToken.tokenType}`);
+        }
     }
 
     private extractExprTokens(localCurrentToken: Token, localTokenQueue: Token[]): Token[] {
@@ -533,6 +598,24 @@ export default class Parser {
             throw new Error(`${expectedTokenType.toString()} expected, but found ${this.currentToken}`);
         }
     }
+
+    private matchForNestedQueue(expectedTokenType: TokenType, currentToken: Token, tokenQueue: Token[]): Token {
+        if (currentToken.tokenType === expectedTokenType) {
+
+            const newToken: Token = new Token(
+                currentToken.lexeme,
+                currentToken.tokenType,
+                currentToken.lineCount
+            );
+            currentToken.reAssign(tokenQueue.shift() as Token);
+
+            return newToken;
+        }
+        else {
+            throw new Error(`${expectedTokenType.toString()} expected, but found ${currentToken}`);
+        }
+    }
+
 
     private hasNegationContext(previousTokenType: TokenType) {
         return (
