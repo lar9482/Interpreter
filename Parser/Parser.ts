@@ -403,17 +403,39 @@ export default class Parser {
     }
 
     private parseExpr(currentToken: Token, tokenQueue: Token[]): ExprAST {
-        const extractedExprTokens: Token[] = this.extractExprTokens(currentToken, tokenQueue);
-        const extractedCurrentExprToken: Token = extractedExprTokens.shift() as Token;
+        const extractedExprTokenQueue: Token[] = this.extractExprTokens(currentToken, tokenQueue);
+        const extractedCurrentExprToken: Token = extractedExprTokenQueue.shift() as Token;
         
         this.expressionCurrentTokenStack.push(
             extractedCurrentExprToken
         )
         this.expressionTokenQueueStack.push(
-            extractedExprTokens
+            extractedExprTokenQueue
         );
+        
+        this.parseExprByShuntingYard(extractedCurrentExprToken, extractedExprTokenQueue);
+
+        this.expressionCurrentTokenStack.pop();
+        this.expressionTokenQueueStack.pop();
 
         return new ExprAST(NodeType.FUNCCALL, 0);
+    }
+
+    private parseExprByShuntingYard(currentExprToken: Token, exprTokenQueue: Token[]) {
+        const operandStack: ExprAST[] = [];
+        const operatorStack: Token[] = [];
+
+        while (exprTokenQueue.length > 0) {
+            if (this.isStartofExpOperand(currentExprToken)) {
+                
+            } else if (this.isExprOperator(currentExprToken)) {
+
+            } else if (currentExprToken.tokenType === TokenType.Token_StartParen) {
+
+            } else if (currentExprToken.tokenType === TokenType.Token_CloseParen) {
+
+            }
+        }
     }
 
     private extractExprTokens(localCurrentToken: Token, localTokenQueue: Token[]): Token[] {        
@@ -430,8 +452,7 @@ export default class Parser {
                     exprTokens.push(
                         new Token('-', TokenType.Token_Negation, localCurrentToken.lineCount)
                     );
-                }
-                else {
+                } else {
                     exprTokens.push(
                         new Token('-', TokenType.Token_Subtraction, localCurrentToken.lineCount)
                     );
@@ -439,6 +460,9 @@ export default class Parser {
             }
 
             //Do parenthesis balancing
+            //Basically, keep a record of the starting parenthesis and brackets in the parenthesis stack.
+            //If the stack does not match up with the closing parenthesis or brackets, 
+            //then its a sign that the sub-expressions has ended.
             else if (localCurrentToken.tokenType === TokenType.Token_StartParen || 
                      localCurrentToken.tokenType === TokenType.Token_StartBracket) {
                 parenthesisStack.push(
@@ -447,30 +471,25 @@ export default class Parser {
                 exprTokens.push(
                     new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                 );
-            }
-            else if (localCurrentToken.tokenType === TokenType.Token_CloseParen) {
+            } else if (localCurrentToken.tokenType === TokenType.Token_CloseParen) {
                 if (parenthesisStack.length > 0 && parenthesisStack[parenthesisStack.length - 1].tokenType === TokenType.Token_StartParen) {
                     parenthesisStack.pop();
                     exprTokens.push(
                         new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                     );
-                }
-                else {
+                } else {
                     break;
                 }
-            }
-            else if (localCurrentToken.tokenType === TokenType.Token_CloseBracket) {
+            } else if (localCurrentToken.tokenType === TokenType.Token_CloseBracket) {
                 if (parenthesisStack.length > 0 && parenthesisStack[parenthesisStack.length - 1].tokenType === TokenType.Token_StartBracket) {
                     parenthesisStack.pop();
                     exprTokens.push(
                         new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                     );
-                }
-                else {
+                } else {
                     break;
                 }
-            }
-            else {
+            } else {
                 exprTokens.push(
                     new Token(localCurrentToken.lexeme, localCurrentToken.tokenType, localCurrentToken.lineCount)
                 );
@@ -567,6 +586,37 @@ export default class Parser {
             localCurrentToken.tokenType === TokenType.Token_StrLiteral ||
             localCurrentToken.tokenType === TokenType.Token_True ||
             localCurrentToken.tokenType === TokenType.Token_False
+        );
+    }
+
+    private isStartofExpOperand(currentToken: Token): boolean {
+        return (
+            currentToken.tokenType === TokenType.Token_Identifier ||
+            currentToken.tokenType === TokenType.Token_DecLiteral ||
+            currentToken.tokenType === TokenType.Token_StrLiteral ||
+            currentToken.tokenType === TokenType.Token_HexLiteral ||
+            currentToken.tokenType === TokenType.Token_True ||
+            currentToken.tokenType === TokenType.Token_False
+        )
+    }
+
+    private isExprOperator(currentToken: Token): boolean {
+        return (
+            //Testing if the current token is a unary operation
+            currentToken.tokenType === TokenType.Token_Minus || 
+            currentToken.tokenType === TokenType.Token_Not ||
+
+            //Testing if the current token is a binary operation
+            currentToken.tokenType === TokenType.Token_Multiply ||
+            currentToken.tokenType === TokenType.Token_Divide || 
+            currentToken.tokenType === TokenType.Token_Modus || 
+            currentToken.tokenType === TokenType.Token_Plus ||
+            currentToken.tokenType === TokenType.Token_LessThan ||
+            currentToken.tokenType === TokenType.Token_LessThanEqual ||
+            currentToken.tokenType === TokenType.Token_MoreThanEqual ||
+            currentToken.tokenType === TokenType.Token_MoreThan ||
+            currentToken.tokenType === TokenType.Token_And ||
+            currentToken.tokenType === TokenType.Token_Or
         );
     }
 }
