@@ -13,17 +13,3 @@ def int expression3() {
 def int expression4() {
     return -5 * 3;
 }
-
-def int main() 
-{ 
-    print_int(expression1());
-    print_str("\n");
-    print_int(expression2());
-    print_str("\n");
-    print_int(expression3());
-    print_str("\n");
-    print_int(expression4());
-
-    print_str("\n");
-    return 0;
-}
