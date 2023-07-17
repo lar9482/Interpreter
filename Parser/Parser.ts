@@ -15,6 +15,9 @@ import LiteralAST from "../AST/ExprAST/LiteralAST";
 import IntLiteralAST from "../AST/ExprAST/IntLiteralAST";
 import BoolLiteralAST from "../AST/ExprAST/BoolLiteralAST";
 import StrLiteralAST from "../AST/ExprAST/StrLiteralAST";
+import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
+import { UnaryOpType } from "../AST/ExprAST/UnaryOpType";
+import { BinaryOpType } from "../AST/ExprAST/BinaryOpType";
 
 export default class Parser {
 
@@ -430,12 +433,26 @@ export default class Parser {
         const operatorStack: Token[] = [];
 
         while (exprTokenQueue.length > 0) {
-            if (this.isStartofExpOperand(currentExprToken)) {
-
-                const test = this.parseOperand(currentExprToken, exprTokenQueue);
+            if (this.isStartOfExpOperand(currentExprToken)) {
+                const operandAST: ExprAST = this.parseOperand(currentExprToken, exprTokenQueue);
+                operandStack.push(operandAST);
 
             } else if (this.isExprOperator(currentExprToken)) {
+                while (operatorStack.length > 0 &&
+                    this.getOperatorPrecedence(operatorStack[operatorStack.length - 1]) 
+                 <= this.getOperatorPrecedence(currentExprToken)) {
+                    const higherOperatorToken: Token = operatorStack.pop() as Token;
 
+                    if (this.isUnaryExprOperator(higherOperatorToken)) {
+                        
+                    } else if (this.isBinaryExprOperator(higherOperatorToken)){
+
+                    }
+                }
+
+                operatorStack.push(
+                    new Token(currentExprToken.lexeme, currentExprToken.tokenType, currentExprToken.lineCount)
+                );
             } else if (currentExprToken.tokenType === TokenType.Token_StartParen) {
 
             } else if (currentExprToken.tokenType === TokenType.Token_CloseParen) {
@@ -547,7 +564,7 @@ export default class Parser {
             //Do parenthesis balancing
             //Basically, keep a record of the starting parenthesis and brackets in the parenthesis stack.
             //If the stack does not match up with the closing parenthesis or brackets, 
-            //then its a sign that the sub-expressions has ended.
+            //then its a sign that the sub-expression has ended.
             else if (localCurrentToken.tokenType === TokenType.Token_StartParen ||
                 localCurrentToken.tokenType === TokenType.Token_StartBracket) {
                 parenthesisStack.push(
@@ -616,6 +633,42 @@ export default class Parser {
         }
     }
 
+    private getOperatorPrecedence(operatorToken: Token): number {
+        switch(operatorToken.tokenType) {
+            case TokenType.Token_Negation:
+                return 1;
+            case TokenType.Token_Not:
+                return 1;
+            case TokenType.Token_Multiply:
+                return 2;
+            case TokenType.Token_Divide:
+                return 2;
+            case TokenType.Token_Modus:
+                return 2;
+            case TokenType.Token_Plus:
+                return 3;
+            case TokenType.Token_Subtraction:
+                return 3;
+            case TokenType.Token_LessThan:
+                return 4;
+            case TokenType.Token_LessThanEqual:
+                return 4;
+            case TokenType.Token_MoreThan:
+                return 4;
+            case TokenType.Token_MoreThanEqual:
+                return 4;
+            case TokenType.Token_Equal:
+                return 5;
+            case TokenType.Token_NotEqual:
+                return 5;
+            case TokenType.Token_And:
+                return 6;
+            case TokenType.Token_Or:
+                return 7;
+            default:
+                throw new Error(`getOperatorPrecedence: ${operatorToken.tokenType} can't be assigned precedence`);
+        }
+    }
 
     private hasNegationContext(previousTokenType: TokenType) {
         return (
@@ -641,7 +694,7 @@ export default class Parser {
         )
     }
 
-    private isStartOfExpr(currentToken: Token) {
+    private isStartOfExpr(currentToken: Token): boolean {
         return (
             currentToken.tokenType === TokenType.Token_StartParen ||
             currentToken.tokenType === TokenType.Token_Identifier ||
@@ -658,7 +711,7 @@ export default class Parser {
     private isExprToken(localCurrentToken: Token): boolean {
         return (
             //Testing if the current token is a unary operation
-            localCurrentToken.tokenType === TokenType.Token_Minus ||
+            localCurrentToken.tokenType === TokenType.Token_Negation ||
             localCurrentToken.tokenType === TokenType.Token_Not ||
 
             //Testing if the current token is a binary operation
@@ -666,10 +719,13 @@ export default class Parser {
             localCurrentToken.tokenType === TokenType.Token_Divide ||
             localCurrentToken.tokenType === TokenType.Token_Modus ||
             localCurrentToken.tokenType === TokenType.Token_Plus ||
+            localCurrentToken.tokenType === TokenType.Token_Subtraction ||
             localCurrentToken.tokenType === TokenType.Token_LessThan ||
             localCurrentToken.tokenType === TokenType.Token_LessThanEqual ||
             localCurrentToken.tokenType === TokenType.Token_MoreThanEqual ||
             localCurrentToken.tokenType === TokenType.Token_MoreThan ||
+            localCurrentToken.tokenType === TokenType.Token_Equal ||
+            localCurrentToken.tokenType === TokenType.Token_NotEqual ||
             localCurrentToken.tokenType === TokenType.Token_And ||
             localCurrentToken.tokenType === TokenType.Token_Or ||
 
@@ -692,7 +748,7 @@ export default class Parser {
         );
     }
 
-    private isStartofExpOperand(currentToken: Token): boolean {
+    private isStartOfExpOperand(currentToken: Token): boolean {
         return (
             currentToken.tokenType === TokenType.Token_Identifier ||
             currentToken.tokenType === TokenType.Token_DecLiteral ||
@@ -706,7 +762,7 @@ export default class Parser {
     private isExprOperator(currentToken: Token): boolean {
         return (
             //Testing if the current token is a unary operation
-            currentToken.tokenType === TokenType.Token_Minus ||
+            currentToken.tokenType === TokenType.Token_Negation ||
             currentToken.tokenType === TokenType.Token_Not ||
 
             //Testing if the current token is a binary operation
@@ -714,12 +770,84 @@ export default class Parser {
             currentToken.tokenType === TokenType.Token_Divide ||
             currentToken.tokenType === TokenType.Token_Modus ||
             currentToken.tokenType === TokenType.Token_Plus ||
+            currentToken.tokenType === TokenType.Token_Subtraction ||
             currentToken.tokenType === TokenType.Token_LessThan ||
             currentToken.tokenType === TokenType.Token_LessThanEqual ||
             currentToken.tokenType === TokenType.Token_MoreThanEqual ||
             currentToken.tokenType === TokenType.Token_MoreThan ||
+            currentToken.tokenType === TokenType.Token_Equal ||
+            currentToken.tokenType === TokenType.Token_NotEqual ||
             currentToken.tokenType === TokenType.Token_And ||
             currentToken.tokenType === TokenType.Token_Or
         );
+    }
+
+    private isUnaryExprOperator(currentToken: Token) {
+        return (
+            currentToken.tokenType === TokenType.Token_Negation ||
+            currentToken.tokenType === TokenType.Token_Not
+        );
+    }
+
+    private isBinaryExprOperator(currentToken: Token) {
+        return (
+            currentToken.tokenType === TokenType.Token_Multiply ||
+            currentToken.tokenType === TokenType.Token_Divide ||
+            currentToken.tokenType === TokenType.Token_Modus ||
+            currentToken.tokenType === TokenType.Token_Plus ||
+            currentToken.tokenType === TokenType.Token_Subtraction ||
+            currentToken.tokenType === TokenType.Token_LessThan ||
+            currentToken.tokenType === TokenType.Token_LessThanEqual ||
+            currentToken.tokenType === TokenType.Token_MoreThanEqual ||
+            currentToken.tokenType === TokenType.Token_MoreThan ||
+            currentToken.tokenType === TokenType.Token_Equal ||
+            currentToken.tokenType === TokenType.Token_NotEqual ||
+            currentToken.tokenType === TokenType.Token_And ||
+            currentToken.tokenType === TokenType.Token_Or
+        );
+    }
+
+    private getUnaryExprOperatorType(currentToken: Token): UnaryOpType {
+        switch(currentToken.tokenType) {
+            case TokenType.Token_Negation:
+                return UnaryOpType.NEGOP;
+            case TokenType.Token_Not:
+                return UnaryOpType.NOTOP;
+            default:
+                throw new Error(`getUnaryExprOperatorType: Unable to get ${currentToken} type.`);
+        }
+    }
+
+    private getBinaryExprOperatorType(currentToken: Token): BinaryOpType {
+        switch(currentToken.tokenType) {
+            case TokenType.Token_Multiply:
+                return BinaryOpType.MULOP;
+            case TokenType.Token_Divide:
+                return BinaryOpType.DIVOP;
+            case TokenType.Token_Modus:
+                return BinaryOpType.MODOP;
+            case TokenType.Token_Plus:
+                return BinaryOpType.ADDOP;
+            case TokenType.Token_Subtraction:
+                return BinaryOpType.SUBOP;
+            case TokenType.Token_LessThan:
+                return BinaryOpType.LTOP;
+            case TokenType.Token_LessThanEqual:
+                return BinaryOpType.LEOP;
+            case TokenType.Token_MoreThan:
+                return BinaryOpType.GTOP;
+            case TokenType.Token_MoreThanEqual:
+                return BinaryOpType.GEOP;
+            case TokenType.Token_Equal:
+                return BinaryOpType.EQOP;
+            case TokenType.Token_NotEqual:
+                return BinaryOpType.NEQOP;
+            case TokenType.Token_And:
+                return BinaryOpType.ANDOP;
+            case TokenType.Token_Or:
+                return BinaryOpType.OROP;
+            default:
+                throw new Error(`getBinaryExprOperatorType: Unable to get ${currentToken} type.`);
+        }
     }
 }
