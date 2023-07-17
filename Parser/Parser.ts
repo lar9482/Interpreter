@@ -761,11 +761,9 @@ export default class Parser {
             currentToken.tokenType === TokenType.Token_HexLiteral ||
             currentToken.tokenType === TokenType.Token_True ||
             currentToken.tokenType === TokenType.Token_False ||
-            currentToken.tokenType === TokenType.Token_Minus ||
             currentToken.tokenType === TokenType.Token_Not ||
-            
             currentToken.tokenType === TokenType.Token_Negation ||
-            currentToken.tokenType === TokenType.Token_Subtraction
+            currentToken.tokenType === TokenType.Token_Minus
         );
     }
 
@@ -774,23 +772,10 @@ export default class Parser {
             currentToken.tokenType === TokenType.Token_Minus ||
 
             //Testing if the current token is a unary operation
-            currentToken.tokenType === TokenType.Token_Negation ||
-            currentToken.tokenType === TokenType.Token_Not ||
+            this.isUnaryExprOperator(currentToken) ||
 
             //Testing if the current token is a binary operation
-            currentToken.tokenType === TokenType.Token_Multiply ||
-            currentToken.tokenType === TokenType.Token_Divide ||
-            currentToken.tokenType === TokenType.Token_Modus ||
-            currentToken.tokenType === TokenType.Token_Plus ||
-            currentToken.tokenType === TokenType.Token_Subtraction ||
-            currentToken.tokenType === TokenType.Token_LessThan ||
-            currentToken.tokenType === TokenType.Token_LessThanEqual ||
-            currentToken.tokenType === TokenType.Token_MoreThanEqual ||
-            currentToken.tokenType === TokenType.Token_MoreThan ||
-            currentToken.tokenType === TokenType.Token_Equal ||
-            currentToken.tokenType === TokenType.Token_NotEqual ||
-            currentToken.tokenType === TokenType.Token_And ||
-            currentToken.tokenType === TokenType.Token_Or ||
+            this.isBinaryExprOperator(currentToken) ||
 
             //Testing if the current token is a container for sub-expressions
             currentToken.tokenType === TokenType.Token_StartParen ||
@@ -824,24 +809,8 @@ export default class Parser {
 
     private isExprOperator(currentToken: Token): boolean {
         return (
-            //Testing if the current token is a unary operation
-            currentToken.tokenType === TokenType.Token_Negation ||
-            currentToken.tokenType === TokenType.Token_Not ||
-
-            //Testing if the current token is a binary operation
-            currentToken.tokenType === TokenType.Token_Multiply ||
-            currentToken.tokenType === TokenType.Token_Divide ||
-            currentToken.tokenType === TokenType.Token_Modus ||
-            currentToken.tokenType === TokenType.Token_Plus ||
-            currentToken.tokenType === TokenType.Token_Subtraction ||
-            currentToken.tokenType === TokenType.Token_LessThan ||
-            currentToken.tokenType === TokenType.Token_LessThanEqual ||
-            currentToken.tokenType === TokenType.Token_MoreThanEqual ||
-            currentToken.tokenType === TokenType.Token_MoreThan ||
-            currentToken.tokenType === TokenType.Token_Equal ||
-            currentToken.tokenType === TokenType.Token_NotEqual ||
-            currentToken.tokenType === TokenType.Token_And ||
-            currentToken.tokenType === TokenType.Token_Or
+            this.isUnaryExprOperator(currentToken) ||
+            this.isBinaryExprOperator(currentToken)
         );
     }
 
