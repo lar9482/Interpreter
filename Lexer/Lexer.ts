@@ -60,13 +60,7 @@ export default class Lexer {
 
         while (programLine.length > 0) {
 
-            if (programLine.match(this.whitespace)) {
-
-                const whitespaceLexeme: string = (programLine.match(this.whitespace) as RegExpMatchArray)[0];
-                programLine = programLine.substring(whitespaceLexeme.length, programLine.length);
-            }
-
-            else if (programLine.match(this.identifier)) {
+            if (programLine.match(this.identifier)) {
 
                 const token: Token = this.extractLexemeFromProgramLine(
                     programLine,
@@ -118,6 +112,12 @@ export default class Lexer {
 
                 lineTokens.push(token);
                 programLine = programLine.substring(token.lexeme.length, programLine.length);
+            }
+            
+            else if (programLine.match(this.whitespace)) {
+
+                const whitespaceLexeme: string = (programLine.match(this.whitespace) as RegExpMatchArray)[0];
+                programLine = programLine.substring(whitespaceLexeme.length, programLine.length);
             }
             else {
                 throw new Error(`Lexer.extractTokensFromProgramLine: ${programLine} is not resolvable`);

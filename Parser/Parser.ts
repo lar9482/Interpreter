@@ -53,8 +53,7 @@ export default class Parser {
                 newProgramAST.variables.push(newAST as VarDeclAST);
             }
             else if (newAST.type === NodeType.FUNCDECL) {
-                const test = newAST as FuncDeclAST
-                newProgramAST.functions.push(test);
+                newProgramAST.functions.push(newAST as FuncDeclAST);
             }
 
             const subProgramAST: ProgramAST = this.parseProgram();
@@ -73,7 +72,6 @@ export default class Parser {
         ) {
 
             const newVarDeclAST: VarDeclAST = this.parseVar();
-
             return newVarDeclAST;
         }
 
@@ -451,7 +449,7 @@ export default class Parser {
                 operatorStack.push(
                     new Token(currentExprToken.lexeme, currentExprToken.tokenType, currentExprToken.lineCount)
                 );
-                
+
                 currentExprToken.reAssign(exprTokenQueue.shift() as Token);
 
             } else if (currentExprToken.tokenType === TokenType.Token_StartParen) {
@@ -472,7 +470,7 @@ export default class Parser {
 
                 currentExprToken.reAssign(exprTokenQueue.shift() as Token);
             }
-            else if (currentExprToken.tokenType === TokenType.Token_Epsilon){
+            else if (currentExprToken.tokenType === TokenType.Token_Epsilon) {
                 break;
             }
         }
@@ -480,7 +478,7 @@ export default class Parser {
         while (operatorStack.length >= 0) {
             const currOperatorToken: Token = operatorStack.pop() as Token;
             this.parseNewInternalExprNodes(currOperatorToken, operandStack);
-    
+
             if (currOperatorToken.tokenType === TokenType.Token_Epsilon) {
                 break;
             }
@@ -519,6 +517,7 @@ export default class Parser {
             operandStack.push(newBinaryExprAST);
         }
     }
+
     private parseOperand(currentExprToken: Token, exprTokenQueue: Token[]): ExprAST {
         //Operand -> Lit
         if (currentExprToken.tokenType === TokenType.Token_DecLiteral ||
@@ -763,7 +762,10 @@ export default class Parser {
             currentToken.tokenType === TokenType.Token_True ||
             currentToken.tokenType === TokenType.Token_False ||
             currentToken.tokenType === TokenType.Token_Minus ||
-            currentToken.tokenType === TokenType.Token_Not
+            currentToken.tokenType === TokenType.Token_Not ||
+            
+            currentToken.tokenType === TokenType.Token_Negation ||
+            currentToken.tokenType === TokenType.Token_Subtraction
         );
     }
 
