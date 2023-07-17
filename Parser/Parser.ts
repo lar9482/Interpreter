@@ -18,6 +18,7 @@ import StrLiteralAST from "../AST/ExprAST/StrLiteralAST";
 import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import { UnaryOpType } from "../AST/ExprAST/UnaryOpType";
 import { BinaryOpType } from "../AST/ExprAST/BinaryOpType";
+import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
 
 export default class Parser {
 
@@ -413,64 +414,121 @@ export default class Parser {
         const extractedExprTokenQueue: Token[] = this.extractExprTokens(currentToken, tokenQueue);
         const extractedCurrentExprToken: Token = extractedExprTokenQueue.shift() as Token;
 
-        this.expressionCurrentTokenStack.push(
-            extractedCurrentExprToken
-        )
-        this.expressionTokenQueueStack.push(
-            extractedExprTokenQueue
-        );
+        // this.expressionCurrentTokenStack.push(
+        //     extractedCurrentExprToken
+        // )
+        // this.expressionTokenQueueStack.push(
+        //     extractedExprTokenQueue
+        // );
 
-        this.parseExprByShuntingYard(extractedCurrentExprToken, extractedExprTokenQueue);
+        const newExprAST: ExprAST = this.parseExprByShuntingYard(extractedCurrentExprToken, extractedExprTokenQueue);
 
-        this.expressionCurrentTokenStack.pop();
-        this.expressionTokenQueueStack.pop();
+        // this.expressionCurrentTokenStack.pop();
+        // this.expressionTokenQueueStack.pop();
 
-        return new ExprAST(NodeType.FUNCCALL, 0);
+        return newExprAST;
     }
 
-    private parseExprByShuntingYard(currentExprToken: Token, exprTokenQueue: Token[]) {
+    private parseExprByShuntingYard(currentExprToken: Token, exprTokenQueue: Token[]): ExprAST {
         const operandStack: ExprAST[] = [];
-        const operatorStack: Token[] = [];
+        const operatorStack: Token[] = [new Token('ε', TokenType.Token_Epsilon, -1)];
 
-        while (exprTokenQueue.length > 0) {
+        while (exprTokenQueue.length >= 0) {
             if (this.isStartOfExpOperand(currentExprToken)) {
                 const operandAST: ExprAST = this.parseOperand(currentExprToken, exprTokenQueue);
                 operandStack.push(operandAST);
 
             } else if (this.isExprOperator(currentExprToken)) {
-                while (operatorStack.length > 0 &&
-                    this.getOperatorPrecedence(operatorStack[operatorStack.length - 1]) 
-                 <= this.getOperatorPrecedence(currentExprToken)) {
+                while (operatorStack.length > 0
+                    && this.isExprOperator(operatorStack[operatorStack.length - 1])
+                    && this.getOperatorPrecedence(operatorStack[operatorStack.length - 1])
+                    <= this.getOperatorPrecedence(currentExprToken)) {
+
                     const higherOperatorToken: Token = operatorStack.pop() as Token;
-
-                    if (this.isUnaryExprOperator(higherOperatorToken)) {
-                        
-                    } else if (this.isBinaryExprOperator(higherOperatorToken)){
-
-                    }
+                    this.parseNewInternalExprNodes(higherOperatorToken, operandStack);
                 }
 
                 operatorStack.push(
                     new Token(currentExprToken.lexeme, currentExprToken.tokenType, currentExprToken.lineCount)
                 );
+                
+                currentExprToken.reAssign(exprTokenQueue.shift() as Token);
+
             } else if (currentExprToken.tokenType === TokenType.Token_StartParen) {
+                operatorStack.push(
+                    new Token(currentExprToken.lexeme, currentExprToken.tokenType, currentExprToken.lineCount)
+                );
+                currentExprToken.reAssign(exprTokenQueue.shift() as Token);
 
             } else if (currentExprToken.tokenType === TokenType.Token_CloseParen) {
 
+                while (operatorStack.length > 0
+                    && operatorStack[operatorStack.length - 1].tokenType !== TokenType.Token_StartParen) {
+
+                    const currOperatorToken: Token = operatorStack.pop() as Token;
+                    this.parseNewInternalExprNodes(currOperatorToken, operandStack);
+                }
+                operatorStack.pop();
+
+                currentExprToken.reAssign(exprTokenQueue.shift() as Token);
+            }
+            else if (currentExprToken.tokenType === TokenType.Token_Epsilon){
+                break;
             }
         }
+
+        while (operatorStack.length >= 0) {
+            const currOperatorToken: Token = operatorStack.pop() as Token;
+            this.parseNewInternalExprNodes(currOperatorToken, operandStack);
+    
+            if (currOperatorToken.tokenType === TokenType.Token_Epsilon) {
+                break;
+            }
+        }
+
+        return operandStack[0];
     }
 
+    private parseNewInternalExprNodes(currOperatorToken: Token, operandStack: ExprAST[]) {
+        if (this.isUnaryExprOperator(currOperatorToken)) {
+            const unaryOpType: UnaryOpType = this.getUnaryExprOperatorType(currOperatorToken);
+            const childOperand: ExprAST = operandStack.pop() as ExprAST;
+
+            const newUnaryExprAST: UnaryExprAST = new UnaryExprAST(
+                NodeType.UNARYOP,
+                currOperatorToken.lineCount,
+                unaryOpType,
+                childOperand
+            );
+
+            operandStack.push(newUnaryExprAST);
+        } else if (this.isBinaryExprOperator(currOperatorToken)) {
+            const binaryOpType: BinaryOpType = this.getBinaryExprOperatorType(currOperatorToken);
+
+            const rightOperand: ExprAST = operandStack.pop() as ExprAST;
+            const leftOperand: ExprAST = operandStack.pop() as ExprAST;
+
+            const newBinaryExprAST: BinaryExprAST = new BinaryExprAST(
+                NodeType.BINARYOP,
+                currOperatorToken.lineCount,
+                binaryOpType,
+                leftOperand,
+                rightOperand
+            );
+
+            operandStack.push(newBinaryExprAST);
+        }
+    }
     private parseOperand(currentExprToken: Token, exprTokenQueue: Token[]): ExprAST {
         //Operand -> Lit
         if (currentExprToken.tokenType === TokenType.Token_DecLiteral ||
-        currentExprToken.tokenType === TokenType.Token_StrLiteral ||
-        currentExprToken.tokenType === TokenType.Token_HexLiteral ||
-        currentExprToken.tokenType === TokenType.Token_True ||
-        currentExprToken.tokenType === TokenType.Token_False) {
+            currentExprToken.tokenType === TokenType.Token_StrLiteral ||
+            currentExprToken.tokenType === TokenType.Token_HexLiteral ||
+            currentExprToken.tokenType === TokenType.Token_True ||
+            currentExprToken.tokenType === TokenType.Token_False) {
 
             return this.parseLiteral(currentExprToken, exprTokenQueue);
-        } 
+        }
         //Operand -> ID LocOrFunc
         else if (currentExprToken.tokenType === TokenType.Token_Identifier) {
 
@@ -493,11 +551,11 @@ export default class Parser {
             );
 
             return newIntAST;
-            
-        } 
+
+        }
         //Lit -> True
         else if (currentExprToken.tokenType === TokenType.Token_True) {
-            
+
             const trueBoolToken: Token = this.matchForNestedQueue(TokenType.Token_True, currentExprToken, exprTokenQueue);
 
             const newTrueBoolAST: BoolLiteralAST = new BoolLiteralAST(
@@ -512,7 +570,7 @@ export default class Parser {
         // Lit -> False 
         else if (currentExprToken.tokenType === TokenType.Token_False) {
             const falseBoolToken: Token = this.matchForNestedQueue(TokenType.Token_False, currentExprToken, exprTokenQueue);
-            
+
             const newFalseBoolAST: BoolLiteralAST = new BoolLiteralAST(
                 NodeType.LITERAL,
                 falseBoolToken.lineCount,
@@ -601,6 +659,7 @@ export default class Parser {
             localCurrentToken.reAssign(localTokenQueue.shift() as Token);
         }
 
+        exprTokens.push(new Token('ε', TokenType.Token_Epsilon, -1));
         return exprTokens;
     }
 
@@ -634,7 +693,7 @@ export default class Parser {
     }
 
     private getOperatorPrecedence(operatorToken: Token): number {
-        switch(operatorToken.tokenType) {
+        switch (operatorToken.tokenType) {
             case TokenType.Token_Negation:
                 return 1;
             case TokenType.Token_Not:
@@ -708,43 +767,45 @@ export default class Parser {
         );
     }
 
-    private isExprToken(localCurrentToken: Token): boolean {
+    private isExprToken(currentToken: Token): boolean {
         return (
+            currentToken.tokenType === TokenType.Token_Minus ||
+
             //Testing if the current token is a unary operation
-            localCurrentToken.tokenType === TokenType.Token_Negation ||
-            localCurrentToken.tokenType === TokenType.Token_Not ||
+            currentToken.tokenType === TokenType.Token_Negation ||
+            currentToken.tokenType === TokenType.Token_Not ||
 
             //Testing if the current token is a binary operation
-            localCurrentToken.tokenType === TokenType.Token_Multiply ||
-            localCurrentToken.tokenType === TokenType.Token_Divide ||
-            localCurrentToken.tokenType === TokenType.Token_Modus ||
-            localCurrentToken.tokenType === TokenType.Token_Plus ||
-            localCurrentToken.tokenType === TokenType.Token_Subtraction ||
-            localCurrentToken.tokenType === TokenType.Token_LessThan ||
-            localCurrentToken.tokenType === TokenType.Token_LessThanEqual ||
-            localCurrentToken.tokenType === TokenType.Token_MoreThanEqual ||
-            localCurrentToken.tokenType === TokenType.Token_MoreThan ||
-            localCurrentToken.tokenType === TokenType.Token_Equal ||
-            localCurrentToken.tokenType === TokenType.Token_NotEqual ||
-            localCurrentToken.tokenType === TokenType.Token_And ||
-            localCurrentToken.tokenType === TokenType.Token_Or ||
+            currentToken.tokenType === TokenType.Token_Multiply ||
+            currentToken.tokenType === TokenType.Token_Divide ||
+            currentToken.tokenType === TokenType.Token_Modus ||
+            currentToken.tokenType === TokenType.Token_Plus ||
+            currentToken.tokenType === TokenType.Token_Subtraction ||
+            currentToken.tokenType === TokenType.Token_LessThan ||
+            currentToken.tokenType === TokenType.Token_LessThanEqual ||
+            currentToken.tokenType === TokenType.Token_MoreThanEqual ||
+            currentToken.tokenType === TokenType.Token_MoreThan ||
+            currentToken.tokenType === TokenType.Token_Equal ||
+            currentToken.tokenType === TokenType.Token_NotEqual ||
+            currentToken.tokenType === TokenType.Token_And ||
+            currentToken.tokenType === TokenType.Token_Or ||
 
             //Testing if the current token is a container for sub-expressions
-            localCurrentToken.tokenType === TokenType.Token_StartParen ||
-            localCurrentToken.tokenType === TokenType.Token_CloseParen ||
+            currentToken.tokenType === TokenType.Token_StartParen ||
+            currentToken.tokenType === TokenType.Token_CloseParen ||
 
             //Testing if the current token is a container for a location or function call
-            localCurrentToken.tokenType === TokenType.Token_Identifier ||
-            localCurrentToken.tokenType === TokenType.Token_StartBracket ||
-            localCurrentToken.tokenType === TokenType.Token_CloseBracket ||
-            localCurrentToken.tokenType === TokenType.Token_Comma ||
+            currentToken.tokenType === TokenType.Token_Identifier ||
+            currentToken.tokenType === TokenType.Token_StartBracket ||
+            currentToken.tokenType === TokenType.Token_CloseBracket ||
+            currentToken.tokenType === TokenType.Token_Comma ||
 
             //Testing if the current token is a representation of a literal
-            localCurrentToken.tokenType === TokenType.Token_DecLiteral ||
-            localCurrentToken.tokenType === TokenType.Token_HexLiteral ||
-            localCurrentToken.tokenType === TokenType.Token_StrLiteral ||
-            localCurrentToken.tokenType === TokenType.Token_True ||
-            localCurrentToken.tokenType === TokenType.Token_False
+            currentToken.tokenType === TokenType.Token_DecLiteral ||
+            currentToken.tokenType === TokenType.Token_HexLiteral ||
+            currentToken.tokenType === TokenType.Token_StrLiteral ||
+            currentToken.tokenType === TokenType.Token_True ||
+            currentToken.tokenType === TokenType.Token_False
         );
     }
 
@@ -808,7 +869,7 @@ export default class Parser {
     }
 
     private getUnaryExprOperatorType(currentToken: Token): UnaryOpType {
-        switch(currentToken.tokenType) {
+        switch (currentToken.tokenType) {
             case TokenType.Token_Negation:
                 return UnaryOpType.NEGOP;
             case TokenType.Token_Not:
@@ -819,7 +880,7 @@ export default class Parser {
     }
 
     private getBinaryExprOperatorType(currentToken: Token): BinaryOpType {
-        switch(currentToken.tokenType) {
+        switch (currentToken.tokenType) {
             case TokenType.Token_Multiply:
                 return BinaryOpType.MULOP;
             case TokenType.Token_Divide:
