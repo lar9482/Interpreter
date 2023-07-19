@@ -271,23 +271,6 @@ export default class ExprParser {
         return exprTokens;
     }
 
-    // private matchForNestedQueue(expectedTokenType: TokenType, currentToken: Token, tokenQueue: Token[]): Token {
-    //     if (currentToken.tokenType === expectedTokenType) {
-
-    //         const newToken: Token = new Token(
-    //             currentToken.lexeme,
-    //             currentToken.tokenType,
-    //             currentToken.lineCount
-    //         );
-    //         currentToken.reAssign(tokenQueue.shift() as Token);
-
-    //         return newToken;
-    //     }
-    //     else {
-    //         throw new Error(`${expectedTokenType.toString()} expected, but found ${currentToken}`);
-    //     }
-    // }
-
     private getOperatorPrecedence(operatorToken: Token): number {
         switch (operatorToken.tokenType) {
             case TokenType.Token_Negation:
