@@ -21,15 +21,9 @@ export default class Parser {
     tokenQueue: Token[];
     currentToken: Token;
 
-    expressionTokenQueueStack: Token[][];
-    expressionCurrentTokenStack: Token[];
-
     constructor(tokenQueue: Token[]) {
         this.tokenQueue = tokenQueue;
         this.currentToken = this.tokenQueue.shift() as Token;
-
-        this.expressionCurrentTokenStack = [];
-        this.expressionTokenQueueStack = [];
     }
 
     parseProgram(): ProgramAST {
