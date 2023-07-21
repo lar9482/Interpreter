@@ -14,6 +14,7 @@ import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import { UnaryOpType } from "../AST/ExprAST/UnaryOpType";
 
 import consume from "./consume";
+import LocOrFuncCallParser from "./LocOrFuncCallParser";
 
 export default class ExprParser {
     
@@ -133,8 +134,8 @@ export default class ExprParser {
         }
         //Operand -> ID LocOrFunc
         else if (this.currExprToken.tokenType === TokenType.Token_Identifier) {
-
-            return new ExprAST(NodeType.LOCATION, 0);
+            
+            return LocOrFuncCallParser.parseLocOrFunc(this.currExprToken, this.exprTokenQueue);
         } else {
             throw new Error(`parseOperand: Cannot parse ${this.currExprToken.tokenType}`);
         }
