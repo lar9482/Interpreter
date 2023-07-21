@@ -14,6 +14,6 @@ export default function consume(expectedTokenType: TokenType, currentToken: Toke
         return newToken;
     }
     else {
-        throw new Error(`${expectedTokenType.toString()} expected, but found ${currentToken}`);
+        throw new Error(`${expectedTokenType.toString()} expected, but found ${currentToken.lexeme}`);
     }
 }
