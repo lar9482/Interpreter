@@ -75,7 +75,8 @@ export default class LocOrFuncCallParser {
         }
 
         else {
-            throw new Error(`parseIndexOrNot: Expected [, ), ;, =, or a binary operator but got ${currToken.lexeme}`)
+            throw new Error(`Line ${currToken.lineCount}: While parsing the expression index for a location,
+            The symbols [, ), ;, =, or a binary operator was expected, but got ${currToken.lexeme}`)
         }
     }
 
@@ -90,7 +91,7 @@ export default class LocOrFuncCallParser {
         }
 
         else {
-            throw new Error(`parseArgsOrNot: Expected the start of an expression or a ), but got ${currToken.lexeme}`);
+            throw new Error(`Line ${currToken.lineCount}: While parsing the beginning of a function argument, the start of an expression or a ) was expected, but got ${currToken.lexeme}`);
         }
     }
 
@@ -141,7 +142,7 @@ export default class LocOrFuncCallParser {
         }
 
         else {
-            throw new Error(`parseArgsTails: Expected ',' or ), but got ${currToken.lexeme}`);
+            throw new Error(`Line ${currToken.lineCount}: While parsing function arguments,' or ) were expected, but got ${currToken.lexeme}`);
         }
     }
 
