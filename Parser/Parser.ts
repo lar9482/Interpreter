@@ -13,6 +13,7 @@ import Token from "../Tokens/Token"
 import { TokenType } from "../Tokens/TokenType";
 
 import ExprParser from "./ExprParser";
+import LocOrFuncCallParser from "./LocOrFuncCallParser";
 
 import consume from "./consume";
 
@@ -344,15 +345,29 @@ export default class Parser {
 
         //Stmt -> ID LocOrFunc ;
         if (this.currentToken.tokenType === TokenType.Token_Identifier) {
-
+            const locOrFuncAST: ExprAST = LocOrFuncCallParser.parseLocOrFunc(this.currentToken, this.tokenQueue);
         }
         //Stmt -> if ( Expr ) Block parseElseOrNot
         else if (this.currentToken.tokenType === TokenType.Token_If) {
+            const ifToken: Token = consume(TokenType.Token_If, this.currentToken, this.tokenQueue);
+            consume(TokenType.Token_StartParen, this.currentToken, this.tokenQueue);
 
+            const exprParser: ExprParser = new ExprParser(this.currentToken, this.tokenQueue);
+            const conditionalExprAST: ExprAST = exprParser.parseExpr();
+
+            const ifBlockAST: BlockAST = this.parseBlock();
+
+            const elseBlockASTOrNot: BlockAST | undefined = this.parseElseBlockOrNot();
         }
         //Stmt -> while ( Expr ) Block
         else if (this.currentToken.tokenType === TokenType.Token_While) {
+            consume(TokenType.Token_While, this.currentToken, this.tokenQueue);
+            consume(TokenType.Token_StartParen, this.currentToken, this.tokenQueue);
 
+            const exprParser: ExprParser = new ExprParser(this.currentToken, this.tokenQueue);
+            const conditionBlockAST: ExprAST = exprParser.parseExpr();
+
+            const bodyBlockAST: BlockAST = this.parseBlock();
         }
         //Stmt -> return parseReturnExprOrNot ; 
         else if (this.currentToken.tokenType === TokenType.Token_Return) {
@@ -371,11 +386,15 @@ export default class Parser {
         }
         //Stmt -> break ;
         else if (this.currentToken.tokenType === TokenType.Token_Break) {
+            const breakToken: Token = consume(TokenType.Token_Break, this.currentToken, this.tokenQueue);
 
+            consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
         }
         //Stmt -> continue ;
         else if (this.currentToken.tokenType === TokenType.Token_Continue) {
+            const continueToken: Token = consume(TokenType.Token_Continue, this.currentToken, this.tokenQueue);
 
+            consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
         }
 
         return new StmtAST(NodeType.ASSIGNMENT, 0);
@@ -402,6 +421,19 @@ export default class Parser {
         else {
             throw new Error(`Line ${this.currentToken.lineCount}: While beginning to parse return expressions, 
             (, ID, decimal, string, hexadecimal, true, false, -, !, or ; were expected but got ${this.currentToken.lexeme}`);
+        }
+    }
+
+    private parseElseBlockOrNot(): BlockAST | undefined {
+        if (this.currentToken.tokenType === TokenType.Token_Else) {
+            consume(TokenType.Token_Else, this.currentToken, this.tokenQueue);
+
+            const elseBlockAST: BlockAST = this.parseBlock();
+
+            return elseBlockAST;
+        }
+        else {
+            return undefined;
         }
     }
 
