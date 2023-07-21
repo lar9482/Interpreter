@@ -74,7 +74,15 @@ export default class ExprParser {
 
                 this.currExprToken.reAssign(this.exprTokenQueue.shift() as Token);
             }
-            else if (this.currExprToken.tokenType === TokenType.Token_Epsilon) {
+
+            //Handing cases when the sub-expression has ended. It happens if a comma or an epsilon was detected.
+            else if (this.currExprToken.tokenType === TokenType.Token_Comma) {
+                //Removing the epsilon of the end of the token queue.
+                this.exprTokenQueue.pop();                
+                break;
+            }
+
+            else if (this.currExprToken.tokenType === TokenType.Token_Epsilon){
                 break;
             }
         }
@@ -132,9 +140,9 @@ export default class ExprParser {
 
             return this.parseLiteral();
         }
-        //Operand -> ID LocOrFunc
+        //Operand -> LocOrFunc
         else if (this.currExprToken.tokenType === TokenType.Token_Identifier) {
-            
+
             return LocOrFuncCallParser.parseLocOrFunc(this.currExprToken, this.exprTokenQueue);
         } else {
             throw new Error(`parseOperand: Cannot parse ${this.currExprToken.tokenType}`);
