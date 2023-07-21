@@ -145,7 +145,7 @@ export default class ExprParser {
 
             return LocOrFuncCallParser.parseLocOrFunc(this.currExprToken, this.exprTokenQueue);
         } else {
-            throw new Error(`parseOperand: Cannot parse ${this.currExprToken.tokenType}`);
+            throw new Error(`Line ${this.currExprToken.lineCount}: Cannot parse ${this.currExprToken.tokenType} as an operand`);
         }
     }
 
@@ -205,7 +205,7 @@ export default class ExprParser {
             return newStrLiteralAST;
 
         } else {
-            throw new Error(`parseLiteral: unable to parse ${this.currExprToken.tokenType}`);
+            throw new Error(`Line ${this.currExprToken.lineCount}: Unable to parse ${this.currExprToken.tokenType} as a literal.`);
         }
     }
 
@@ -313,7 +313,7 @@ export default class ExprParser {
             case TokenType.Token_Or:
                 return 7;
             default:
-                throw new Error(`getOperatorPrecedence: ${operatorToken.tokenType} can't be assigned precedence`);
+                throw new Error(`Line ${operatorToken.lineCount}: ${operatorToken.tokenType} can't be assigned operator precedence.`);
         }
     }
 
@@ -420,7 +420,7 @@ export default class ExprParser {
             case TokenType.Token_Not:
                 return UnaryOpType.NOTOP;
             default:
-                throw new Error(`getUnaryExprOperatorType: Unable to get ${currentToken} type.`);
+                throw new Error(`Line ${currentToken.lineCount}: Unable to get ${currentToken} as an unary operator type.`);
         }
     }
 
@@ -453,7 +453,7 @@ export default class ExprParser {
             case TokenType.Token_Or:
                 return BinaryOpType.OROP;
             default:
-                throw new Error(`getBinaryExprOperatorType: Unable to get ${currentToken} type.`);
+                throw new Error(`Line ${currentToken.lineCount}: Unable to get ${currentToken} as a binary operator type.`);
         }
     }
 }

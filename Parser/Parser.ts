@@ -73,7 +73,7 @@ export default class Parser {
         }
 
         else {
-            throw new Error("parseVarOrFunc: Didn't get int, bool, void, or def tokens");
+            throw new Error(`Line ${this.currentToken.lineCount}: Expected int, bool, void, or def, but got ${this.currentToken.lexeme}`);
         }
     }
 
@@ -114,7 +114,7 @@ export default class Parser {
             return DecafType.VOID;
         }
         else {
-            throw new Error("parseType: Didn't get int, bool, or void tokens");
+            throw new Error(`Line ${this.currentToken.lineCount}: Expected int, bool, or void, but got ${this.currentToken.lexeme}`);
         }
     }
 
@@ -139,7 +139,8 @@ export default class Parser {
         }
 
         else {
-            throw new Error("parseVar_Prime: Didn't detect [ or ; at the start");
+            throw new Error(`Line ${this.currentToken.lineCount}: While parsing the details of the variable declaration,
+            [ or ; were expected, but got ${this.currentToken.lineCount}`);
         }
     }
 
@@ -185,7 +186,8 @@ export default class Parser {
         }
 
         else {
-            throw new Error("parseParamsOrNot: Didn't detect int, bool, void, or ) at the start");
+            throw new Error(`Line ${this.currentToken.lineCount}: While parsing the beginning of function parameters,
+            int, bool, void, and ) were expected, but got ${this.currentToken.lexeme}`);
         }
     }
 
@@ -231,7 +233,8 @@ export default class Parser {
         }
 
         else {
-            throw new Error("parseParamsOrNot: Didn't detect , or ) at the start");
+            throw new Error(`Line ${this.currentToken.lineCount}: While parsing a parameter, ',' or ) were expected,
+            but got ${this.currentToken.lexeme}`);
         }
     }
 
@@ -299,7 +302,8 @@ export default class Parser {
         }
 
         else {
-            throw new Error('parseVarBlock: expected int, bool, void, {, identifier, if, while, return, break, continue');
+            throw new Error(`Line ${this.currentToken.lineCount}: While parsing variable declarations encoded within a block,
+            int, bool, void, {, identifier, if, while, return, break, continue were expected, but got ${this.currentToken.lexeme}`);
         }
     }
 
@@ -332,7 +336,7 @@ export default class Parser {
         }
 
         else {
-            throw new Error(`parseStmtBlock: Expected {, identifier, if, while, return, break, continue, but got ${this.currentToken.lexeme}`)
+            throw new Error(`Line ${this.currentToken.lineCount}: Expected {, identifier, if, while, return, break, continue, but got ${this.currentToken.lexeme}`)
         }
     }
 
@@ -396,7 +400,8 @@ export default class Parser {
         }
 
         else {
-            throw new Error("parseReturnExprOrNot: Didn't detect (, ID, decimal, string, hexadecimal, true, false, -, !, or ; at the start");
+            throw new Error(`Line ${this.currentToken.lineCount}: While beginning to parse return expressions, 
+            (, ID, decimal, string, hexadecimal, true, false, -, !, or ; were expected but got ${this.currentToken.lexeme}`);
         }
     }
 
