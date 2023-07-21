@@ -332,7 +332,7 @@ export default class Parser {
         }
 
         else {
-            throw new Error('parseStmtBlock: expected {, identifier, if, while, return, break, continue')
+            throw new Error(`parseStmtBlock: Expected {, identifier, if, while, return, break, continue, but got ${this.currentToken.lexeme}`)
         }
     }
 
