@@ -157,7 +157,7 @@ export default class Lexer {
             case ";":
                 return new Token(lexeme, TokenType.Token_Semicolon, currentLineNumber);
             case "=":
-                return new Token(lexeme, TokenType.Token_Equal, currentLineNumber);
+                return new Token(lexeme, TokenType.Token_Assign, currentLineNumber);
             case "+":
                 return new Token(lexeme, TokenType.Token_Plus, currentLineNumber);
             case "-":

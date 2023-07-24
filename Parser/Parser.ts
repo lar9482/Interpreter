@@ -343,9 +343,25 @@ export default class Parser {
 
     private parseStmt(): StmtAST {
 
-        //Stmt -> ID LocOrFunc ;
+        //Stmt -> LocOrFunc
         if (this.currentToken.tokenType === TokenType.Token_Identifier) {
             const locOrFuncAST: ExprAST = LocOrFuncCallParser.parseLocOrFunc(this.currentToken, this.tokenQueue);
+
+            //Stmt -> Loc = Expr ;
+            if (locOrFuncAST.type === NodeType.LOCATION) {
+                consume(TokenType.Token_Assign, this.currentToken, this.tokenQueue);
+
+                const assignmentExprParser: ExprParser = new ExprParser(this.currentToken, this.tokenQueue);
+                const assignmentExprAST: ExprAST = assignmentExprParser.parseExpr();
+
+                consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
+
+            //Stmt -> FuncCall ;
+            } else if (locOrFuncAST.type === NodeType.FUNCCALL){
+                consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
+
+                return locOrFuncAST;
+            }
         }
         //Stmt -> if ( Expr ) Block parseElseOrNot
         else if (this.currentToken.tokenType === TokenType.Token_If) {
