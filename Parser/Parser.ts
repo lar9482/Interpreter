@@ -19,6 +19,7 @@ import LocOrFuncCallParser from "./LocOrFuncCallParser";
 
 import consume from "./consume";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
+import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 
 export default class Parser {
 
@@ -402,13 +403,24 @@ export default class Parser {
         }
         //Stmt -> while ( Expr ) Block
         else if (this.currentToken.tokenType === TokenType.Token_While) {
-            consume(TokenType.Token_While, this.currentToken, this.tokenQueue);
+            const whileToken: Token = consume(TokenType.Token_While, this.currentToken, this.tokenQueue);
             consume(TokenType.Token_StartParen, this.currentToken, this.tokenQueue);
 
             const exprParser: ExprParser = new ExprParser(this.currentToken, this.tokenQueue);
             const conditionBlockAST: ExprAST = exprParser.parseExpr();
 
+            consume(TokenType.Token_CloseParen, this.currentToken, this.tokenQueue);
+            
             const bodyBlockAST: BlockAST = this.parseBlock();
+
+            const newWhileLoopStmtAST: WhileLoopStmtAST = new WhileLoopStmtAST(
+                NodeType.WHILELOOP,
+                whileToken.lineCount,
+                conditionBlockAST,
+                bodyBlockAST
+            );
+
+            return newWhileLoopStmtAST;
         }
         //Stmt -> return parseReturnExprOrNot ; 
         else if (this.currentToken.tokenType === TokenType.Token_Return) {
