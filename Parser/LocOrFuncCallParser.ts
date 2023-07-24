@@ -69,6 +69,8 @@ export default class LocOrFuncCallParser {
         else if (currToken.tokenType === TokenType.Token_CloseParen || 
             currToken.tokenType === TokenType.Token_Semicolon ||
             currToken.tokenType === TokenType.Token_Assign ||
+            currToken.tokenType === TokenType.Token_Comma ||
+            currToken.tokenType === TokenType.Token_Epsilon ||
             this.isBinaryExprOperator(currToken)) {
             
             return undefined;
