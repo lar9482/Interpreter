@@ -18,6 +18,7 @@ import ExprParser from "./ExprParser";
 import LocOrFuncCallParser from "./LocOrFuncCallParser";
 
 import consume from "./consume";
+import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
 
 export default class Parser {
 
@@ -383,9 +384,21 @@ export default class Parser {
             const exprParser: ExprParser = new ExprParser(this.currentToken, this.tokenQueue);
             const conditionalExprAST: ExprAST = exprParser.parseExpr();
 
+            consume(TokenType.Token_CloseParen, this.currentToken, this.tokenQueue);
+
             const ifBlockAST: BlockAST = this.parseBlock();
 
             const elseBlockASTOrNot: BlockAST | undefined = this.parseElseBlockOrNot();
+
+            const newConditionalStmtAST: ConditionalStmtAST = new ConditionalStmtAST(
+                NodeType.CONDITIONAL,
+                ifToken.lineCount,
+                conditionalExprAST,
+                ifBlockAST,
+                elseBlockASTOrNot
+            );
+
+            return newConditionalStmtAST;
         }
         //Stmt -> while ( Expr ) Block
         else if (this.currentToken.tokenType === TokenType.Token_While) {

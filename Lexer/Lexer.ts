@@ -34,7 +34,8 @@ export default class Lexer {
         this.stringLiteral = new RegExp(/^"\n*[\x00-\x7F]*\t*\\*"/);
 
         //Look for raw decimal literals
-        this.decimalLiteral = new RegExp(/^(-|)([0-9]+)/);
+        // this.decimalLiteral = new RegExp(/^(-|)([0-9]+)/);
+        this.decimalLiteral = new RegExp(/^([0-9]+)/);
     }
 
     scanProgram(programBuffer: string): Token[] {
