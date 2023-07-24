@@ -6,9 +6,11 @@ import FuncDeclAST from "../AST/FuncDeclAST";
 import { NodeType } from "../AST/NodeType";
 import ParameterAST from "../AST/ParameterAST";
 import ProgramAST from "../AST/ProgramAST";
+import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
 import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 import StmtAST from "../AST/StmtAST/StmtAST";
 import VarDeclAST from "../AST/VarDeclAST";
+import LocAST from "../AST/ExprAST/LocAST";
 import Token from "../Tokens/Token"
 import { TokenType } from "../Tokens/TokenType";
 
@@ -356,8 +358,18 @@ export default class Parser {
 
                 consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
 
+                const newAssignStmtAST: AssignStmtAST = new AssignStmtAST(
+                    NodeType.ASSIGNMENT,
+                    locOrFuncAST.sourceLineNumber,
+                    locOrFuncAST as LocAST,
+                    assignmentExprAST
+                );
+
+                return newAssignStmtAST;
+            } 
+
             //Stmt -> FuncCall ;
-            } else if (locOrFuncAST.type === NodeType.FUNCCALL){
+            else if (locOrFuncAST.type === NodeType.FUNCCALL){
                 consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
 
                 return locOrFuncAST;
