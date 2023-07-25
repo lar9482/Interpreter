@@ -1,10 +1,12 @@
 import { NodeType } from "./NodeType";
 import AST from "./AST";
-
 import VarDeclAST from './VarDeclAST';
 import FuncDeclAST from "./FuncDeclAST";
 
-export default class ProgramAST extends AST {
+import symbolElement from "../symbolTableTraversal/symbolElement";
+import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+
+export default class ProgramAST extends AST implements symbolElement {
     
     public variables: VarDeclAST[]; 
     public functions: FuncDeclAST[];
@@ -17,5 +19,9 @@ export default class ProgramAST extends AST {
 
         this.variables = variables;
         this.functions = functions;
+    }
+
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitProgram(this);
     }
 }
