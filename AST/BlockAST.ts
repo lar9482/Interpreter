@@ -3,8 +3,8 @@ import { NodeType } from "./NodeType";
 import VarDeclAST from "./VarDeclAST";
 import StmtAST from "./StmtAST/StmtAST";
 
-import symbolElement from "../symbolTableTraversal/symbolElement";
-import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+import symbolElement from "../SymbolTableAnalysis/symbolElement";
+import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 
 export default class BlockAST extends AST implements symbolElement {
 

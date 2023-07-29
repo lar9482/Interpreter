@@ -5,8 +5,8 @@ import AST from "./AST";
 import ParameterAST from "./ParameterAST";
 import BlockAST from "./BlockAST";
 
-import symbolElement from "../symbolTableTraversal/symbolElement";
-import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+import symbolElement from "../SymbolTableAnalysis/symbolElement";
+import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 
 export default class FuncDeclAST extends AST implements symbolElement {
     name: string;

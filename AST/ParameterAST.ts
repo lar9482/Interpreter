@@ -2,8 +2,8 @@ import AST from "./AST";
 import { DecafType } from "./DecafType";
 import { NodeType } from "./NodeType";
 
-import symbolElement from "../symbolTableTraversal/symbolElement";
-import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+import symbolElement from "../SymbolTableAnalysis/symbolElement";
+import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 
 export default class ParameterAST extends AST implements symbolElement {
 
