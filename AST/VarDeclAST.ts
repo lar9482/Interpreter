@@ -2,8 +2,8 @@ import { NodeType } from "./NodeType";
 import { DecafType } from "./DecafType";
 import AST from "./AST";
 
-import symbolElement from "../symbolTableTraversal/symbolElement";
-import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+import symbolElement from "../SymbolTableAnalysis/symbolElement";
+import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 
 export default class VarDeclAST extends AST implements symbolElement {
     

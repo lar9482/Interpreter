@@ -1,8 +1,8 @@
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
 
-import symbolElement from "../../symbolTableTraversal/symbolElement";
-import symbolVisitorInterface from "../../symbolTableTraversal/symbolVisitorInterface";
+import symbolElement from "../../SymbolTableAnalysis/symbolElement";
+import symbolVisitorInterface from "../../SymbolTableAnalysis/symbolVisitorInterface";
 
 export default class FuncCallAST extends ExprAST implements symbolElement {
     name: string;
