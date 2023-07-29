@@ -1,7 +1,10 @@
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
 
-export default class FuncCallAST extends ExprAST {
+import symbolElement from "../../symbolTableTraversal/symbolElement";
+import symbolVisitorInterface from "../../symbolTableTraversal/symbolVisitorInterface";
+
+export default class FuncCallAST extends ExprAST implements symbolElement {
     name: string;
     funcArguments: ExprAST[];
 
@@ -13,5 +16,9 @@ export default class FuncCallAST extends ExprAST {
         
         this.name = name;
         this.funcArguments = funcArguments;
+    }
+
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitFuncCall(this);
     }
 }

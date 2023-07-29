@@ -25,9 +25,16 @@ export default class Interpreter {
         return AST;
     }
 
+    public analyseProgram(AST: ProgramAST) {
+        console.log(AST);
+        console.log();
+    }
+
     runProgram(programFile: string) {
         const programBuffer: string = readFileSync(programFile, 'utf-8').toString();
         const tokenQueue: Token[] = this.lexProgram(programBuffer);  
         const AST: ProgramAST = this.parseProgram(tokenQueue);
+
+        this.analyseProgram(AST);
     }
 }

@@ -2,7 +2,10 @@ import { NodeType } from "./NodeType";
 import { DecafType } from "./DecafType";
 import AST from "./AST";
 
-export default class VarDeclAST extends AST {
+import symbolElement from "../symbolTableTraversal/symbolElement";
+import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+
+export default class VarDeclAST extends AST implements symbolElement {
     
     public name: string;
     public decafType: DecafType;
@@ -21,5 +24,9 @@ export default class VarDeclAST extends AST {
         this.decafType = decafType;
         this.isArray = isArray;
         this.arrayLength = arrayLength;
+    }
+
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitVarDec(this);
     }
 }

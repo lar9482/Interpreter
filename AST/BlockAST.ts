@@ -3,7 +3,10 @@ import { NodeType } from "./NodeType";
 import VarDeclAST from "./VarDeclAST";
 import StmtAST from "./StmtAST/StmtAST";
 
-export default class BlockAST extends AST {
+import symbolElement from "../symbolTableTraversal/symbolElement";
+import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+
+export default class BlockAST extends AST implements symbolElement {
 
     variables: VarDeclAST[];
     statements: StmtAST[];
@@ -16,5 +19,9 @@ export default class BlockAST extends AST {
 
         this.variables = variables;
         this.statements = statements;
+    }
+
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitBlock(this);
     }
 }

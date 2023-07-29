@@ -5,7 +5,10 @@ import AST from "./AST";
 import ParameterAST from "./ParameterAST";
 import BlockAST from "./BlockAST";
 
-export default class FuncDeclAST extends AST {
+import symbolElement from "../symbolTableTraversal/symbolElement";
+import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+
+export default class FuncDeclAST extends AST implements symbolElement {
     name: string;
     returnType: DecafType;
     parameters: ParameterAST[];
@@ -23,5 +26,9 @@ export default class FuncDeclAST extends AST {
         this.returnType = returnType;
         this.parameters = parameters;
         this.body = body;
+    }
+
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitFuncDecl(this);
     }
 }
