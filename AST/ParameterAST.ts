@@ -2,7 +2,10 @@ import AST from "./AST";
 import { DecafType } from "./DecafType";
 import { NodeType } from "./NodeType";
 
-export default class ParameterAST extends AST {
+import symbolElement from "../symbolTableTraversal/symbolElement";
+import symbolVisitorInterface from "../symbolTableTraversal/symbolVisitorInterface";
+
+export default class ParameterAST extends AST implements symbolElement {
 
     name: string;
     parameterType: DecafType;
@@ -17,4 +20,7 @@ export default class ParameterAST extends AST {
         this.parameterType = parameterType;
     }
 
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitParameter(this);
+    }
 }
