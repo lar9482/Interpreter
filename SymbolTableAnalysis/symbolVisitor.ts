@@ -7,14 +7,13 @@ import VarDeclAST from "../AST/VarDeclAST";
 import ParameterAST from "../AST/ParameterAST";
 import LocAST from "../AST/ExprAST/LocAST";
 import FuncCallAST from "../AST/ExprAST/FuncCallAST";
-import ExprAST from "../AST/ExprAST/ExprAST";
 
 export default class SymbolVisitor implements symbolVisitorInterface {
-    visitProgram (programAST: ProgramAST) { 
+    visitProgram(programAST: ProgramAST) { 
 
     }
 
-    visitFuncDecl (funcDeclAST: FuncDeclAST) {
+    visitFuncDecl(funcDeclAST: FuncDeclAST) {
 
     }
 
@@ -22,19 +21,19 @@ export default class SymbolVisitor implements symbolVisitorInterface {
 
     }
 
-    visitVarDec (varDeclAST: VarDeclAST) {
+    visitVarDec(varDeclAST: VarDeclAST) {
 
     }
 
-    visitParameter (parameterAST: ParameterAST) {
+    visitParameter(parameterAST: ParameterAST) {
         
     }
 
-    visitLoc (locAST: LocAST) {
+    visitLoc(locAST: LocAST) {
         
     }
 
-    visitFuncCall (funcCallAST: FuncCallAST) {
+    visitFuncCall(funcCallAST: FuncCallAST) {
         
     }
 }
