@@ -7,12 +7,16 @@ import BlockAST from "./BlockAST";
 
 import symbolElement from "../SymbolTableAnalysis/symbolElement";
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
+import symbolScope from "../SymbolTableAnalysis/symbolScope";
+import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 
-export default class FuncDeclAST extends AST implements symbolElement {
+export default class FuncDeclAST extends AST implements symbolElement, symbolScope {
     name: string;
     returnType: DecafType;
     parameters: ParameterAST[];
     body: BlockAST
+
+    symbols: SymbolTable;
 
     constructor(type: NodeType, sourceLineNumber: number,
                 name: string,
@@ -26,9 +30,15 @@ export default class FuncDeclAST extends AST implements symbolElement {
         this.returnType = returnType;
         this.parameters = parameters;
         this.body = body;
+
+        this.symbols = new SymbolTable(NodeType.FUNCDECL);
     }
 
     acceptSymbolElement(visitor: symbolVisitorInterface) {
         visitor.visitFuncDecl(this);
+    }
+
+    addSymbolTable(symbolTable: SymbolTable) {
+        this.symbols = symbolTable;
     }
 }

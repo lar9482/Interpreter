@@ -1,10 +1,7 @@
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
 
-import symbolElement from "../../SymbolTableAnalysis/symbolElement";
-import symbolVisitorInterface from "../../SymbolTableAnalysis/symbolVisitorInterface";
-
-export default class LocAST extends ExprAST implements symbolElement {
+export default class LocAST extends ExprAST {
     name: string;
     index: ExprAST | undefined;
 
@@ -16,9 +13,5 @@ export default class LocAST extends ExprAST implements symbolElement {
         
         this.name = name;
         this.index = index;
-    }
-
-    acceptSymbolElement(visitor: symbolVisitorInterface) {
-        visitor.visitLoc(this);
     }
 }
