@@ -5,9 +5,9 @@ import AST from "./AST";
 import ParameterAST from "./ParameterAST";
 import BlockAST from "./BlockAST";
 
-import symbolElement from "../SymbolTableAnalysis/symbolElement";
+import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolElement";
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
-import symbolScope from "../SymbolTableAnalysis/symbolScope";
+import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 
 export default class FuncDeclAST extends AST implements symbolElement, symbolScope {
