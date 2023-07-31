@@ -4,6 +4,7 @@ import { TokenType } from './Tokens/TokenType';
 import Lexer from './Lexer/Lexer'
 import Parser from './Parser/Parser';
 import ProgramAST from './AST/ProgramAST';
+import SymbolVisitor from './SymbolTableAnalysis/symbolVisitor';
 
 export default class Interpreter {
 
@@ -26,8 +27,9 @@ export default class Interpreter {
     }
 
     public analyseProgram(AST: ProgramAST) {
-        console.log(AST);
-        console.log();
+        const symbolTableBuilder: SymbolVisitor = new SymbolVisitor();
+        symbolTableBuilder.buildSymbolTables(AST);
+
     }
 
     runProgram(programFile: string) {
