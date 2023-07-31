@@ -1,4 +1,4 @@
-import SymbolTable from "./SymbolTable/SymbolTable";
+import SymbolTable from "../SymbolTable/SymbolTable";
 
 //Interface for AST nodes that will have their own scope.
 export default interface symbolScope {

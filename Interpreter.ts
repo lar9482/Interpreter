@@ -30,6 +30,7 @@ export default class Interpreter {
         const symbolTableBuilder: SymbolVisitor = new SymbolVisitor();
         symbolTableBuilder.buildSymbolTables(AST);
 
+        console.log();
     }
 
     runProgram(programFile: string) {

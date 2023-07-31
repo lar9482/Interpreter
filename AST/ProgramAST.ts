@@ -3,10 +3,10 @@ import AST from "./AST";
 import VarDeclAST from './VarDeclAST';
 import FuncDeclAST from "./FuncDeclAST";
 
-import symbolElement from "../SymbolTableAnalysis/symbolElement";
+import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolElement";
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
-import symbolScope from "../SymbolTableAnalysis/symbolScope";
+import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 
 export default class ProgramAST extends AST implements symbolElement, symbolScope {
     

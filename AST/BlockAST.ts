@@ -3,9 +3,9 @@ import { NodeType } from "./NodeType";
 import VarDeclAST from "./VarDeclAST";
 import StmtAST from "./StmtAST/StmtAST";
 
-import symbolElement from "../SymbolTableAnalysis/symbolElement";
+import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolElement";
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
-import symbolScope from "../SymbolTableAnalysis/symbolScope";
+import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 
 export default class BlockAST extends AST implements symbolElement, symbolScope {
