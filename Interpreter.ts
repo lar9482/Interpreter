@@ -27,8 +27,8 @@ export default class Interpreter {
     }
 
     public analyseProgram(AST: ProgramAST) {
-        const symbolTableBuilder: SymbolVisitor = new SymbolVisitor();
-        symbolTableBuilder.buildSymbolTables(AST);
+        const symbolTableBuilder: SymbolVisitor = new SymbolVisitor(AST);
+        symbolTableBuilder.buildSymbolTables();
 
         console.log();
     }

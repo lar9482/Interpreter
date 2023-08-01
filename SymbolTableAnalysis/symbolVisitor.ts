@@ -20,9 +20,14 @@ import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
 export default class SymbolVisitor implements symbolVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];
+    private programAST: ProgramAST;
 
-    buildSymbolTables(programAST: ProgramAST) {
-        this.visitProgram(programAST);
+    constructor(programAST: ProgramAST) {
+        this.programAST = programAST;
+    }
+
+    buildSymbolTables() {
+        this.visitProgram(this.programAST);
     }
 
     private initializeIOIntoGlobalScope(globalScopeSymbolTable: SymbolTable) {

@@ -1,0 +1,28 @@
+def void print_collatz_sequence(int num) {
+    if (num < 1) {
+        return;
+    }
+
+    print_sequence_element(num);
+
+    while (num > 1) {
+        if (num % 2 == 0) {
+            num = num / 2;
+        } else {
+            num = 3 * num + 1;
+        }
+
+        print_sequence_element(num);
+    }
+}
+
+def void print_sequence_element(int num) {
+    print_int(num);
+    print_str(" ");
+}
+
+def int main() {
+    print_collatz_sequence(19);
+
+    return 0;
+}
