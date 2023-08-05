@@ -3,7 +3,10 @@ import { NodeType } from "../NodeType";
 import StmtAST from "./StmtAST";
 import BlockAST from "../BlockAST";
 
-export default class ConditionalStmtAST extends StmtAST {
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
+
+export default class ConditionalStmtAST extends StmtAST implements inferenceElement {
 
     condition: ExprAST;
     ifBlock: BlockAST;
@@ -19,5 +22,9 @@ export default class ConditionalStmtAST extends StmtAST {
         this.condition = condition;
         this.ifBlock = ifBlock;
         this.elseBlock = elseBlock;
+    }
+
+    acceptInferenceElement(visitor: inferenceVisitorInterface) {
+        visitor.visitConditionalStmt(this);
     }
 }

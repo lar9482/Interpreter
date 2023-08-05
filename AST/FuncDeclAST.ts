@@ -9,8 +9,10 @@ import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolEleme
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
+import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
 
-export default class FuncDeclAST extends AST implements symbolElement, symbolScope {
+export default class FuncDeclAST extends AST implements symbolElement, symbolScope, inferenceElement{
     name: string;
     returnType: DecafType;
     parameters: ParameterAST[];
@@ -41,4 +43,8 @@ export default class FuncDeclAST extends AST implements symbolElement, symbolSco
     addSymbolTable(symbolTable: SymbolTable) {
         this.symbols = symbolTable;
     }
+
+    acceptInferenceElement(visitor: inferenceVisitorInterface) {
+        visitor.visitFuncDecl(this);
+    }  
 }

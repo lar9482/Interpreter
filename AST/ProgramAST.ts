@@ -8,7 +8,10 @@ import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterfac
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 
-export default class ProgramAST extends AST implements symbolElement, symbolScope {
+import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
+
+export default class ProgramAST extends AST implements symbolElement, symbolScope, inferenceElement {
     
     public variables: VarDeclAST[]; 
     public functions: FuncDeclAST[];
@@ -31,6 +34,10 @@ export default class ProgramAST extends AST implements symbolElement, symbolScop
     }
 
     acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitProgram(this);
+    }
+
+    acceptInferenceElement (visitor: inferenceVisitorInterface) {
         visitor.visitProgram(this);
     }
 }

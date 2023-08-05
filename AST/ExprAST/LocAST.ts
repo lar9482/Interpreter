@@ -1,7 +1,9 @@
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
 
-export default class LocAST extends ExprAST {
+export default class LocAST extends ExprAST implements inferenceElement {
     name: string;
     index: ExprAST | undefined;
 
@@ -13,5 +15,9 @@ export default class LocAST extends ExprAST {
         
         this.name = name;
         this.index = index;
+    }
+
+    acceptInferenceElement(visitor: inferenceVisitorInterface) {
+        visitor.visitLoc(this);
     }
 }
