@@ -7,8 +7,10 @@ import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolEleme
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
+import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
 
-export default class BlockAST extends AST implements symbolElement, symbolScope {
+export default class BlockAST extends AST implements symbolElement, symbolScope, inferenceElement {
 
     variables: VarDeclAST[];
     statements: StmtAST[];
@@ -32,5 +34,9 @@ export default class BlockAST extends AST implements symbolElement, symbolScope 
 
     addSymbolTable(symbolTable: SymbolTable) {
         this.symbols = symbolTable;
+    }
+
+    acceptInferenceElement(visitor: inferenceVisitorInterface) {
+        visitor.visitBlock(this);
     }
 }

@@ -1,7 +1,9 @@
+import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
 
-export default class FuncCallAST extends ExprAST {
+export default class FuncCallAST extends ExprAST implements inferenceElement{
     name: string;
     funcArguments: ExprAST[];
 
@@ -13,5 +15,9 @@ export default class FuncCallAST extends ExprAST {
         
         this.name = name;
         this.funcArguments = funcArguments;
+    }
+
+    acceptInferenceElement(visitor: inferenceVisitorInterface) {
+        visitor.visitFuncCall(this);
     }
 }

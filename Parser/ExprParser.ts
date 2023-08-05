@@ -9,9 +9,9 @@ import IntLiteralAST from "../AST/ExprAST/IntLiteralAST";
 import BoolLiteralAST from "../AST/ExprAST/BoolLiteralAST";
 
 import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
-import { BinaryOpType } from "../AST/ExprAST/BinaryOpType";
+import { BinaryOpType } from "../AST/ExprAST/ExprTypes/BinaryOpType";
 import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
-import { UnaryOpType } from "../AST/ExprAST/UnaryOpType";
+import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
 
 import consume from "./consume";
 import LocOrFuncCallParser from "./LocOrFuncCallParser";

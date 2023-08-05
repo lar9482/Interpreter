@@ -1,8 +1,10 @@
+import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
-import { UnaryOpType } from "./UnaryOpType";
+import { UnaryOpType } from "./ExprTypes/UnaryOpType";
 
-export default class UnaryExprAST extends ExprAST {
+export default class UnaryExprAST extends ExprAST implements inferenceElement {
 
     operator: UnaryOpType;
     child: ExprAST;
@@ -15,5 +17,9 @@ export default class UnaryExprAST extends ExprAST {
 
         this.operator = operator;
         this.child = child;
+    }
+
+    acceptInferenceElement(visitor: inferenceVisitorInterface) {
+        visitor.visitUnaryExpr(this);
     }
 }
