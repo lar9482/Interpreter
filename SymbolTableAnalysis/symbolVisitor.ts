@@ -16,10 +16,13 @@ import { DecafType } from "../AST/DecafType";
 import { NodeType } from "../AST/NodeType";
 import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 export default class SymbolVisitor implements symbolVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];
+    private errorMessages: ErrorMessage[] = [];
+
     private programAST: ProgramAST;
 
     constructor(programAST: ProgramAST) {
@@ -91,14 +94,14 @@ export default class SymbolVisitor implements symbolVisitorInterface {
     }
 
     visitFuncDecl(funcDeclAST: FuncDeclAST) {
+        
         const functionNameSymbol: SymbolFunction = new SymbolFunction(
             SymbolType.FUNCTION_SYMBOL,
             funcDeclAST.name,
             funcDeclAST.returnType,
             funcDeclAST.parameters
         );
-        this.symbolTableStack[this.symbolTableStack.length-1]
-            .addSymbol(functionNameSymbol);
+        this.addSymbolToCurrentSymbolTable(functionNameSymbol, funcDeclAST.sourceLineNumber);
 
         const functionDeclScopeSymbolTable: SymbolTable = new SymbolTable(
             funcDeclAST.type, this.symbolTableStack[this.symbolTableStack.length-1]
@@ -152,9 +155,8 @@ export default class SymbolVisitor implements symbolVisitorInterface {
                 varDeclAST.decafType,
                 varDeclAST.arrayLength
             );
-
-            this.symbolTableStack[this.symbolTableStack.length-1]
-                .addSymbol(newSymbolArray);
+            
+            this.addSymbolToCurrentSymbolTable(newSymbolArray, varDeclAST.sourceLineNumber)
         }
 
         else {
@@ -163,8 +165,8 @@ export default class SymbolVisitor implements symbolVisitorInterface {
                 varDeclAST.name,
                 varDeclAST.decafType
             );
-            this.symbolTableStack[this.symbolTableStack.length-1]
-                .addSymbol(newSymbolScalar);
+            
+            this.addSymbolToCurrentSymbolTable(newSymbolScalar, varDeclAST.sourceLineNumber);
         }
     }
 
@@ -175,7 +177,18 @@ export default class SymbolVisitor implements symbolVisitorInterface {
             parameterAST.parameterType
         );
 
-        this.symbolTableStack[this.symbolTableStack.length-1]
-            .addSymbol(parameterSymbol);
+        this.addSymbolToCurrentSymbolTable(parameterSymbol, parameterAST.sourceLineNumber);
+    }
+
+    private addSymbolToCurrentSymbolTable(symbol: Symbol, sourceLineNumber: number) {
+        const currentSymbolTable: SymbolTable = this.symbolTableStack[this.symbolTableStack.length-1];
+
+        if (currentSymbolTable.lookupSymbolName(symbol.name)) {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${sourceLineNumber}: Symbol ${symbol.name} appears more than once.`)
+            );
+        } else {
+            currentSymbolTable.addSymbol(symbol);
+        }
     }
 }

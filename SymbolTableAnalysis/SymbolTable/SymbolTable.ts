@@ -24,7 +24,7 @@ export default class SymbolTable {
                 return this.table.get(symbolName);
             }
             else {
-                currentTable = this.parentTable;
+                currentTable = currentTable.parentTable;
             }
         }
 
