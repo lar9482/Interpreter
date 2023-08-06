@@ -23,6 +23,15 @@ import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
 import Symbol from "../SymbolTableAnalysis/SymbolTable/Symbol/Symbol";
 import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 
+/**
+ * As part of the first pass for type checking, this visitor will make pre-order
+ * traversals to the expression nodes to infer their types.
+ * 
+ * Most of the types are either inferred from:
+ *  1. Their operator.
+ *  2. The type from the symbol table.
+ *
+ */
 export default class TypeInferenceVisitor implements inferenceVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];

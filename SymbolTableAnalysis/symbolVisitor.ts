@@ -18,6 +18,13 @@ import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
+/**
+ * This visitor will build symbol tables by traversing down to variable declarations and parameters,
+ * and caching the symbols in tables that are stored in the program, function declaration, and block AST nodes.
+ * 
+ * NOTE:
+ * print_int, print_str, and print_bool will be harded into the 'ProgramAST' symbol for I/O support
+ */
 export default class SymbolVisitor implements symbolVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];
