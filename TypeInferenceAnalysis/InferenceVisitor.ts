@@ -21,6 +21,7 @@ import { BinaryOpType } from "../AST/ExprAST/ExprTypes/BinaryOpType";
 import { DecafType } from "../AST/DecafType";
 import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
 import Symbol from "../SymbolTableAnalysis/SymbolTable/Symbol/Symbol";
+import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 
 export default class TypeInferenceVisitor implements inferenceVisitorInterface {
 
@@ -66,6 +67,9 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
                 const assignStmtAST: AssignStmtAST = stmtAST as AssignStmtAST;
                 assignStmtAST.acceptInferenceElement(this);
 
+            } else if (stmtAST.type === NodeType.RETURNSTMT) {
+                const returnStmtAST: ReturnStmtAST = stmtAST as ReturnStmtAST;
+                returnStmtAST.acceptInferenceElement(this);
             }
         })
 
@@ -81,14 +85,24 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
             conditionalStmtAST.elseBlock.acceptInferenceElement(this);
         }
     }
+
     visitWhileStmt(whileStmtAST: WhileLoopStmtAST) {
         whileStmtAST.condition.acceptInferenceElement(this);
         whileStmtAST.body.acceptInferenceElement(this);
     }
+
     visitAssignStmt(assignStmtAST: AssignStmtAST) {
         assignStmtAST.location.acceptInferenceElement(this);
         assignStmtAST.value.acceptInferenceElement(this);
     }
+
+    visitReturnStmt(returnStmtAST: ReturnStmtAST) {
+        if (returnStmtAST.returnValue) {
+            const returnExpr: ExprAST = returnStmtAST.returnValue;
+            returnExpr.acceptInferenceElement(this);
+        }
+    }
+
     visitExpr(exprAST: ExprAST) {
         if (exprAST.type === NodeType.BINARYOP) {
             const binaryExprAST: BinaryExprAST = exprAST as BinaryExprAST;
@@ -138,6 +152,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         binaryExprAST.left.acceptInferenceElement(this);
         binaryExprAST.right.acceptInferenceElement(this);
     }
+
     visitUnaryExpr(unaryExprAST: UnaryExprAST) {
         if (unaryExprAST.operator === UnaryOpType.NEGOP) {
             unaryExprAST.decafType = DecafType.INT;
@@ -151,6 +166,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
 
         unaryExprAST.child.acceptInferenceElement(this);
     }
+
     visitFuncCall(funcCallAST: FuncCallAST) {
         const funcCallSymbol: Symbol = this.getSymbolFromCurrentTable(funcCallAST.name, funcCallAST.sourceLineNumber) as Symbol;
         funcCallAST.decafType = funcCallSymbol.returnType;
@@ -159,6 +175,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
             exprArgAST.acceptInferenceElement(this);
         }) 
     }
+
     visitLoc(locAST: LocAST) {
         const locSymbol: Symbol = this.getSymbolFromCurrentTable(locAST.name, locAST.sourceLineNumber) as Symbol;
         locAST.decafType = locSymbol.returnType;
@@ -173,9 +190,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         if (symbol !== undefined) {
             return symbol as Symbol;
         } else {
-            this.errorMessages.push(
-                new ErrorMessage(`Line ${lineNumber}: Couldn't find the symbol ${symbolName}`)
-            );
+            throw new Error(`Line ${lineNumber}: The symbol '${symbolName}' is undefined in the current context. Unable to infer its type`);
         }
     }
 }
