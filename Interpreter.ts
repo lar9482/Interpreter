@@ -5,6 +5,7 @@ import Lexer from './Lexer/Lexer'
 import Parser from './Parser/Parser';
 import ProgramAST from './AST/ProgramAST';
 import SymbolVisitor from './SymbolTableAnalysis/symbolVisitor';
+import { TypeInferenceAnalyzer } from './TypeInferenceAnalysis/InferenceVisitor';
 
 export default class Interpreter {
 
@@ -29,6 +30,8 @@ export default class Interpreter {
     public analyseProgram(AST: ProgramAST) {
         const symbolTableBuilder: SymbolVisitor = new SymbolVisitor(AST);
         symbolTableBuilder.buildSymbolTables();
+
+        TypeInferenceAnalyzer.inferTypes(AST);
 
         console.log();
     }

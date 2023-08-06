@@ -4,7 +4,7 @@ import Symbol from "./Symbol/Symbol";
 export default class SymbolTable {
     table: Map<string, Symbol>;
     parentTable?: SymbolTable;
-    scopeType: NodeType
+    scopeType: NodeType;
 
     constructor(scopeType: NodeType, parentTable?: SymbolTable) {
         this.table = new Map<string, Symbol>();
@@ -20,8 +20,8 @@ export default class SymbolTable {
         let currentTable: SymbolTable | undefined = this;
 
         while (currentTable != undefined) {
-            if (this.table.has(symbolName)) {
-                return this.table.get(symbolName);
+            if ((currentTable as SymbolTable).table.has(symbolName)) {
+                return (currentTable as SymbolTable).table.get(symbolName);
             }
             else {
                 currentTable = currentTable.parentTable;
