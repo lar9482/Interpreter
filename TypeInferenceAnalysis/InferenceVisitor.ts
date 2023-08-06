@@ -22,7 +22,7 @@ import { DecafType } from "../AST/DecafType";
 import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
 import Symbol from "../SymbolTableAnalysis/SymbolTable/Symbol/Symbol";
 
-class TypeInferenceVisitor implements inferenceVisitorInterface {
+export default class TypeInferenceVisitor implements inferenceVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];
     private errorMessages: ErrorMessage[] = [];
@@ -179,5 +179,3 @@ class TypeInferenceVisitor implements inferenceVisitorInterface {
         }
     }
 }
-
-export const TypeInferenceAnalyzer: TypeInferenceVisitor = new TypeInferenceVisitor();
