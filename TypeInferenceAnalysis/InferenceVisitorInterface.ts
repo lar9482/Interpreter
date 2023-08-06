@@ -9,6 +9,7 @@ import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import FuncCallAST from "../AST/ExprAST/FuncCallAST";
 import LocAST from "../AST/ExprAST/LocAST";
 import ExprAST from "../AST/ExprAST/ExprAST";
+import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 
 export default interface inferenceVisitorInterface {
     //Base nodes for the visitor.
@@ -20,6 +21,7 @@ export default interface inferenceVisitorInterface {
     visitConditionalStmt: (conditionalStmtAST: ConditionalStmtAST) => void
     visitWhileStmt: (whileStmtAST: WhileLoopStmtAST) => void
     visitAssignStmt: (assignStmtAST: AssignStmtAST) => void
+    visitReturnStmt: (returnStmtAST: ReturnStmtAST) => void
     visitExpr: (exprAST: ExprAST) => void
 
     //The 'atomic' expressions that require inferences.
