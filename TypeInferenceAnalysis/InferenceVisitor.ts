@@ -8,7 +8,7 @@ import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
 import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import FuncCallAST from "../AST/ExprAST/FuncCallAST";
 import LocAST from "../AST/ExprAST/LocAST";
-import StmtAST from "../AST/StmtAST/StmtAST";
+import AST from "../AST/AST";
 import ExprAST from "../AST/ExprAST/ExprAST";
 
 import inferenceVisitorInterface from "./InferenceVisitorInterface";
@@ -63,7 +63,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
     visitBlock(blockAST: BlockAST) {
         this.symbolTableStack.push(blockAST.symbols);
 
-        blockAST.statements.forEach((stmtAST: StmtAST) => {
+        blockAST.statements.forEach((stmtAST: AST) => {
             if (stmtAST.type === NodeType.CONDITIONAL) {
                 const conditionStmtAST: ConditionalStmtAST = stmtAST as ConditionalStmtAST;
                 conditionStmtAST.acceptInferenceElement(this);
@@ -79,6 +79,9 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
             } else if (stmtAST.type === NodeType.RETURNSTMT) {
                 const returnStmtAST: ReturnStmtAST = stmtAST as ReturnStmtAST;
                 returnStmtAST.acceptInferenceElement(this);
+            } else if (stmtAST.type === NodeType.FUNCCALL) {
+                const funcCallAST: FuncCallAST = stmtAST as FuncCallAST;
+                funcCallAST.acceptInferenceElement(this);
             }
         })
 
