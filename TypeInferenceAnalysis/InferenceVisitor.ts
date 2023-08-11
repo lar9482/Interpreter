@@ -38,11 +38,11 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
     private errorMessages: ErrorMessage[] = [];
 
     inferTypes(programAST: ProgramAST) {
-        this.visitProgram(programAST);
+        this.inferProgram(programAST);
     }
 
     //Base nodes for the visitor.
-    visitProgram(programAST: ProgramAST) {
+    inferProgram(programAST: ProgramAST) {
         this.symbolTableStack.push(programAST.symbols);
 
         programAST.functions.forEach((functionAST: FuncDeclAST) => {
@@ -52,7 +52,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         this.symbolTableStack.pop();
     }
 
-    visitFuncDecl(funcDeclAST: FuncDeclAST) {
+    inferFuncDecl(funcDeclAST: FuncDeclAST) {
         this.symbolTableStack.push(funcDeclAST.symbols);
 
         funcDeclAST.body.acceptInferenceElement(this);
@@ -60,7 +60,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         this.symbolTableStack.pop();
     }
 
-    visitBlock(blockAST: BlockAST) {
+    inferBlock(blockAST: BlockAST) {
         this.symbolTableStack.push(blockAST.symbols);
 
         blockAST.statements.forEach((stmtAST: AST) => {
@@ -89,7 +89,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
     }
 
     //Containers for the expressions that need inference.
-    visitConditionalStmt(conditionalStmtAST: ConditionalStmtAST) {
+    inferConditionalStmt(conditionalStmtAST: ConditionalStmtAST) {
         conditionalStmtAST.condition.acceptInferenceElement(this);
         conditionalStmtAST.ifBlock.acceptInferenceElement(this);
         
@@ -98,24 +98,24 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         }
     }
 
-    visitWhileStmt(whileStmtAST: WhileLoopStmtAST) {
+    inferWhileStmt(whileStmtAST: WhileLoopStmtAST) {
         whileStmtAST.condition.acceptInferenceElement(this);
         whileStmtAST.body.acceptInferenceElement(this);
     }
 
-    visitAssignStmt(assignStmtAST: AssignStmtAST) {
+    inferAssignStmt(assignStmtAST: AssignStmtAST) {
         assignStmtAST.location.acceptInferenceElement(this);
         assignStmtAST.value.acceptInferenceElement(this);
     }
 
-    visitReturnStmt(returnStmtAST: ReturnStmtAST) {
+    inferReturnStmt(returnStmtAST: ReturnStmtAST) {
         if (returnStmtAST.returnValue) {
             const returnExpr: ExprAST = returnStmtAST.returnValue;
             returnExpr.acceptInferenceElement(this);
         }
     }
 
-    visitExpr(exprAST: ExprAST) {
+    inferExpr(exprAST: ExprAST) {
         if (exprAST.type === NodeType.BINARYOP) {
             const binaryExprAST: BinaryExprAST = exprAST as BinaryExprAST;
             binaryExprAST.acceptInferenceElement(this);
@@ -135,7 +135,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
     }
    
     //The 'atomic' expressions that require inferences.
-    visitBinaryExpr(binaryExprAST: BinaryExprAST) {
+    inferBinaryExpr(binaryExprAST: BinaryExprAST) {
         if (binaryExprAST.operator === BinaryOpType.LTOP ||
             binaryExprAST.operator === BinaryOpType.LEOP ||
             binaryExprAST.operator === BinaryOpType.GTOP ||
@@ -165,7 +165,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         binaryExprAST.right.acceptInferenceElement(this);
     }
 
-    visitUnaryExpr(unaryExprAST: UnaryExprAST) {
+    inferUnaryExpr(unaryExprAST: UnaryExprAST) {
         if (unaryExprAST.operator === UnaryOpType.NEGOP) {
             unaryExprAST.decafType = DecafType.INT;
         } else if (unaryExprAST.operator === UnaryOpType.NOTOP) {
@@ -179,7 +179,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         unaryExprAST.child.acceptInferenceElement(this);
     }
 
-    visitFuncCall(funcCallAST: FuncCallAST) {
+    inferFuncCall(funcCallAST: FuncCallAST) {
         const funcCallSymbol: Symbol = this.getSymbolFromCurrentTable(funcCallAST.name, funcCallAST.sourceLineNumber) as Symbol;
         funcCallAST.decafType = funcCallSymbol.returnType;
         
@@ -188,7 +188,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         }) 
     }
 
-    visitLoc(locAST: LocAST) {
+    inferLoc(locAST: LocAST) {
         const locSymbol: Symbol = this.getSymbolFromCurrentTable(locAST.name, locAST.sourceLineNumber) as Symbol;
         locAST.decafType = locSymbol.returnType;
 

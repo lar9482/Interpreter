@@ -22,6 +22,6 @@ export default class WhileLoopStmtAST extends StmtAST implements inferenceElemen
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitWhileStmt(this);
+        visitor.inferWhileStmt(this);
     }
 }

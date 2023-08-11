@@ -15,6 +15,6 @@ export default class ExprAST extends AST implements inferenceElement {
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitExpr(this);
+        visitor.inferExpr(this);
     }
 }

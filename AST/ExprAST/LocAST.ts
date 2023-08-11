@@ -18,6 +18,6 @@ export default class LocAST extends ExprAST implements inferenceElement {
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitLoc(this);
+        visitor.inferLoc(this);
     }
 }

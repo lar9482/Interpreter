@@ -20,6 +20,6 @@ export default class UnaryExprAST extends ExprAST implements inferenceElement {
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitUnaryExpr(this);
+        visitor.inferUnaryExpr(this);
     }
 }

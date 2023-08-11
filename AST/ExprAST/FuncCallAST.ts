@@ -18,6 +18,6 @@ export default class FuncCallAST extends ExprAST implements inferenceElement{
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitFuncCall(this);
+        visitor.inferFuncCall(this);
     }
 }
