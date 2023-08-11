@@ -20,6 +20,8 @@ import LocOrFuncCallParser from "./LocOrFuncCallParser";
 import consume from "./consume";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
 import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
+import BreakStmtAST from "../AST/StmtAST/BreakStmtAST";
+import ContinueStmtAST from "../AST/StmtAST/ContinueStmtAST";
 
 export default class Parser {
 
@@ -442,14 +444,32 @@ export default class Parser {
             const breakToken: Token = consume(TokenType.Token_Break, this.currentToken, this.tokenQueue);
 
             consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
+
+            const newBreakStmtAST: BreakStmtAST = new BreakStmtAST(
+                NodeType.BREAKSTMT,
+                breakToken.lineCount
+            );
+
+            return newBreakStmtAST;
         }
         //Stmt -> continue ;
         else if (this.currentToken.tokenType === TokenType.Token_Continue) {
             const continueToken: Token = consume(TokenType.Token_Continue, this.currentToken, this.tokenQueue);
 
             consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
-        }
 
+            const newContinueStmtAST: ContinueStmtAST = new ContinueStmtAST(
+                NodeType.CONTINUESTMT,
+                continueToken.lineCount
+            );
+
+            return newContinueStmtAST;
+        } 
+        
+        else {
+            throw new Error(`Line ${this.currentToken.lineCount}: Unable to parse statement.`);
+        }
+        
         return new StmtAST(NodeType.ASSIGNMENT, 0);
     }
 

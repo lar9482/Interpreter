@@ -1,0 +1,30 @@
+def int main() {     
+    int i;
+    int j;
+
+    i = 0;
+    while (i < 100) {
+        print_int(i);
+        print_str("\n");
+
+        if (i == 90) {
+            break;
+        }
+        i = i + 1;
+    }
+
+    print_str("\n");
+    j = 0;
+    
+    while (j < 100) {
+        if (j % 10 == 0) {
+            j = j + 1;
+            continue;
+        }
+        print_int(j);
+        print_str("\n");
+        j = j + 1;
+    }
+
+    return 0;
+}
