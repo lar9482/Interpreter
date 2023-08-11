@@ -1,4 +1,4 @@
 import Interpreter from "./Interpreter";
 
 const interpreter: Interpreter = new Interpreter();
-interpreter.runProgram("./ProgramTests/collatz.decaf");
+interpreter.runProgram("./ProgramTests/add.decaf");
