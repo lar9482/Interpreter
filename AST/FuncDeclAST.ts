@@ -9,10 +9,14 @@ import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolEleme
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
-import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
+import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
+import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class FuncDeclAST extends AST implements symbolElement, symbolScope, inferenceElement{
+export default class FuncDeclAST extends AST
+    implements symbolElement, symbolScope, inferenceElement, checkElement {
+
     name: string;
     returnType: DecafType;
     parameters: ParameterAST[];
@@ -21,10 +25,10 @@ export default class FuncDeclAST extends AST implements symbolElement, symbolSco
     symbols: SymbolTable;
 
     constructor(type: NodeType, sourceLineNumber: number,
-                name: string,
-                returnType: DecafType,
-                parameters: ParameterAST[],
-                body: BlockAST) {
+        name: string,
+        returnType: DecafType,
+        parameters: ParameterAST[],
+        body: BlockAST) {
 
         super(type, sourceLineNumber);
 
@@ -46,5 +50,9 @@ export default class FuncDeclAST extends AST implements symbolElement, symbolSco
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferFuncDecl(this);
-    }  
+    }
+
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkFuncDecl(this);
+    }
 }

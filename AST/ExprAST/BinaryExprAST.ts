@@ -1,10 +1,12 @@
 import { NodeType } from "../NodeType";
 import { BinaryOpType } from "./ExprTypes/BinaryOpType";
 import ExprAST from "./ExprAST";
-import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
+import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
+import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class BinaryExprAST extends ExprAST implements inferenceElement {
+export default class BinaryExprAST extends ExprAST implements inferenceElement, checkElement {
     operator: BinaryOpType;
     left: ExprAST;
     right: ExprAST;
@@ -23,5 +25,9 @@ export default class BinaryExprAST extends ExprAST implements inferenceElement {
     
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferBinaryExpr(this);
+    }
+
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkBinaryExpr(this);
     }
 }
