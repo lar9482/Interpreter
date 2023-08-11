@@ -8,19 +8,22 @@ import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterfac
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 
-import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
+import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
+import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class ProgramAST extends AST implements symbolElement, symbolScope, inferenceElement {
-    
-    public variables: VarDeclAST[]; 
+export default class ProgramAST extends AST
+    implements symbolElement, symbolScope, inferenceElement, checkElement {
+
+    public variables: VarDeclAST[];
     public functions: FuncDeclAST[];
-    
+
     symbols: SymbolTable;
 
     constructor(type: NodeType, sourceLineNumber: number,
-                    variables: VarDeclAST[],
-                    functions: FuncDeclAST[]) {
+        variables: VarDeclAST[],
+        functions: FuncDeclAST[]) {
 
         super(type, sourceLineNumber);
 
@@ -37,7 +40,11 @@ export default class ProgramAST extends AST implements symbolElement, symbolScop
         visitor.visitProgram(this);
     }
 
-    acceptInferenceElement (visitor: inferenceVisitorInterface) {
+    acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferProgram(this);
+    }
+
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkProgram(this);
     }
 }

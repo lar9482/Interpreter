@@ -7,18 +7,21 @@ import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolEleme
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
-import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
+import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
+import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class BlockAST extends AST implements symbolElement, symbolScope, inferenceElement {
+export default class BlockAST extends AST
+    implements symbolElement, symbolScope, inferenceElement, checkElement {
 
     variables: VarDeclAST[];
     statements: StmtAST[];
     symbols: SymbolTable;
 
     constructor(type: NodeType, sourceLineNumber: number,
-                variables: VarDeclAST[],
-                statements: StmtAST[]
+        variables: VarDeclAST[],
+        statements: StmtAST[]
     ) {
         super(type, sourceLineNumber);
 
@@ -38,5 +41,9 @@ export default class BlockAST extends AST implements symbolElement, symbolScope,
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferBlock(this);
+    }
+    
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkBlock(this);
     }
 }

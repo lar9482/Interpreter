@@ -1,5 +1,5 @@
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
-import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import AST from "../AST";
 import { DecafType } from "../DecafType";
 import { NodeType } from "../NodeType";

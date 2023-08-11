@@ -1,9 +1,11 @@
+import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
+import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
-import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
 
-export default class FuncCallAST extends ExprAST implements inferenceElement{
+export default class FuncCallAST extends ExprAST implements inferenceElement, checkElement{
     name: string;
     funcArguments: ExprAST[];
 
@@ -19,5 +21,9 @@ export default class FuncCallAST extends ExprAST implements inferenceElement{
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferFuncCall(this);
+    }
+
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkFuncCall(this);
     }
 }

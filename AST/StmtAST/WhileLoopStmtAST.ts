@@ -3,10 +3,12 @@ import { NodeType } from "../NodeType";
 import StmtAST from "./StmtAST";
 import BlockAST from "../BlockAST";
 
-import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
+import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
+import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class WhileLoopStmtAST extends StmtAST implements inferenceElement {
+export default class WhileLoopStmtAST extends StmtAST implements inferenceElement, checkElement{
 
     condition: ExprAST;
     body: BlockAST;
@@ -23,5 +25,9 @@ export default class WhileLoopStmtAST extends StmtAST implements inferenceElemen
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferWhileStmt(this);
+    }
+
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkWhileStmt(this);
     }
 }

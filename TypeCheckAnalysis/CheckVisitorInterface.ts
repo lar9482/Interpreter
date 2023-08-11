@@ -13,17 +13,16 @@ export default interface checkVisitorInterface {
     //Base nodes for the visitor
     checkProgram: (programAST: ProgramAST) => void,
     checkFuncDecl: (funcDeclAST: FuncDeclAST) => void,
-    visitBlock: (blockAST: BlockAST) => void,
+    checkBlock: (blockAST: BlockAST) => void,
 
     //Stmts that need to be type checked.
     checkConditionalStmt: (conditionalStmtAST: ConditionalStmtAST) => void,
     checkAssignSmt: (assignStmtAST: AssignStmtAST) => void,
     checkWhileStmt: (whileLoopStmtAST: WhileLoopStmtAST) => void,
-    checkVoidFuncCall: (funcCallAST: FuncCallAST) => void
 
     //Exprs that need to be type checked.
     checkBinaryExpr: (binaryExprAST: BinaryExprAST) => void,
     checkUnaryExpr: (unaryExprAST: UnaryExprAST) => void,
-    checkFuncCall: (funcCallAST: FuncCallAST) => void
+    checkFuncCall: (funcCallAST: FuncCallAST) => void,
     checkLoc: (locAST: LocAST) => void
 }

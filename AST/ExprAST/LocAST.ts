@@ -1,9 +1,11 @@
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
-import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
+import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
+import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class LocAST extends ExprAST implements inferenceElement {
+export default class LocAST extends ExprAST implements inferenceElement, checkElement {
     name: string;
     index: ExprAST | undefined;
 
@@ -19,5 +21,9 @@ export default class LocAST extends ExprAST implements inferenceElement {
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferLoc(this);
+    }
+
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkLoc(this);
     }
 }

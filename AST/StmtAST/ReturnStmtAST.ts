@@ -1,5 +1,5 @@
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
-import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInference/inferenceElement";
+import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import ExprAST from "../ExprAST/ExprAST";
 import { NodeType } from "../NodeType";
 import StmtAST from "./StmtAST";
