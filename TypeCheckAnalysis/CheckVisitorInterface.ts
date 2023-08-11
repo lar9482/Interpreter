@@ -8,6 +8,7 @@ import FuncCallAST from "../AST/ExprAST/FuncCallAST";
 import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
 import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import LocAST from "../AST/ExprAST/LocAST";
+import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 
 export default interface checkVisitorInterface {
     //Base nodes for the visitor
@@ -19,6 +20,7 @@ export default interface checkVisitorInterface {
     checkConditionalStmt: (conditionalStmtAST: ConditionalStmtAST) => void,
     checkAssignSmt: (assignStmtAST: AssignStmtAST) => void,
     checkWhileStmt: (whileLoopStmtAST: WhileLoopStmtAST) => void,
+    checkReturnStmt: (returnStmtAST: ReturnStmtAST) => void,
 
     //Exprs that need to be type checked.
     checkBinaryExpr: (binaryExprAST: BinaryExprAST) => void,
