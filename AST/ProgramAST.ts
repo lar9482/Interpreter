@@ -38,6 +38,6 @@ export default class ProgramAST extends AST implements symbolElement, symbolScop
     }
 
     acceptInferenceElement (visitor: inferenceVisitorInterface) {
-        visitor.visitProgram(this);
+        visitor.inferProgram(this);
     }
 }

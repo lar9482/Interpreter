@@ -25,6 +25,6 @@ export default class ConditionalStmtAST extends StmtAST implements inferenceElem
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitConditionalStmt(this);
+        visitor.inferConditionalStmt(this);
     }
 }

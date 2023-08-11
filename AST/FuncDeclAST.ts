@@ -45,6 +45,6 @@ export default class FuncDeclAST extends AST implements symbolElement, symbolSco
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitFuncDecl(this);
+        visitor.inferFuncDecl(this);
     }  
 }

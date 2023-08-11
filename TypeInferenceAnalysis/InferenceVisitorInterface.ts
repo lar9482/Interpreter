@@ -13,20 +13,20 @@ import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 
 export default interface inferenceVisitorInterface {
     //Base nodes for the visitor.
-    visitProgram: (programAST: ProgramAST) => void,
-    visitFuncDecl: (funcDeclAST: FuncDeclAST) => void,
-    visitBlock: (blockAST: BlockAST) => void,
+    inferProgram: (programAST: ProgramAST) => void,
+    inferFuncDecl: (funcDeclAST: FuncDeclAST) => void,
+    inferBlock: (blockAST: BlockAST) => void,
 
     //Containers for the expressions that need inference.
-    visitConditionalStmt: (conditionalStmtAST: ConditionalStmtAST) => void
-    visitWhileStmt: (whileStmtAST: WhileLoopStmtAST) => void
-    visitAssignStmt: (assignStmtAST: AssignStmtAST) => void
-    visitReturnStmt: (returnStmtAST: ReturnStmtAST) => void
-    visitExpr: (exprAST: ExprAST) => void
+    inferConditionalStmt: (conditionalStmtAST: ConditionalStmtAST) => void
+    inferWhileStmt: (whileStmtAST: WhileLoopStmtAST) => void
+    inferAssignStmt: (assignStmtAST: AssignStmtAST) => void
+    inferReturnStmt: (returnStmtAST: ReturnStmtAST) => void
+    inferExpr: (exprAST: ExprAST) => void
 
     //The 'atomic' expressions that require inferences.
-    visitBinaryExpr: (binaryExprAST: BinaryExprAST) => void
-    visitUnaryExpr: (unaryExprAST: UnaryExprAST) => void
-    visitFuncCall: (funcCallAST: FuncCallAST) => void
-    visitLoc: (locASt: LocAST) => void
+    inferBinaryExpr: (binaryExprAST: BinaryExprAST) => void
+    inferUnaryExpr: (unaryExprAST: UnaryExprAST) => void
+    inferFuncCall: (funcCallAST: FuncCallAST) => void
+    inferLoc: (locASt: LocAST) => void
 }

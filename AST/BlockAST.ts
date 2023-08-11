@@ -37,6 +37,6 @@ export default class BlockAST extends AST implements symbolElement, symbolScope,
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitBlock(this);
+        visitor.inferBlock(this);
     }
 }

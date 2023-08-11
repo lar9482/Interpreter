@@ -20,6 +20,6 @@ export default class AssignStmtAST extends StmtAST implements inferenceElement {
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitAssignStmt(this);
+        visitor.inferAssignStmt(this);
     }
 }

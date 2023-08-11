@@ -16,6 +16,6 @@ export default class ReturnStmtAST extends StmtAST implements inferenceElement {
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitReturnStmt(this);
+        visitor.inferReturnStmt(this);
     }
 }

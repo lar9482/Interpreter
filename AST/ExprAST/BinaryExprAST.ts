@@ -22,6 +22,6 @@ export default class BinaryExprAST extends ExprAST implements inferenceElement {
     }
     
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
-        visitor.visitBinaryExpr(this);
+        visitor.inferBinaryExpr(this);
     }
 }
