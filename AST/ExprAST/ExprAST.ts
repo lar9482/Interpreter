@@ -1,10 +1,12 @@
+import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
 import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterface/inferenceElement";
 import AST from "../AST";
 import { DecafType } from "../DecafType";
 import { NodeType } from "../NodeType";
+import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class ExprAST extends AST implements inferenceElement {
+export default class ExprAST extends AST implements inferenceElement, checkElement {
     
     decafType: DecafType;
 
@@ -16,5 +18,9 @@ export default class ExprAST extends AST implements inferenceElement {
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferExpr(this);
+    }
+
+    acceptCheckElement(visitor: checkVisitorInterface) {
+        visitor.checkExpr(this);
     }
 }
