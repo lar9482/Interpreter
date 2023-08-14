@@ -13,18 +13,23 @@ import AST from "../AST/AST";
 import checkVisitorInterface from "./CheckVisitorInterface";
 
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
+import Symbol from "../SymbolTableAnalysis/SymbolTable/Symbol/Symbol";
 import { NodeType } from "../AST/NodeType";
 import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
+import ExprAST from "../AST/ExprAST/ExprAST";
+import { DecafType } from "../AST/DecafType";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 /**
  * As part of the second pass for type checking, this visitor will make post-order
  * traversals over statements and expressions to actually check the types.
  */
-export default class CheckVisitor implements checkVisitorInterface {
+export default class TypeCheckVisitor implements checkVisitorInterface {
     private symbolTableStack: SymbolTable[] = [];
+    private errorMessages: ErrorMessage[] = [];
 
     checkTypes(programAST: ProgramAST) {
-        this.checkProgram(programAST);
+        programAST.acceptCheckElement(this);
     }
 
     //Base nodes for the visitor
@@ -78,18 +83,84 @@ export default class CheckVisitor implements checkVisitorInterface {
     //Stmts that need to be type checked.
     checkConditionalStmt(conditionalStmtAST: ConditionalStmtAST) {
 
+        conditionalStmtAST.ifBlock.acceptCheckElement(this);
+        conditionalStmtAST.elseBlock?.acceptCheckElement(this);
+        conditionalStmtAST.condition.acceptCheckElement(this);
+        
+        if (conditionalStmtAST.condition.decafType === DecafType.BOOL) {
+            return;
+        } else {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${conditionalStmtAST.sourceLineNumber}: The conditional in the if statement is not a boolean type.`)
+            );
+
+            return;
+        }
     }
 
     checkAssignSmt(assignStmtAST: AssignStmtAST) {
+        assignStmtAST.location.acceptCheckElement(this);
+        assignStmtAST.value.acceptCheckElement(this);
 
+        const currAssignSymbol: Symbol = this.getSymbolFromCurrentTable(assignStmtAST.location.name, assignStmtAST.sourceLineNumber);
+
+        if (assignStmtAST.location.decafType !== currAssignSymbol.returnType) {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${assignStmtAST.sourceLineNumber}: The location type does not match.`)
+            );
+        }
+
+        if (assignStmtAST.value.decafType !== currAssignSymbol.returnType) {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${assignStmtAST.sourceLineNumber}: The location type does not match with the assignment expression`)
+            );  
+        } 
+
+        if (assignStmtAST.location.index !== undefined) {
+            if (assignStmtAST.location.index.decafType !== DecafType.INT) {
+                this.errorMessages.push(
+                    new ErrorMessage(`Line ${assignStmtAST.sourceLineNumber}: The index expression not an integer.`)
+                );
+            }
+        }
     }
 
     checkWhileStmt(whileLoopStmtAST: WhileLoopStmtAST) {
+        whileLoopStmtAST.condition.acceptCheckElement(this);
+        whileLoopStmtAST.body.acceptCheckElement(this);
 
+        if (whileLoopStmtAST.condition.decafType === DecafType.BOOL) {
+            return;
+        } else {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${whileLoopStmtAST.sourceLineNumber}: The conditional for the while loop is not a boolean type.`)
+            );
+
+            return;
+        }
     }
 
     checkReturnStmt(returnStmtAST: ReturnStmtAST) {
 
+    }
+
+    checkExpr(exprAST: ExprAST) {
+        if (exprAST.type === NodeType.BINARYOP) {
+            const binaryExprAST: BinaryExprAST = exprAST as BinaryExprAST;
+            binaryExprAST.acceptCheckElement(this);
+
+        } else if (exprAST.type === NodeType.UNARYOP) {
+            const unaryExprAST: UnaryExprAST = exprAST as UnaryExprAST;
+            unaryExprAST.acceptCheckElement(this);
+
+        } else if (exprAST.type === NodeType.FUNCCALL) {
+            const funcCallExprAST: FuncCallAST = exprAST as FuncCallAST;
+            funcCallExprAST.acceptCheckElement(this);
+
+        } else if (exprAST.type === NodeType.LOCATION) {
+            const locExprAST: LocAST = exprAST as LocAST;
+            locExprAST.acceptCheckElement(this);
+        }
     }
 
     //Exprs that need to be type checked.
@@ -107,5 +178,16 @@ export default class CheckVisitor implements checkVisitorInterface {
 
     checkLoc(locAST: LocAST) {
         
+    }
+
+    private getSymbolFromCurrentTable(symbolName: string, lineNumber: number) {
+        const currentSymbolTable: SymbolTable = this.symbolTableStack[this.symbolTableStack.length-1];
+        const symbol: Symbol | undefined = currentSymbolTable.lookupSymbolName(symbolName);
+
+        if (symbol !== undefined) {
+            return symbol as Symbol;
+        } else {
+            throw new Error(`Line ${lineNumber}: The symbol '${symbolName}' is undefined in the current context. Unable to check its type`);
+        }
     }
 }

@@ -6,6 +6,7 @@ import Parser from './Parser/Parser';
 import ProgramAST from './AST/ProgramAST';
 import SymbolVisitor from './SymbolTableAnalysis/symbolVisitor';
 import TypeInferenceVisitor from './TypeInferenceAnalysis/InferenceVisitor';
+import TypeCheckVisitor from './TypeCheckAnalysis/CheckVisitor';
 
 export default class Interpreter {
 
@@ -34,6 +35,9 @@ export default class Interpreter {
         const TypeInferenceAnalyzer: TypeInferenceVisitor = new TypeInferenceVisitor();
         TypeInferenceAnalyzer.inferTypes(AST);
 
+        const TypeCheckAnalyzer: TypeCheckVisitor = new TypeCheckVisitor();
+        TypeCheckAnalyzer.checkTypes(AST);
+        
         console.log();
     }
 
