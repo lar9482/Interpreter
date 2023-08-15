@@ -38,7 +38,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
     private errorMessages: ErrorMessage[] = [];
 
     inferTypes(programAST: ProgramAST) {
-        this.inferProgram(programAST);
+        programAST.acceptInferenceElement(this);
     }
 
     //Base nodes for the visitor.

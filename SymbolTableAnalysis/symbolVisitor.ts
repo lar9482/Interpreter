@@ -30,14 +30,8 @@ export default class SymbolVisitor implements symbolVisitorInterface {
     private symbolTableStack: SymbolTable[] = [];
     private errorMessages: ErrorMessage[] = [];
 
-    private programAST: ProgramAST;
-
-    constructor(programAST: ProgramAST) {
-        this.programAST = programAST;
-    }
-
-    buildSymbolTables() {
-        this.visitProgram(this.programAST);
+    buildSymbolTables(programAST: ProgramAST) {
+        programAST.acceptSymbolElement(this);
     }
 
     private initializeIOIntoGlobalScope(globalScopeSymbolTable: SymbolTable) {
