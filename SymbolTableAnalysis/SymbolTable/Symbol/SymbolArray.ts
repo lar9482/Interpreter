@@ -6,14 +6,14 @@ import VarDeclAST from "../../../AST/VarDeclAST";
 export default class SymbolArray extends Symbol {
 
     length: number;
-    variableArray: VarDeclAST;
+    arrayNode: VarDeclAST;
 
     constructor(symbolType: SymbolType, name: string, returnType: DecafType,
             length: number,
-            variableArray: VarDeclAST) {
+            arrayNode: VarDeclAST) {
         super(symbolType, name, returnType);
 
         this.length = length;
-        this.variableArray = variableArray;
+        this.arrayNode = arrayNode;
     }
 }

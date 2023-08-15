@@ -1,7 +1,7 @@
 import { DecafType } from "../../../AST/DecafType";
 import { SymbolType } from "./SymbolType"
 
-export default class Symbol {
+export default abstract class Symbol {
 
     symbolType: SymbolType;
     name: string;

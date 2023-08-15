@@ -325,10 +325,12 @@ export default class Parser {
             this.currentToken.tokenType === TokenType.Token_Continue) {
 
             let newStmtASTList: StmtAST[] = [];
-
-            newStmtASTList.push(
-                this.parseStmt()
-            );
+            
+            const newStmtAST: StmtAST | undefined = this.parseStmt();
+            
+            if (newStmtAST) {
+                newStmtASTList.push(newStmtAST);
+            }
 
             newStmtASTList = newStmtASTList.concat(
                 this.parseStmtBlock()
@@ -347,7 +349,7 @@ export default class Parser {
         }
     }
 
-    private parseStmt(): StmtAST {
+    private parseStmt(): StmtAST | undefined {
 
         //Stmt -> LocOrFunc
         if (this.currentToken.tokenType === TokenType.Token_Identifier) {
@@ -469,8 +471,6 @@ export default class Parser {
         else {
             throw new Error(`Line ${this.currentToken.lineCount}: Unable to parse statement.`);
         }
-        
-        return new StmtAST(NodeType.ASSIGNMENT, 0);
     }
 
     private parseReturnExprOrNot(): ExprAST | undefined {

@@ -6,7 +6,7 @@ import { DecafType } from "../DecafType";
 import { NodeType } from "../NodeType";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 
-export default class ExprAST extends AST implements inferenceElement, checkElement {
+export default abstract class ExprAST extends AST implements inferenceElement, checkElement {
     
     decafType: DecafType;
 

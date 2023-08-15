@@ -1,6 +1,6 @@
 import { NodeType } from "./NodeType";
 
-export default class AST {
+export default abstract class AST {
     public type: NodeType;
     public sourceLineNumber: number;
 
