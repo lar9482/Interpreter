@@ -17,6 +17,7 @@ import { NodeType } from "../AST/NodeType";
 import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import SymbolScalar from "./SymbolTable/Symbol/SymbolScalar";
 
 /**
  * This visitor will build symbol tables by traversing down to variable declarations and parameters,
@@ -155,17 +156,19 @@ export default class SymbolVisitor implements symbolVisitorInterface {
                 SymbolType.ARRAY_SYMBOL,
                 varDeclAST.name,
                 varDeclAST.decafType,
-                varDeclAST.arrayLength
+                varDeclAST.arrayLength,
+                varDeclAST
             );
             
             this.addSymbolToCurrentSymbolTable(newSymbolArray, varDeclAST.sourceLineNumber)
         }
 
         else {
-            const newSymbolScalar: Symbol = new Symbol(
+            const newSymbolScalar: SymbolScalar = new SymbolScalar(
                 SymbolType.SCALAR_SYMBOL,
                 varDeclAST.name,
-                varDeclAST.decafType
+                varDeclAST.decafType,
+                varDeclAST
             );
             
             this.addSymbolToCurrentSymbolTable(newSymbolScalar, varDeclAST.sourceLineNumber);
@@ -173,10 +176,11 @@ export default class SymbolVisitor implements symbolVisitorInterface {
     }
 
     visitParameter(parameterAST: ParameterAST) {
-        const parameterSymbol: Symbol = new Symbol(
+        const parameterSymbol: Symbol = new SymbolScalar(
             SymbolType.SCALAR_SYMBOL,
             parameterAST.name,
-            parameterAST.parameterType
+            parameterAST.parameterType,
+            parameterAST
         );
 
         this.addSymbolToCurrentSymbolTable(parameterSymbol, parameterAST.sourceLineNumber);
