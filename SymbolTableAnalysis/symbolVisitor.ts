@@ -21,10 +21,13 @@ import SymbolScalar from "./SymbolTable/Symbol/SymbolScalar";
 
 /**
  * This visitor will build symbol tables by traversing down to variable declarations and parameters,
- * and caching the symbols in tables that are stored in the program, function declaration, and block AST nodes.
+ * and caching symbols into tables that are stored in the program, function declaration, and block AST nodes.
+ * 
+ * For now, the only nodes that are classified as 'symbols' are nodes that contain idenifiers.
+ * This includes VarDeclASTs, FuncDeclASTs, and ParameterASTs.
  * 
  * NOTE:
- * print_int, print_str, and print_bool will be harded into the 'ProgramAST' symbol for I/O support
+ * print_int, print_str, and print_bool will be hard coded into the 'ProgramAST' symbol for I/O support
  */
 export default class SymbolVisitor implements symbolVisitorInterface {
 
