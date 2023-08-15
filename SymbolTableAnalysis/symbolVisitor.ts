@@ -100,7 +100,8 @@ export default class SymbolVisitor implements symbolVisitorInterface {
             SymbolType.FUNCTION_SYMBOL,
             funcDeclAST.name,
             funcDeclAST.returnType,
-            funcDeclAST.parameters
+            funcDeclAST.parameters,
+            funcDeclAST
         );
         this.addSymbolToCurrentSymbolTable(functionNameSymbol, funcDeclAST.sourceLineNumber);
 
