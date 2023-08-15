@@ -5,11 +5,13 @@ export default class SymbolTable {
     table: Map<string, Symbol>;
     parentTable?: SymbolTable;
     scopeType: NodeType;
+    scopeName?: string
 
-    constructor(scopeType: NodeType, parentTable?: SymbolTable) {
+    constructor(scopeType: NodeType, parentTable?: SymbolTable, scopeName?: string,) {
         this.table = new Map<string, Symbol>();
         this.parentTable = parentTable;
         this.scopeType = scopeType;
+        this.scopeName = scopeName;
     }
 
     addSymbol(symbol: Symbol) {
