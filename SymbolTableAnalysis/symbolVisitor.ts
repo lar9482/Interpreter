@@ -48,7 +48,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
             [new ParameterAST(
                 NodeType.PARAMETER,
                 -1,
-                "print_str_parameter",
+                "print_str",
                 DecafType.STR
             )]
         );
@@ -60,7 +60,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
             [new ParameterAST(
                 NodeType.PARAMETER,
                 -1,
-                "print_int_parameter",
+                "print_int",
                 DecafType.INT
             )]
         );
@@ -72,7 +72,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
             [new ParameterAST(
                 NodeType.PARAMETER,
                 -1,
-                "print_bool_parameter",
+                "print_bool",
                 DecafType.BOOL
             )]
         );
@@ -111,7 +111,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         this.addSymbolToCurrentSymbolTable(functionNameSymbol, funcDeclAST.sourceLineNumber);
 
         const functionDeclScopeSymbolTable: SymbolTable = new SymbolTable(
-            funcDeclAST.type, this.symbolTableStack[this.symbolTableStack.length-1]
+            funcDeclAST.type, this.symbolTableStack[this.symbolTableStack.length-1], funcDeclAST.name
         );
         this.symbolTableStack.push(functionDeclScopeSymbolTable);
 
