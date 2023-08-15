@@ -28,9 +28,9 @@ export default class Interpreter {
         return AST;
     }
 
-    public analyseProgram(AST: ProgramAST) {
-        const symbolTableBuilder: SymbolVisitor = new SymbolVisitor(AST);
-        symbolTableBuilder.buildSymbolTables();
+    public analyzeProgram(AST: ProgramAST) {
+        const symbolTableBuilder: SymbolVisitor = new SymbolVisitor();
+        symbolTableBuilder.buildSymbolTables(AST);
 
         const TypeInferenceAnalyzer: TypeInferenceVisitor = new TypeInferenceVisitor();
         TypeInferenceAnalyzer.inferTypes(AST);
@@ -46,6 +46,6 @@ export default class Interpreter {
         const tokenQueue: Token[] = this.lexProgram(programBuffer);  
         const AST: ProgramAST = this.parseProgram(tokenQueue);
 
-        this.analyseProgram(AST);
+        this.analyzeProgram(AST);
     }
 }
