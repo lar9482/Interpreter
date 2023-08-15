@@ -7,14 +7,14 @@ import FuncDeclAST from "../../../AST/FuncDeclAST";
 export default class SymbolFunction extends Symbol {
 
     parameters: ParameterAST[]
-    functionDeclaration?: FuncDeclAST;
+    funcDeclNode?: FuncDeclAST;
 
     constructor(symbolType: SymbolType, name: string, returnType: DecafType,
         parameters: ParameterAST[],
-        functionDeclaration?: FuncDeclAST) {
+        funcDeclNode?: FuncDeclAST) {
 
         super(symbolType, name, returnType);
         this.parameters = parameters;
-        this.functionDeclaration = functionDeclaration;
+        this.funcDeclNode = funcDeclNode;
     }
 }
