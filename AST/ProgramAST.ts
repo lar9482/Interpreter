@@ -3,7 +3,6 @@ import AST from "./AST";
 import VarDeclAST from './VarDeclAST';
 import FuncDeclAST from "./FuncDeclAST";
 
-import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolElement";
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
@@ -16,7 +15,7 @@ import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/a
 import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
 export default class ProgramAST extends AST
-    implements symbolElement, symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
+    implements symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
 
     public variables: VarDeclAST[];
     public functions: FuncDeclAST[];
@@ -31,15 +30,15 @@ export default class ProgramAST extends AST
 
         this.variables = variables;
         this.functions = functions;
-        this.symbols = new SymbolTable(NodeType.PROGRAM);
+        this.symbols = new SymbolTable(NodeType.PROGRAM, NodeType.PROGRAM);
     }
 
     addSymbolTable(symbolTable: SymbolTable) {
         this.symbols = symbolTable;
     }
 
-    acceptSymbolElement(visitor: symbolVisitorInterface) {
-        visitor.visitProgram(this);
+    acceptSymbolScope(visitor: symbolVisitorInterface, containerType: NodeType) {
+        visitor.visitProgram(this, containerType);
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
