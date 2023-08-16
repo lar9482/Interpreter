@@ -4,8 +4,11 @@ import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterf
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
 import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
+import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
-export default class LocAST extends ExprAST implements inferenceElement, checkElement {
+export default class LocAST extends ExprAST
+    implements inferenceElement, checkElement, miscAnalyzeElement {
     name: string;
     index: ExprAST | undefined;
 
@@ -14,7 +17,7 @@ export default class LocAST extends ExprAST implements inferenceElement, checkEl
         index: ExprAST | undefined) {
 
         super(type, sourceLineNumber);
-        
+
         this.name = name;
         this.index = index;
     }
@@ -26,4 +29,9 @@ export default class LocAST extends ExprAST implements inferenceElement, checkEl
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkLoc(this);
     }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeLoc(this);
+    }
+    
 }
