@@ -2,6 +2,10 @@ void var1;
 void var2[100];
 void var3[0];
 
+def int invalidParameters(void param1, int param2) {
+    return 0;
+}
+
 def int main() {
     void var5;
     void var6[100];

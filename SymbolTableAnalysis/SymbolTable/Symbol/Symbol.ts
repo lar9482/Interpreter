@@ -5,11 +5,13 @@ export default abstract class Symbol {
 
     symbolType: SymbolType;
     name: string;
-    returnType: DecafType
+    sourceLineNumber: number;
+    returnType: DecafType;
 
-    constructor(symbolType: SymbolType, name: string, returnType: DecafType) {
+    constructor(symbolType: SymbolType, name: string, sourceLineNumber: number, returnType: DecafType) {
         this.symbolType = symbolType;
         this.name = name;
+        this.sourceLineNumber = sourceLineNumber;
         this.returnType = returnType;
     }
 }
