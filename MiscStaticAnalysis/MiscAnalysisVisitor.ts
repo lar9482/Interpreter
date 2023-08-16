@@ -151,11 +151,11 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
     }
 
     analyzeBreakStmt(breakStmtAST: BreakStmtAST) {
-
+        console.log();
     }
 
     analyzeContinueStmt(continueStmtAST: ContinueStmtAST) {
-
+        console.log();
     }
 
     //Expressions to analyze(because they contain locations).

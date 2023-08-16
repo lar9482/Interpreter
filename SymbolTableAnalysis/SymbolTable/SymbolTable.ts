@@ -1,15 +1,29 @@
 import { NodeType } from "../../AST/NodeType";
 import Symbol from "./Symbol/Symbol";
 
+/**
+ * containerType and parentTable aren't necessarily related
+ * 
+ * For example, if the current symbol table is at a block level,
+ * then the parent table is pointing to the scope of another nested block or a function declaration.
+ * 
+ * However, containerType refers to the node immediately above the node that points to the current symbol table.
+ */
 export default class SymbolTable {
     table: Map<string, Symbol>;
-    parentTable?: SymbolTable;
+
     scopeType: NodeType;
+    containerType: NodeType;
+
+    parentTable?: SymbolTable;
     scopeName?: string
 
-    constructor(scopeType: NodeType, parentTable?: SymbolTable, scopeName?: string) {
+    constructor(scopeType: NodeType, containerType: NodeType, parentTable?: SymbolTable, scopeName?: string) {
         this.table = new Map<string, Symbol>();
+
         this.scopeType = scopeType;
+        this.containerType = containerType;
+
         this.parentTable = parentTable;
         this.scopeName = scopeName;
     }

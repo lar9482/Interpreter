@@ -5,7 +5,6 @@ import AST from "./AST";
 import ParameterAST from "./ParameterAST";
 import BlockAST from "./BlockAST";
 
-import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolElement";
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
 import symbolScope from "../SymbolTableAnalysis/SymbolASTInterface/symbolScope";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
@@ -17,7 +16,7 @@ import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/a
 import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
 export default class FuncDeclAST extends AST
-    implements symbolElement, symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
+    implements symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
 
     name: string;
     returnType: DecafType;
@@ -39,15 +38,15 @@ export default class FuncDeclAST extends AST
         this.parameters = parameters;
         this.body = body;
 
-        this.symbols = new SymbolTable(NodeType.FUNCDECL);
+        this.symbols = new SymbolTable(NodeType.FUNCDECL, NodeType.PROGRAM);
     }
 
     addSymbolTable(symbolTable: SymbolTable) {
         this.symbols = symbolTable;
     }
 
-    acceptSymbolElement(visitor: symbolVisitorInterface) {
-        visitor.visitFuncDecl(this);
+    acceptSymbolScope(visitor: symbolVisitorInterface, containerType: NodeType) {
+        visitor.visitFuncDecl(this, containerType);
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {

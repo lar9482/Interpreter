@@ -35,7 +35,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
     private errorMessages: ErrorMessage[] = [];
 
     buildSymbolTables(programAST: ProgramAST) {
-        programAST.acceptSymbolElement(this);
+        programAST.acceptSymbolScope(this, NodeType.PROGRAM);
     }
 
     private initializeIOIntoGlobalScope(globalScopeSymbolTable: SymbolTable) {
@@ -83,8 +83,8 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         globalScopeSymbolTable.addSymbol(printBoolSymbol);
     }
 
-    visitProgram(programAST: ProgramAST) { 
-        const globalScopeSymbolTable: SymbolTable = new SymbolTable(programAST.type);
+    visitProgram(programAST: ProgramAST, containerType: NodeType) { 
+        const globalScopeSymbolTable: SymbolTable = new SymbolTable(programAST.type, containerType);
         this.initializeIOIntoGlobalScope(globalScopeSymbolTable);
 
         this.symbolTableStack.push(globalScopeSymbolTable);
@@ -94,14 +94,14 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         })
 
         programAST.functions.forEach((functionDeclAST: FuncDeclAST) => {
-            functionDeclAST.acceptSymbolElement(this);
+            functionDeclAST.acceptSymbolScope(this, programAST.type)
         })
 
         programAST.addSymbolTable(globalScopeSymbolTable);
         this.symbolTableStack.pop();
     }
 
-    visitFuncDecl(funcDeclAST: FuncDeclAST) {
+    visitFuncDecl(funcDeclAST: FuncDeclAST, containerType: NodeType) {
         
         const functionNameSymbol: SymbolFunction = new SymbolFunction(
             SymbolType.FUNCTION_SYMBOL,
@@ -115,6 +115,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
 
         const functionDeclScopeSymbolTable: SymbolTable = new SymbolTable(
             funcDeclAST.type, 
+            containerType,
             this.symbolTableStack[this.symbolTableStack.length-1], 
             funcDeclAST.name
         );
@@ -123,15 +124,16 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         funcDeclAST.parameters.forEach((parameter: ParameterAST) => {
             parameter.acceptSymbolElement(this);
         })
-        funcDeclAST.body.acceptSymbolElement(this);
+        funcDeclAST.body.acceptSymbolScope(this, funcDeclAST.type);
         
         funcDeclAST.addSymbolTable(functionDeclScopeSymbolTable);
         this.symbolTableStack.pop();
     }
 
-    visitBlock(blockAST: BlockAST) {
+    visitBlock(blockAST: BlockAST, containerType: NodeType) {
         const blockScopeSymbolTable: SymbolTable = new SymbolTable(
             NodeType.BLOCK, 
+            containerType,
             this.symbolTableStack[this.symbolTableStack.length-1]
         );
 
@@ -144,15 +146,15 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         blockAST.statements.forEach((stmtAST: StmtAST) => {
             if (stmtAST.type === NodeType.CONDITIONAL) {
                 const conditionStmt: ConditionalStmtAST = stmtAST as ConditionalStmtAST;
-                conditionStmt.ifBlock.acceptSymbolElement(this);
+                conditionStmt.ifBlock.acceptSymbolScope(this, NodeType.CONDITIONAL);
 
                 if (conditionStmt.elseBlock) {
-                    conditionStmt.elseBlock.acceptSymbolElement(this);
+                    conditionStmt.elseBlock.acceptSymbolScope(this, NodeType.CONDITIONAL);
                 }
             }
             else if (stmtAST.type === NodeType.WHILELOOP) {
                 const whileLoopStmt: WhileLoopStmtAST = stmtAST as WhileLoopStmtAST;
-                whileLoopStmt.body.acceptSymbolElement(this);
+                whileLoopStmt.body.acceptSymbolScope(this, NodeType.WHILELOOP);
             }
         })
 
