@@ -7,8 +7,11 @@ import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterf
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
 import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
+import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
-export default class ConditionalStmtAST extends StmtAST implements inferenceElement, checkElement {
+export default class ConditionalStmtAST extends StmtAST
+    implements inferenceElement, checkElement, miscAnalyzeElement {
 
     condition: ExprAST;
     ifBlock: BlockAST;
@@ -18,7 +21,7 @@ export default class ConditionalStmtAST extends StmtAST implements inferenceElem
         condition: ExprAST,
         ifBlock: BlockAST,
         elseBlock: BlockAST | undefined) {
-            
+
         super(type, sourceLineNumber);
 
         this.condition = condition;
@@ -32,5 +35,9 @@ export default class ConditionalStmtAST extends StmtAST implements inferenceElem
 
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkConditionalStmt(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeConditionalStmt(this);
     }
 }

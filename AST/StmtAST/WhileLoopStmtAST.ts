@@ -7,8 +7,11 @@ import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterf
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
 import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
+import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
-export default class WhileLoopStmtAST extends StmtAST implements inferenceElement, checkElement{
+export default class WhileLoopStmtAST extends StmtAST
+    implements inferenceElement, checkElement, miscAnalyzeElement {
 
     condition: ExprAST;
     body: BlockAST;
@@ -16,7 +19,7 @@ export default class WhileLoopStmtAST extends StmtAST implements inferenceElemen
     constructor(type: NodeType, sourceLineNumber: number,
         condition: ExprAST,
         body: BlockAST) {
-            
+
         super(type, sourceLineNumber);
 
         this.condition = condition;
@@ -29,5 +32,9 @@ export default class WhileLoopStmtAST extends StmtAST implements inferenceElemen
 
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkWhileStmt(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeWhileLoopStmt(this);
     }
 }

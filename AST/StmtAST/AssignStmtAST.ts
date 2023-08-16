@@ -6,8 +6,11 @@ import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterf
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
 import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
+import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
-export default class AssignStmtAST extends StmtAST implements inferenceElement, checkElement {
+export default class AssignStmtAST extends StmtAST
+    implements inferenceElement, checkElement, miscAnalyzeElement {
 
     location: LocAST;
     value: ExprAST;
@@ -27,5 +30,9 @@ export default class AssignStmtAST extends StmtAST implements inferenceElement, 
 
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkAssignSmt(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeAssignStmt(this);
     }
 }
