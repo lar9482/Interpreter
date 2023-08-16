@@ -88,14 +88,14 @@ export default class Parser {
         //Var -> Type ID Var_Prime
         const decafType: DecafType = this.parseType();
         const identifier: Token = consume(TokenType.Token_Identifier, this.currentToken, this.tokenQueue);
-        const number: number = this.parseVar_Prime();
+        const [number, isArray]: [number, boolean] = this.parseVar_Prime();
 
         const newVarDeclAST: VarDeclAST = new VarDeclAST(
             NodeType.VARDECL,
             identifier.lineCount,
             identifier.lexeme,
             decafType,
-            number !== 0,
+            isArray,
             number
         );
 
@@ -125,7 +125,7 @@ export default class Parser {
         }
     }
 
-    private parseVar_Prime(): number {
+    private parseVar_Prime(): [number, boolean] {
         //Var_Prime -> [ DEC ] ;
         if (this.currentToken.tokenType === TokenType.Token_StartBracket) {
             consume(TokenType.Token_StartBracket, this.currentToken, this.tokenQueue);
@@ -135,14 +135,14 @@ export default class Parser {
             consume(TokenType.Token_CloseBracket, this.currentToken, this.tokenQueue);
             consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
 
-            return parseInt(decimalToken.lexeme);
+            return [parseInt(decimalToken.lexeme), true];
         }
 
         //Var_Prime -> ;
         else if (this.currentToken.tokenType === TokenType.Token_Semicolon) {
             consume(TokenType.Token_Semicolon, this.currentToken, this.tokenQueue);
 
-            return 0;
+            return [0, false];
         }
 
         else {

@@ -7,6 +7,7 @@ import ProgramAST from './AST/ProgramAST';
 import SymbolVisitor from './SymbolTableAnalysis/symbolVisitor';
 import TypeInferenceVisitor from './TypeInferenceAnalysis/InferenceVisitor';
 import TypeCheckVisitor from './TypeCheckAnalysis/CheckVisitor';
+import MiscAnalysisVisitor from './MiscStaticAnalysis/MiscAnalysisVisitor';
 
 export default class Interpreter {
 
@@ -37,6 +38,9 @@ export default class Interpreter {
 
         const TypeCheckAnalyzer: TypeCheckVisitor = new TypeCheckVisitor();
         TypeCheckAnalyzer.checkTypes(AST);
+
+        const MiscellaneousStaticAnalyzer: MiscAnalysisVisitor = new MiscAnalysisVisitor();
+        MiscellaneousStaticAnalyzer.applyAdditionalStaticAnalysis(AST);
         
         console.log();
     }

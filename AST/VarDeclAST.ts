@@ -4,8 +4,10 @@ import AST from "./AST";
 
 import symbolElement from "../SymbolTableAnalysis/SymbolASTInterface/symbolElement";
 import symbolVisitorInterface from "../SymbolTableAnalysis/symbolVisitorInterface";
+import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
-export default class VarDeclAST extends AST implements symbolElement {
+export default class VarDeclAST extends AST implements symbolElement, miscAnalyzeElement {
     
     public name: string;
     public decafType: DecafType;
@@ -28,5 +30,9 @@ export default class VarDeclAST extends AST implements symbolElement {
 
     acceptSymbolElement(visitor: symbolVisitorInterface) {
         visitor.visitVarDec(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeVarDecl(this);
     }
 }
