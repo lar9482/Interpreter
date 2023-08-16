@@ -12,9 +12,11 @@ import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInterface
 import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
 import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
+import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
 export default class ProgramAST extends AST
-    implements symbolElement, symbolScope, inferenceElement, checkElement {
+    implements symbolElement, symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
 
     public variables: VarDeclAST[];
     public functions: FuncDeclAST[];
@@ -46,5 +48,9 @@ export default class ProgramAST extends AST
 
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkProgram(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeProgram(this);
     }
 }
