@@ -151,11 +151,19 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
     }
 
     analyzeBreakStmt(breakStmtAST: BreakStmtAST) {
-        console.log();
+        if (!this.isDescendantOfCurrentTable(NodeType.WHILELOOP)) {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${breakStmtAST.sourceLineNumber}: Break statement occurred outside of a loop.`)
+            );
+        }
     }
 
     analyzeContinueStmt(continueStmtAST: ContinueStmtAST) {
-        console.log();
+        if (!this.isDescendantOfCurrentTable(NodeType.WHILELOOP)) {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${continueStmtAST.sourceLineNumber}: Continue statement occurred outside of a loop.`)
+            );
+        }
     }
 
     //Expressions to analyze(because they contain locations).
@@ -240,5 +248,10 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
         const symbol: Symbol | undefined = currentSymbolTable.lookupSymbolName(symbolName);
 
         return symbol;
+    }
+
+    private isDescendantOfCurrentTable(containerType: NodeType): boolean {
+        const currentSymbolTable: SymbolTable = this.symbolTableStack[this.symbolTableStack.length - 1];
+        return currentSymbolTable.isDescendantOf(containerType);
     }
 }
