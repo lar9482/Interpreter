@@ -9,6 +9,15 @@ import { SymbolType } from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolType
 import { DecafType } from "../AST/DecafType";
 import FuncDeclAST from "../AST/FuncDeclAST";
 import SymbolArray from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolArray";
+import BlockAST from "../AST/BlockAST";
+import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
+import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
+import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
+import AST from "../AST/AST";
+import { NodeType } from "../AST/NodeType";
+import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
+import BreakStmtAST from "../AST/StmtAST/BreakStmtAST";
+import ContinueStmtAST from "../AST/StmtAST/ContinueStmtAST";
 
 /**
  * As part of the final static analysis pass, this visitor will traverse over the AST
@@ -73,8 +82,59 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
         funcDeclAST.symbols.table.forEach((symbol: Symbol) => {
             this.checkSymbolValidity(symbol);
         })
+        funcDeclAST.body.acceptAnalyzeElement(this);
 
         this.symbolTableStack.pop();
+    }
+
+    analyzeBlock(blockAST: BlockAST) {
+        this.symbolTableStack.push(blockAST.symbols);
+
+        blockAST.symbols.table.forEach((symbol: Symbol) => {
+            this.checkSymbolValidity(symbol);
+        });
+
+        blockAST.statements.forEach((stmtAST: AST) => {
+            if (stmtAST.type === NodeType.ASSIGNMENT) {
+
+            } else if (stmtAST.type === NodeType.CONDITIONAL) {
+
+            } else if (stmtAST.type === NodeType.WHILELOOP) {
+
+            } else if (stmtAST.type === NodeType.RETURNSTMT) {
+
+            } else if (stmtAST.type === NodeType.BREAKSTMT) {
+
+            } else if (stmtAST.type === NodeType.CONTINUESTMT) {
+
+            }
+        });
+
+        this.symbolTableStack.pop();
+    }
+
+    analyzeAssignStmt(assignStmtAST: AssignStmtAST) {
+        
+    }
+
+    analyzeConditionalStmt(conditionalStmtAST: ConditionalStmtAST) {
+
+    }
+
+    analyzeWhileLoopStmt(whileLoopStmtAST: WhileLoopStmtAST) {
+
+    }
+
+    analyzeReturnStmt(returnStmtAST: ReturnStmtAST) {
+
+    }
+
+    analyzeBreakStmt(breakStmtAST: BreakStmtAST) {
+
+    }
+
+    analyzeContinueStmt(continueStmtAST: ContinueStmtAST) {
+
     }
 
     private checkSymbolValidity(symbol: Symbol) {

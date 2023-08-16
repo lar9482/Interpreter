@@ -11,9 +11,11 @@ import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInterface
 import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
 import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
+import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
 export default class BlockAST extends AST
-    implements symbolElement, symbolScope, inferenceElement, checkElement {
+    implements symbolElement, symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
 
     variables: VarDeclAST[];
     statements: StmtAST[];
@@ -31,12 +33,12 @@ export default class BlockAST extends AST
         this.symbols = new SymbolTable(NodeType.BLOCK);
     }
 
-    acceptSymbolElement(visitor: symbolVisitorInterface) {
-        visitor.visitBlock(this);
-    }
-
     addSymbolTable(symbolTable: SymbolTable) {
         this.symbols = symbolTable;
+    }
+
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitBlock(this);
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
@@ -45,5 +47,9 @@ export default class BlockAST extends AST
     
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkBlock(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeBlock(this);
     }
 }
