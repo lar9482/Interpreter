@@ -42,6 +42,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         const printStrSymbol: SymbolFunction = new SymbolFunction(
             SymbolType.FUNCTION_SYMBOL,
             "print_str",
+            -1,
             DecafType.VOID,
             [new ParameterAST(
                 NodeType.PARAMETER,
@@ -54,6 +55,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         const printIntSymbol: SymbolFunction = new SymbolFunction(
             SymbolType.FUNCTION_SYMBOL,
             "print_int",
+            -1,
             DecafType.VOID,
             [new ParameterAST(
                 NodeType.PARAMETER,
@@ -66,6 +68,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         const printBoolSymbol: SymbolFunction = new SymbolFunction(
             SymbolType.FUNCTION_SYMBOL,
             "print_bool",
+            -1,
             DecafType.VOID,
             [new ParameterAST(
                 NodeType.PARAMETER,
@@ -103,6 +106,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         const functionNameSymbol: SymbolFunction = new SymbolFunction(
             SymbolType.FUNCTION_SYMBOL,
             funcDeclAST.name,
+            funcDeclAST.sourceLineNumber,
             funcDeclAST.returnType,
             funcDeclAST.parameters,
             funcDeclAST
@@ -110,7 +114,9 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         this.addSymbolToCurrentSymbolTable(functionNameSymbol, funcDeclAST.sourceLineNumber);
 
         const functionDeclScopeSymbolTable: SymbolTable = new SymbolTable(
-            funcDeclAST.type, this.symbolTableStack[this.symbolTableStack.length-1], funcDeclAST.name
+            funcDeclAST.type, 
+            this.symbolTableStack[this.symbolTableStack.length-1], 
+            funcDeclAST.name
         );
         this.symbolTableStack.push(functionDeclScopeSymbolTable);
 
@@ -125,7 +131,8 @@ export default class SymbolVisitor implements symbolVisitorInterface {
 
     visitBlock(blockAST: BlockAST) {
         const blockScopeSymbolTable: SymbolTable = new SymbolTable(
-            NodeType.BLOCK, this.symbolTableStack[this.symbolTableStack.length-1]
+            NodeType.BLOCK, 
+            this.symbolTableStack[this.symbolTableStack.length-1]
         );
 
         this.symbolTableStack.push(blockScopeSymbolTable);
@@ -158,6 +165,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
             const newSymbolArray: SymbolArray = new SymbolArray(
                 SymbolType.ARRAY_SYMBOL,
                 varDeclAST.name,
+                varDeclAST.sourceLineNumber,
                 varDeclAST.decafType,
                 varDeclAST.arrayLength,
                 varDeclAST
@@ -170,6 +178,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
             const newSymbolScalar: SymbolScalar = new SymbolScalar(
                 SymbolType.SCALAR_SYMBOL,
                 varDeclAST.name,
+                varDeclAST.sourceLineNumber,
                 varDeclAST.decafType,
                 varDeclAST
             );
@@ -182,6 +191,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
         const parameterSymbol: Symbol = new SymbolScalar(
             SymbolType.SCALAR_SYMBOL,
             parameterAST.name,
+            parameterAST.sourceLineNumber,
             parameterAST.parameterType,
             parameterAST
         );

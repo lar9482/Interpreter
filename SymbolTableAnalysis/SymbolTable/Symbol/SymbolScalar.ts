@@ -7,10 +7,10 @@ export default class SymbolScalar extends Symbol {
 
     scalarNode: AST;
 
-    constructor(symbolType: SymbolType, name: string, returnType: DecafType,
+    constructor(symbolType: SymbolType, name: string, sourceLineNumber: number, returnType: DecafType,
         scalarNode: AST) {
 
-        super(symbolType, name, returnType);
+        super(symbolType, name, sourceLineNumber, returnType);
         this.scalarNode = scalarNode;
     }
 }
