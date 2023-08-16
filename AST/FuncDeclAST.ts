@@ -13,9 +13,11 @@ import inferenceElement from "../TypeInferenceAnalysis/TypeInferenceASTInterface
 import inferenceVisitorInterface from "../TypeInferenceAnalysis/InferenceVisitorInterface";
 import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
+import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 
 export default class FuncDeclAST extends AST
-    implements symbolElement, symbolScope, inferenceElement, checkElement {
+    implements symbolElement, symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
 
     name: string;
     returnType: DecafType;
@@ -40,12 +42,12 @@ export default class FuncDeclAST extends AST
         this.symbols = new SymbolTable(NodeType.FUNCDECL);
     }
 
-    acceptSymbolElement(visitor: symbolVisitorInterface) {
-        visitor.visitFuncDecl(this);
-    }
-
     addSymbolTable(symbolTable: SymbolTable) {
         this.symbols = symbolTable;
+    }
+
+    acceptSymbolElement(visitor: symbolVisitorInterface) {
+        visitor.visitFuncDecl(this);
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
@@ -54,5 +56,9 @@ export default class FuncDeclAST extends AST
 
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkFuncDecl(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeFuncDecl(this);
     }
 }

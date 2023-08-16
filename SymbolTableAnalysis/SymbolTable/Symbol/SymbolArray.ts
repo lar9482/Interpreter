@@ -8,10 +8,10 @@ export default class SymbolArray extends Symbol {
     length: number;
     arrayNode: VarDeclAST;
 
-    constructor(symbolType: SymbolType, name: string, returnType: DecafType,
+    constructor(symbolType: SymbolType, name: string, sourceLineNumber: number, returnType: DecafType,
             length: number,
             arrayNode: VarDeclAST) {
-        super(symbolType, name, returnType);
+        super(symbolType, name, sourceLineNumber, returnType);
 
         this.length = length;
         this.arrayNode = arrayNode;

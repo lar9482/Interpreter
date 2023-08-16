@@ -7,10 +7,10 @@ export default class SymbolTable {
     scopeType: NodeType;
     scopeName?: string
 
-    constructor(scopeType: NodeType, parentTable?: SymbolTable, scopeName?: string,) {
+    constructor(scopeType: NodeType, parentTable?: SymbolTable, scopeName?: string) {
         this.table = new Map<string, Symbol>();
-        this.parentTable = parentTable;
         this.scopeType = scopeType;
+        this.parentTable = parentTable;
         this.scopeName = scopeName;
     }
 
