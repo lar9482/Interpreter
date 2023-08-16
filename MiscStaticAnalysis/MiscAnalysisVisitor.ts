@@ -21,6 +21,10 @@ import SymbolArray from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolArray";
  *  4. Variable array declarations of size zero.
  *  5. Location array accesses without an index.
  *  6. All break and continue statements outside of a loop.
+ * 
+ * NOTE:
+ * For better debug information, 
+ * this visitor will check the AST nodes directly, not symbols stored in the symbol tables.
  */
 export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface {
 
