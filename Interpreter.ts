@@ -11,7 +11,7 @@ import MiscAnalysisVisitor from './MiscStaticAnalysis/MiscAnalysisVisitor';
 
 export default class Interpreter {
 
-    private lexProgram(programBuffer: string): Token[] {
+    private static lexProgram(programBuffer: string): Token[] {
         const lexer: Lexer = new Lexer();
         const tokenQueue: Token[] = lexer.scanProgram(programBuffer);
         
@@ -22,14 +22,14 @@ export default class Interpreter {
         return tokenQueue;
     }
 
-    private parseProgram(tokenQueue: Token[]): ProgramAST {
+    private static parseProgram(tokenQueue: Token[]): ProgramAST {
         const parser: Parser = new Parser(tokenQueue);
         const AST: ProgramAST = parser.parseProgram();
 
         return AST;
     }
 
-    public analyzeProgram(AST: ProgramAST) {
+    private static analyzeProgram(AST: ProgramAST) {
         const symbolTableBuilder: SymbolVisitor = new SymbolVisitor();
         symbolTableBuilder.buildSymbolTables(AST);
 
@@ -45,11 +45,11 @@ export default class Interpreter {
         console.log();
     }
 
-    runProgram(programFile: string) {
+    static runProgram(programFile: string) {
         const programBuffer: string = readFileSync(programFile, 'utf-8').toString();
-        const tokenQueue: Token[] = this.lexProgram(programBuffer);  
-        const AST: ProgramAST = this.parseProgram(tokenQueue);
+        const tokenQueue: Token[] = Interpreter.lexProgram(programBuffer);  
+        const AST: ProgramAST = Interpreter.parseProgram(tokenQueue);
 
-        this.analyzeProgram(AST);
+        Interpreter.analyzeProgram(AST);
     }
 }
