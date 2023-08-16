@@ -18,6 +18,11 @@ import { NodeType } from "../AST/NodeType";
 import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 import BreakStmtAST from "../AST/StmtAST/BreakStmtAST";
 import ContinueStmtAST from "../AST/StmtAST/ContinueStmtAST";
+import FuncCallAST from "../AST/ExprAST/FuncCallAST";
+import ExprAST from "../AST/ExprAST/ExprAST";
+import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
+import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
+import LocAST from "../AST/ExprAST/LocAST";
 
 /**
  * As part of the final static analysis pass, this visitor will traverse over the AST
@@ -96,16 +101,25 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
 
         blockAST.statements.forEach((stmtAST: AST) => {
             if (stmtAST.type === NodeType.ASSIGNMENT) {
+                const assignStmtAST: AssignStmtAST = stmtAST as AssignStmtAST;
 
             } else if (stmtAST.type === NodeType.CONDITIONAL) {
+                const conditionalStmtAST: ConditionalStmtAST = stmtAST as ConditionalStmtAST;
 
             } else if (stmtAST.type === NodeType.WHILELOOP) {
+                const whileLoopStmtAST: WhileLoopStmtAST = stmtAST as WhileLoopStmtAST;
 
             } else if (stmtAST.type === NodeType.RETURNSTMT) {
+                const returnStmtAST: ReturnStmtAST = stmtAST as ReturnStmtAST;
 
             } else if (stmtAST.type === NodeType.BREAKSTMT) {
+                const breakStmtAST: BreakStmtAST = stmtAST as BreakStmtAST;
 
             } else if (stmtAST.type === NodeType.CONTINUESTMT) {
+                const continueStmtAST: ContinueStmtAST = stmtAST as ContinueStmtAST;
+
+            } else if (stmtAST.type === NodeType.FUNCCALL) {
+                const funcCallAST: FuncCallAST = stmtAST as FuncCallAST;
 
             }
         });
@@ -134,6 +148,42 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
     }
 
     analyzeContinueStmt(continueStmtAST: ContinueStmtAST) {
+
+    }
+
+    //Expressions to analyze(because they contain locations).
+    analyzeExpr(exprAST: ExprAST) {
+        if (exprAST.type === NodeType.BINARYOP) {
+            const binaryExprAST: BinaryExprAST = exprAST as BinaryExprAST;
+            binaryExprAST.acceptAnalyzeElement(this);
+
+        } else if (exprAST.type === NodeType.UNARYOP) {
+            const unaryExprAST: UnaryExprAST = exprAST as UnaryExprAST;
+            unaryExprAST.acceptAnalyzeElement(this);
+
+        } else if (exprAST.type === NodeType.FUNCCALL) {
+            const funcCallExprAST: FuncCallAST = exprAST as FuncCallAST;
+            funcCallExprAST.acceptAnalyzeElement(this);
+
+        } else if (exprAST.type === NodeType.LOCATION) {
+            const locExprAST: LocAST = exprAST as LocAST;
+            locExprAST.acceptAnalyzeElement(this);
+        }
+    }
+
+    analyzeBinaryExpr(binaryExprAST: BinaryExprAST) {
+
+    }
+
+    analyzeUnaryExpr(unaryExprAST: UnaryExprAST) {
+
+    }
+
+    analyzeFuncCall(funcCallAST: FuncCallAST) {
+
+    }
+
+    analyzeLoc(locAST: LocAST) {
 
     }
 

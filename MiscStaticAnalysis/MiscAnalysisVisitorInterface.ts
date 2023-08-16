@@ -7,6 +7,11 @@ import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
 import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 import BreakStmtAST from "../AST/StmtAST/BreakStmtAST";
 import ContinueStmtAST from "../AST/StmtAST/ContinueStmtAST";
+import ExprAST from "../AST/ExprAST/ExprAST";
+import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
+import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
+import FuncCallAST from "../AST/ExprAST/FuncCallAST";
+import LocAST from "../AST/ExprAST/LocAST";
 
 export default interface miscAnalysisVisitorInterface {
     //Base nodes for the visitor.
@@ -21,4 +26,11 @@ export default interface miscAnalysisVisitorInterface {
     analyzeReturnStmt: (returnStmtAST: ReturnStmtAST) => void,
     analyzeBreakStmt: (breakStmtAST: BreakStmtAST) => void,
     analyzeContinueStmt: (continueStmtAST: ContinueStmtAST) => void,
+
+    //Expressions to analyze(because they contain locations).
+    analyzeExpr: (exprAST: ExprAST) => void,
+    analyzeBinaryExpr: (binaryExprAST: BinaryExprAST) => void,
+    analyzeUnaryExpr: (unaryExprAST: UnaryExprAST) => void,
+    analyzeFuncCall: (funcCallAST: FuncCallAST) => void,
+    analyzeLoc: (locAST: LocAST) => void
 }

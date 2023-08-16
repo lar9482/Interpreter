@@ -1,3 +1,5 @@
+import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
+import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkElement";
 import inferenceVisitorInterface from "../../TypeInferenceAnalysis/InferenceVisitorInterface";
@@ -5,7 +7,8 @@ import inferenceElement from "../../TypeInferenceAnalysis/TypeInferenceASTInterf
 import { NodeType } from "../NodeType";
 import ExprAST from "./ExprAST";
 
-export default class FuncCallAST extends ExprAST implements inferenceElement, checkElement{
+export default class FuncCallAST extends ExprAST
+    implements inferenceElement, checkElement, miscAnalyzeElement {
     name: string;
     funcArguments: ExprAST[];
 
@@ -14,7 +17,7 @@ export default class FuncCallAST extends ExprAST implements inferenceElement, ch
         funcArguments: ExprAST[]) {
 
         super(type, sourceLineNumber);
-        
+
         this.name = name;
         this.funcArguments = funcArguments;
     }
@@ -25,5 +28,9 @@ export default class FuncCallAST extends ExprAST implements inferenceElement, ch
 
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkFuncCall(this);
+    }
+
+    acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
+        visitor.analyzeFuncCall(this);
     }
 }
