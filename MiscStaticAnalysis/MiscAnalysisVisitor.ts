@@ -31,14 +31,10 @@ import LocAST from "../AST/ExprAST/LocAST";
  * The invalid features that this visitor will catch include the following:
  *  1. No main function that returns an integer.
  *  2. Void variable declarations.
- *  3. Undefined variables in locations.
- *  4. Variable array declarations of size zero.
- *  5. Location array accesses without an index.
- *  6. All break and continue statements outside of a loop.
+ *  3. Variable array declarations of size zero.
+ *  4. Location array accesses without an index.
+ *  5. All break and continue statements outside of a loop.
  * 
- * NOTE:
- * For better debug information, 
- * this visitor will check the AST nodes directly, not symbols stored in the symbol tables.
  */
 export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface {
 
@@ -54,7 +50,7 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
         this.symbolTableStack.push(programAST.symbols);
 
         const mainFunctionSymbol: Symbol | undefined
-            = this.getSymbolFromCurrentTable('main', programAST.sourceLineNumber);
+            = this.getSymbolFromCurrentTable('main');
 
         if (mainFunctionSymbol) {
             if (mainFunctionSymbol.symbolType === SymbolType.FUNCTION_SYMBOL) {
@@ -102,24 +98,31 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
         blockAST.statements.forEach((stmtAST: AST) => {
             if (stmtAST.type === NodeType.ASSIGNMENT) {
                 const assignStmtAST: AssignStmtAST = stmtAST as AssignStmtAST;
+                assignStmtAST.acceptAnalyzeElement(this);
 
             } else if (stmtAST.type === NodeType.CONDITIONAL) {
                 const conditionalStmtAST: ConditionalStmtAST = stmtAST as ConditionalStmtAST;
+                conditionalStmtAST.acceptAnalyzeElement(this);
 
             } else if (stmtAST.type === NodeType.WHILELOOP) {
                 const whileLoopStmtAST: WhileLoopStmtAST = stmtAST as WhileLoopStmtAST;
+                whileLoopStmtAST.acceptAnalyzeElement(this);
 
             } else if (stmtAST.type === NodeType.RETURNSTMT) {
                 const returnStmtAST: ReturnStmtAST = stmtAST as ReturnStmtAST;
+                returnStmtAST.acceptAnalyzeElement(this);
 
             } else if (stmtAST.type === NodeType.BREAKSTMT) {
                 const breakStmtAST: BreakStmtAST = stmtAST as BreakStmtAST;
+                breakStmtAST.acceptAnalyzeElement(this);
 
             } else if (stmtAST.type === NodeType.CONTINUESTMT) {
                 const continueStmtAST: ContinueStmtAST = stmtAST as ContinueStmtAST;
+                continueStmtAST.acceptAnalyzeElement(this);
 
             } else if (stmtAST.type === NodeType.FUNCCALL) {
                 const funcCallAST: FuncCallAST = stmtAST as FuncCallAST;
+                funcCallAST.acceptAnalyzeElement(this);
 
             }
         });
@@ -128,19 +131,23 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
     }
 
     analyzeAssignStmt(assignStmtAST: AssignStmtAST) {
-        
+        assignStmtAST.location.acceptAnalyzeElement(this);
+        assignStmtAST.value.acceptAnalyzeElement(this);
     }
 
     analyzeConditionalStmt(conditionalStmtAST: ConditionalStmtAST) {
-
+        conditionalStmtAST.condition.acceptAnalyzeElement(this);
+        conditionalStmtAST.ifBlock.acceptAnalyzeElement(this);
+        conditionalStmtAST.elseBlock?.acceptAnalyzeElement(this);
     }
 
     analyzeWhileLoopStmt(whileLoopStmtAST: WhileLoopStmtAST) {
-
+        whileLoopStmtAST.condition.acceptAnalyzeElement(this);
+        whileLoopStmtAST.body.acceptAnalyzeElement(this);
     }
 
     analyzeReturnStmt(returnStmtAST: ReturnStmtAST) {
-
+        returnStmtAST.returnValue?.acceptAnalyzeElement(this);
     }
 
     analyzeBreakStmt(breakStmtAST: BreakStmtAST) {
@@ -172,19 +179,36 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
     }
 
     analyzeBinaryExpr(binaryExprAST: BinaryExprAST) {
-
+        binaryExprAST.left.acceptAnalyzeElement(this);
+        binaryExprAST.right.acceptAnalyzeElement(this)
     }
 
     analyzeUnaryExpr(unaryExprAST: UnaryExprAST) {
-
+        unaryExprAST.child.acceptAnalyzeElement(this);
     }
 
     analyzeFuncCall(funcCallAST: FuncCallAST) {
-
+        funcCallAST.funcArguments.forEach((funcArgExprAST: ExprAST) => {
+            funcArgExprAST.acceptAnalyzeElement(this);
+        })
     }
 
     analyzeLoc(locAST: LocAST) {
+        const locSymbol: Symbol | undefined = this.getSymbolFromCurrentTable(locAST.name);
 
+        if (locSymbol === undefined) {
+            this.errorMessages.push(
+                new ErrorMessage(`Line ${locAST.sourceLineNumber}: ${locAST.name} wasn't initialized in the current scope.`)
+            );
+        }
+
+        if (locSymbol?.symbolType === SymbolType.ARRAY_SYMBOL) {
+            if (locAST.index === undefined) {
+                this.errorMessages.push(
+                    new ErrorMessage(`Line ${locAST.sourceLineNumber}: The array access for ${locAST.name} doesn't have an index expression.`)
+                );
+            }
+        }
     }
 
     private checkSymbolValidity(symbol: Symbol) {
@@ -211,7 +235,7 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
         }
     }
 
-    private getSymbolFromCurrentTable(symbolName: string, lineNumber: number): Symbol | undefined {
+    private getSymbolFromCurrentTable(symbolName: string): Symbol | undefined {
         const currentSymbolTable: SymbolTable = this.symbolTableStack[this.symbolTableStack.length - 1];
         const symbol: Symbol | undefined = currentSymbolTable.lookupSymbolName(symbolName);
 
