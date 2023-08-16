@@ -46,4 +46,19 @@ export default class SymbolTable {
 
         return undefined;
     }
+
+    isDescendantOf(containerType: NodeType): boolean {
+        let currentTable: SymbolTable | undefined = this;
+        
+        while (currentTable != undefined) {
+            if (currentTable.containerType === containerType) {
+                return true;
+            }
+            else {
+                currentTable = currentTable.parentTable;
+            }
+        }
+
+        return false;
+    }
 }
