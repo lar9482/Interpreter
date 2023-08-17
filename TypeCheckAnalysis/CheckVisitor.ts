@@ -18,7 +18,6 @@ import { NodeType } from "../AST/NodeType";
 import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 import ExprAST from "../AST/ExprAST/ExprAST";
 import { DecafType } from "../AST/DecafType";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { BinaryOpType } from "../AST/ExprAST/ExprTypes/BinaryOpType";
 import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
 import SymbolFunction from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolFunction";
@@ -158,7 +157,7 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
 
             const currFunctionSymbol: Symbol = globalTable.lookupSymbolName(currFunctionName) as Symbol;
 
-            if (currFunctionSymbol.returnType !== returnStmtAST.returnValue?.decafType) {
+            if (returnStmtAST.returnValue !== undefined && currFunctionSymbol.returnType !== returnStmtAST.returnValue.decafType) {
                 this.errorMessages.push(
                     `Line ${returnStmtAST.sourceLineNumber}: Return expression doesn't match the function return type.`
                 );

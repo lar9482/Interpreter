@@ -2,7 +2,6 @@ import ProgramAST from "../AST/ProgramAST";
 
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 import Symbol from "../SymbolTableAnalysis/SymbolTable/Symbol/Symbol";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 import miscAnalysisVisitorInterface from "./MiscAnalysisVisitorInterface";
 import { SymbolType } from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolType";

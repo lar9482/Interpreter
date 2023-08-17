@@ -59,5 +59,6 @@ export default class Interpreter {
         const AST: ProgramAST = Interpreter.parseProgram(tokenQueue);
 
         Interpreter.analyzeProgram(AST);
+        console.log();
     }
 }

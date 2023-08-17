@@ -14,8 +14,6 @@ import ExprAST from "../AST/ExprAST/ExprAST";
 import inferenceVisitorInterface from "./InferenceVisitorInterface";
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 import { NodeType } from "../AST/NodeType";
-
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { BinaryOpType } from "../AST/ExprAST/ExprTypes/BinaryOpType";
 
 import { DecafType } from "../AST/DecafType";
