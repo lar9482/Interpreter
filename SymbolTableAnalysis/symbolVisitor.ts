@@ -16,7 +16,6 @@ import { DecafType } from "../AST/DecafType";
 import { NodeType } from "../AST/NodeType";
 import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import SymbolScalar from "./SymbolTable/Symbol/SymbolScalar";
 
 /**
