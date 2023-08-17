@@ -6,8 +6,10 @@ import FuncDeclAST from "../../../AST/FuncDeclAST";
 
 export default class SymbolFunction extends Symbol {
 
-    parameters: ParameterAST[]
+    parameters: ParameterAST[];
     funcDeclNode?: FuncDeclAST;
+
+    value: number | boolean | void;
 
     constructor(symbolType: SymbolType, name: string, sourceLineNumber: number, returnType: DecafType,
         parameters: ParameterAST[],
@@ -16,5 +18,13 @@ export default class SymbolFunction extends Symbol {
         super(symbolType, name, sourceLineNumber, returnType);
         this.parameters = parameters;
         this.funcDeclNode = funcDeclNode;
+
+        if (returnType === DecafType.VOID) {
+            this.value = undefined;
+        } else if (returnType === DecafType.INT) {
+            this.value = 0;
+        } else if (returnType === DecafType.BOOL) {
+            this.value = false;
+        }
     }
 }
