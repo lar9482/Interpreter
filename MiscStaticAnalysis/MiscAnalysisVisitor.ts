@@ -39,7 +39,7 @@ import LocAST from "../AST/ExprAST/LocAST";
 export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];
-    private errorMessages: ErrorMessage[] = [];
+    public errorMessages: string[] = [];
 
     applyAdditionalStaticAnalysis(programAST: ProgramAST) {
         programAST.acceptAnalyzeElement(this);
@@ -56,13 +56,13 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
             if (mainFunctionSymbol.symbolType === SymbolType.FUNCTION_SYMBOL) {
                 if (mainFunctionSymbol.returnType !== DecafType.INT) {
                     this.errorMessages.push(
-                        new ErrorMessage(`The 'main' function doesn't return an integer`)
+                        `The 'main' function doesn't return an integer.`
                     );
                 }
             }
         } else {
             this.errorMessages.push(
-                new Error(`The 'main' function was not found`)
+                `The 'main' function was not found.`
             );
         }
         
@@ -153,7 +153,7 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
     analyzeBreakStmt(breakStmtAST: BreakStmtAST) {
         if (!this.isDescendantOfCurrentTable(NodeType.WHILELOOP)) {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${breakStmtAST.sourceLineNumber}: Break statement occurred outside of a loop.`)
+                `Line ${breakStmtAST.sourceLineNumber}: Break statement occurred outside of a loop.`
             );
         }
     }
@@ -161,7 +161,7 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
     analyzeContinueStmt(continueStmtAST: ContinueStmtAST) {
         if (!this.isDescendantOfCurrentTable(NodeType.WHILELOOP)) {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${continueStmtAST.sourceLineNumber}: Continue statement occurred outside of a loop.`)
+                `Line ${continueStmtAST.sourceLineNumber}: Continue statement occurred outside of a loop.`
             );
         }
     }
@@ -206,14 +206,14 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
 
         if (locSymbol === undefined) {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${locAST.sourceLineNumber}: ${locAST.name} wasn't initialized in the current scope.`)
+                `Line ${locAST.sourceLineNumber}: ${locAST.name} wasn't initialized in the current scope.`
             );
         }
 
         if (locSymbol?.symbolType === SymbolType.ARRAY_SYMBOL) {
             if (locAST.index === undefined) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${locAST.sourceLineNumber}: The array access for ${locAST.name} doesn't have an index expression.`)
+                    `Line ${locAST.sourceLineNumber}: The array access for ${locAST.name} doesn't have an index expression.`
                 );
             }
         }
@@ -223,7 +223,7 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
         if (symbol.symbolType === SymbolType.SCALAR_SYMBOL) {
             if (symbol.returnType === DecafType.VOID) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${symbol.sourceLineNumber}: ${symbol.name} has a 'void' type.`)
+                    `Line ${symbol.sourceLineNumber}: ${symbol.name} has a 'void' type.`
                 );
             }
         } else if (symbol.symbolType === SymbolType.ARRAY_SYMBOL) {
@@ -231,13 +231,13 @@ export default class MiscAnalysisVisitor implements miscAnalysisVisitorInterface
 
             if (symbolArray.returnType === DecafType.VOID) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${symbol.sourceLineNumber}: ${symbolArray.name} has a 'void' type.`)
+                    `Line ${symbol.sourceLineNumber}: ${symbolArray.name} has a 'void' type.`
                 );
             }
 
             if (symbolArray.length === 0) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${symbol.sourceLineNumber}: Invalid size declaration for ${symbolArray.name}. Make sure the array size is greater than 0.`)
+                    `Line ${symbol.sourceLineNumber}: Invalid size declaration for ${symbolArray.name}. Make sure the array size is greater than 0.`
                 );
             }
         }

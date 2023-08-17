@@ -37,7 +37,7 @@ import { SymbolType } from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolType
  */
 export default class TypeCheckVisitor implements checkVisitorInterface {
     private symbolTableStack: SymbolTable[] = [];
-    private errorMessages: ErrorMessage[] = [];
+    public errorMessages: string[] = [];
 
     checkTypes(programAST: ProgramAST) {
         programAST.acceptCheckElement(this);
@@ -102,7 +102,7 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
             return;
         } else {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${conditionalStmtAST.sourceLineNumber}: The conditional in the if statement is not a boolean type.`)
+                `Line ${conditionalStmtAST.sourceLineNumber}: The conditional in the if statement is not a boolean type.`
             );
 
             return;
@@ -117,14 +117,14 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
 
         if (assignStmtAST.value.decafType !== currAssignSymbol.returnType) {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${assignStmtAST.sourceLineNumber}: The location type does not match with the assignment expression`)
+                `Line ${assignStmtAST.sourceLineNumber}: The location type does not match with the assignment expression`
             );
         }
 
         if (assignStmtAST.location.index !== undefined) {
             if (assignStmtAST.location.index.decafType !== DecafType.INT) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${assignStmtAST.sourceLineNumber}: The index expression not an integer.`)
+                    `Line ${assignStmtAST.sourceLineNumber}: The index expression not an integer.`
                 );
             }
         }
@@ -136,7 +136,7 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
 
         if (whileLoopStmtAST.condition.decafType !== DecafType.BOOL) {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${whileLoopStmtAST.sourceLineNumber}: The conditional for the while loop is not a boolean type.`)
+                `Line ${whileLoopStmtAST.sourceLineNumber}: The conditional for the while loop is not a boolean type.`
             );
         }
     }
@@ -160,12 +160,12 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
 
             if (currFunctionSymbol.returnType !== returnStmtAST.returnValue?.decafType) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${returnStmtAST.sourceLineNumber}: Return expression doesn't match the function return type`)
+                    `Line ${returnStmtAST.sourceLineNumber}: Return expression doesn't match the function return type.`
                 );
             }
         } else {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${returnStmtAST.sourceLineNumber}: Unable to type check return statement.`)
+                `Line ${returnStmtAST.sourceLineNumber}: Unable to type check return statement.`
             );
         }
     }
@@ -206,20 +206,20 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
 
             if (binaryExprAST.left.decafType !== DecafType.INT) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${binaryExprAST.sourceLineNumber}: Left side of the expression is not an integer`)
+                    `Line ${binaryExprAST.sourceLineNumber}: Left side of the expression is not an integer.`
                 );
             }
 
             if (binaryExprAST.right.decafType !== DecafType.INT) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${binaryExprAST.sourceLineNumber}: Right side of the expression is not an integer`)
+                    `Line ${binaryExprAST.sourceLineNumber}: Left side of the expression is not an integer.`
                 );
             }
 
         } else if (binaryExprAST.operator === BinaryOpType.EQOP) {
             if (binaryExprAST.left.decafType !== binaryExprAST.right.decafType) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${binaryExprAST.sourceLineNumber}: Within the equality expression, the types of the binary expression do not match.`)
+                    `Line ${binaryExprAST.sourceLineNumber}: Within the equality expression, the types of the binary expression do not match.`
                 );
             }
 
@@ -228,13 +228,13 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
 
             if (binaryExprAST.left.decafType !== DecafType.BOOL) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${binaryExprAST.sourceLineNumber}: Left side of the expression is not a boolean`)
+                    `Line ${binaryExprAST.sourceLineNumber}: Left side of the expression is not a boolean.`
                 );
             }
 
             if (binaryExprAST.right.decafType !== DecafType.BOOL) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${binaryExprAST.sourceLineNumber}: Right side of the expression is not a boolean`)
+                    `Line ${binaryExprAST.sourceLineNumber}: Right side of the expression is not a boolean.`
                 );
             }
         }
@@ -246,13 +246,13 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
         if (unaryExprAST.operator === UnaryOpType.NEGOP) {
             if (unaryExprAST.child.decafType !== DecafType.INT) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${unaryExprAST.sourceLineNumber}: The child expression is not an integer.`)
+                    `Line ${unaryExprAST.sourceLineNumber}: The child expression is not an integer.`
                 );
             }
         } else if (unaryExprAST.operator === UnaryOpType.NOTOP) {
             if (unaryExprAST.child.decafType !== DecafType.BOOL) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${unaryExprAST.sourceLineNumber}: The child expression is not a boolean.`)
+                    `Line ${unaryExprAST.sourceLineNumber}: The child expression is not a boolean.`
                 );
             }
         }
@@ -273,33 +273,27 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
 
             if (funcCallSymbol.returnType !== funcCallAST.decafType) {
                 this.errorMessages.push(
-                    new ErrorMessage(
-                    `Line ${funcCallAST.sourceLineNumber}: The function call doesn't match with the declaration of ${funcCallSymbol.name}, which is ${funcCallSymbol.returnType}.`
-                    )
+                `Line ${funcCallAST.sourceLineNumber}: The function call doesn't match with the declaration of ${funcCallSymbol.name}, which is ${funcCallSymbol.returnType}.`
                 );
             }
 
             if (funcCallSymbol.parameters.length !== funcCallAST.funcArguments.length) {
                 this.errorMessages.push(
-                    new ErrorMessage(
                     `Line ${funcCallAST.sourceLineNumber}: The number of arguments inside the function doesn't match the number of parameters in ${funcCallSymbol.name}'s declaration.`
-                    )
                 );
             }
 
             for (let i = 0; i < funcCallSymbol.parameters.length; i++) {
                 if (funcCallSymbol.parameters[i].parameterType !== funcCallAST.funcArguments[i].decafType) {
                     this.errorMessages.push(
-                        new ErrorMessage(
-                        `Line ${funcCallAST.sourceLineNumber}: ${funcCallSymbol.parameters[i].name}'s type, ${funcCallSymbol.parameters[i].parameterType}, doesn't match with the passed in argument`
-                        )
+                        `Line ${funcCallAST.sourceLineNumber}: ${funcCallSymbol.parameters[i].name}'s type, ${funcCallSymbol.parameters[i].parameterType}, doesn't match with the passed in argument.`
                     );
                 }
             }
 
         } else {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${funcCallAST.sourceLineNumber}: Unable to locate the function call ${funcCallAST.name}.`)
+                `Line ${funcCallAST.sourceLineNumber}: Unable to locate the function call ${funcCallAST.name}.`
             );
         }
         
@@ -309,7 +303,7 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
         if (locAST.index) {
             if (locAST.index.decafType !== DecafType.INT) {
                 this.errorMessages.push(
-                    new ErrorMessage(`Line ${locAST.sourceLineNumber}: The index expression is not an integer.`)
+                    `Line ${locAST.sourceLineNumber}: The index expression is not an integer.`
                 );
             }
         }

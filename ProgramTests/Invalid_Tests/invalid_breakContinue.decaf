@@ -3,7 +3,6 @@ def int main() {
 
     while (i < 100) {
         int j;
-        
         while (j < 100) {
             if (j == 50) {
                 continue;

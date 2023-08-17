@@ -35,7 +35,7 @@ import ReturnStmtAST from "../AST/StmtAST/ReturnStmtAST";
 export default class TypeInferenceVisitor implements inferenceVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];
-    private errorMessages: ErrorMessage[] = [];
+    public errorMessages: string[] = [];
 
     inferTypes(programAST: ProgramAST) {
         programAST.acceptInferenceElement(this);
@@ -157,7 +157,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
         }
         else {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${binaryExprAST.sourceLineNumber}: Unable to infer the type of ${binaryExprAST.operator}`)
+                `Line ${binaryExprAST.sourceLineNumber}: Unable to infer the type of ${binaryExprAST.operator}`
             );
         }
 
@@ -172,7 +172,7 @@ export default class TypeInferenceVisitor implements inferenceVisitorInterface {
             unaryExprAST.decafType = DecafType.BOOL;
         } else {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${unaryExprAST.sourceLineNumber}: Unable to infer the type of ${unaryExprAST.operator}`)
+                `Line ${unaryExprAST.sourceLineNumber}: Unable to infer the type of ${unaryExprAST.operator}`
             );
         }
 
