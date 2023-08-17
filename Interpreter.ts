@@ -53,7 +53,7 @@ export default class Interpreter {
         }
     }
 
-    static interpretProgram(AST: ProgramAST) {
+    private static interpretProgram(AST: ProgramAST) {
         console.log();
     }
 

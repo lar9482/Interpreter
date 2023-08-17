@@ -12,11 +12,13 @@ export default abstract class ExprAST extends AST
     implements inferenceElement, checkElement, miscAnalyzeElement {
 
     decafType: DecafType;
+    value: number | boolean | string;
 
     constructor(type: NodeType, sourceLineNumber: number) {
         super(type, sourceLineNumber);
 
-        this.decafType = DecafType.VOID
+        this.decafType = DecafType.VOID;
+        this.value = 0;
     }
 
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
