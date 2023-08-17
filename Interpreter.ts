@@ -53,12 +53,15 @@ export default class Interpreter {
         }
     }
 
+    static interpretProgram(AST: ProgramAST) {
+        console.log();
+    }
+
     static runProgram(programFile: string) {
         const programBuffer: string = readFileSync(programFile, 'utf-8').toString();
         const tokenQueue: Token[] = Interpreter.lexProgram(programBuffer);  
         const AST: ProgramAST = Interpreter.parseProgram(tokenQueue);
-
         Interpreter.analyzeProgram(AST);
-        console.log();
+        Interpreter.interpretProgram(AST);
     }
 }
