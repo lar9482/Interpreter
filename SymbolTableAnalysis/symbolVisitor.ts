@@ -32,7 +32,7 @@ import SymbolScalar from "./SymbolTable/Symbol/SymbolScalar";
 export default class SymbolVisitor implements symbolVisitorInterface {
 
     private symbolTableStack: SymbolTable[] = [];
-    private errorMessages: ErrorMessage[] = [];
+    public errorMessages: string[] = [];
 
     buildSymbolTables(programAST: ProgramAST) {
         programAST.acceptSymbolScope(this, NodeType.PROGRAM);
@@ -206,7 +206,7 @@ export default class SymbolVisitor implements symbolVisitorInterface {
 
         if (currentSymbolTable.lookupSymbolName(symbol.name)) {
             this.errorMessages.push(
-                new ErrorMessage(`Line ${sourceLineNumber}: Symbol ${symbol.name} appears more than once.`)
+                `Line ${sourceLineNumber}: Symbol ${symbol.name} appears more than once.`
             );
         } else {
             currentSymbolTable.addSymbol(symbol);

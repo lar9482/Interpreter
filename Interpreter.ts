@@ -42,7 +42,15 @@ export default class Interpreter {
         const MiscellaneousStaticAnalyzer: MiscAnalysisVisitor = new MiscAnalysisVisitor();
         MiscellaneousStaticAnalyzer.applyAdditionalStaticAnalysis(AST);
         
-        console.log();
+        let errorMessages = " ";
+        errorMessages += symbolTableBuilder.errorMessages.join("\n\t");
+        errorMessages += TypeInferenceAnalyzer.errorMessages.join("\n\t");
+        errorMessages += TypeCheckAnalyzer.errorMessages.join("\n\t");
+        errorMessages += MiscellaneousStaticAnalyzer.errorMessages.join("\n\t");
+        
+        if (errorMessages !== " ") {
+            throw new Error(errorMessages);
+        }
     }
 
     static runProgram(programFile: string) {
