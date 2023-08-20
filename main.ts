@@ -1,3 +1,4 @@
 import Interpreter from "./Interpreter";
 
-Interpreter.runProgram("./ProgramTests/factorial.decaf");
+const arg1: string = process.argv[2];
+Interpreter.runProgram("./ProgramTests/my13thReason.decaf");
