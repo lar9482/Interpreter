@@ -7,7 +7,8 @@ export default abstract class Symbol {
     name: string;
     sourceLineNumber: number;
     returnType: DecafType;
-
+    value: unknown;
+    
     constructor(symbolType: SymbolType, name: string, sourceLineNumber: number, returnType: DecafType) {
         this.symbolType = symbolType;
         this.name = name;

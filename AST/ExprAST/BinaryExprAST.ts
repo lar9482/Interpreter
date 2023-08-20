@@ -7,9 +7,14 @@ import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkEle
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
 import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
+import interpretElement from "../../Interpret/InterpretASTInterface/interpretElement";
+import interpretVisitorInterface from "../../Interpret/InterpretVisitorInterface";
 
 export default class BinaryExprAST extends ExprAST
-    implements inferenceElement, checkElement, miscAnalyzeElement {
+    implements inferenceElement, 
+    checkElement, 
+    miscAnalyzeElement,
+    interpretElement {
     operator: BinaryOpType;
     left: ExprAST;
     right: ExprAST;
@@ -36,5 +41,9 @@ export default class BinaryExprAST extends ExprAST
 
     acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
         visitor.analyzeBinaryExpr(this);
+    }
+
+    acceptInterpretElement(visitor: interpretVisitorInterface) {
+        visitor.interpretBinaryExpr(this);
     }
 }

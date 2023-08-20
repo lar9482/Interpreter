@@ -12,9 +12,18 @@ import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElemen
 import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
 import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
 import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
+import interpretElement from "../Interpret/InterpretASTInterface/interpretElement";
+import interpretVisitorInterface from "../Interpret/InterpretVisitorInterface";
 
-export default class BlockAST extends AST
-    implements symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
+export default class BlockAST
+    extends AST
+
+    implements
+    symbolScope,
+    inferenceElement,
+    checkElement,
+    miscAnalyzeElement,
+    interpretElement {
 
     variables: VarDeclAST[];
     statements: StmtAST[];
@@ -43,12 +52,16 @@ export default class BlockAST extends AST
     acceptInferenceElement(visitor: inferenceVisitorInterface) {
         visitor.inferBlock(this);
     }
-    
+
     acceptCheckElement(visitor: checkVisitorInterface) {
         visitor.checkBlock(this);
     }
 
     acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
         visitor.analyzeBlock(this);
+    }
+
+    acceptInterpretElement(visitor: interpretVisitorInterface) {
+        visitor.interpretBlock(this);
     }
 }

@@ -1,3 +1,5 @@
+import interpretElement from "../../Interpret/InterpretASTInterface/interpretElement";
+import interpretVisitorInterface from "../../Interpret/InterpretVisitorInterface";
 import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
 import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
@@ -9,7 +11,10 @@ import ExprAST from "./ExprAST";
 import { UnaryOpType } from "./ExprTypes/UnaryOpType";
 
 export default class UnaryExprAST extends ExprAST
-    implements inferenceElement, checkElement, miscAnalyzeElement {
+    implements inferenceElement, 
+    checkElement, 
+    miscAnalyzeElement,
+    interpretElement {
 
     operator: UnaryOpType;
     child: ExprAST;
@@ -34,5 +39,9 @@ export default class UnaryExprAST extends ExprAST
 
     acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
         visitor.analyzeUnaryExpr(this);
+    }
+
+    acceptInterpretElement(visitor: interpretVisitorInterface) {
+        visitor.interpretUnaryExpr(this);
     }
 }

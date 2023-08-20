@@ -49,7 +49,7 @@ export default class SymbolTable {
 
     isDescendantOf(containerType: NodeType): boolean {
         let currentTable: SymbolTable | undefined = this;
-        
+
         while (currentTable != undefined) {
             if (currentTable.containerType === containerType) {
                 return true;
@@ -61,4 +61,39 @@ export default class SymbolTable {
 
         return false;
     }
+
+    synchronizeRootTable(updatedTable: SymbolTable) {
+        let currTable: SymbolTable = this;
+        let currUpdatedTable: SymbolTable = updatedTable;
+
+        while (currTable.parentTable !== undefined) {
+            currTable = currTable.parentTable;
+        }
+
+        while (currUpdatedTable.parentTable !== undefined) {
+            currUpdatedTable = currUpdatedTable.parentTable;
+        }
+
+        if (currTable.scopeType === currUpdatedTable.scopeType
+            && currTable.containerType === currUpdatedTable.containerType
+            && Array.from(currTable.table.keys())
+               .every(symbolName =>
+                      Array.from(currUpdatedTable.table.keys())
+                      .includes(symbolName))
+        ) {
+            const symbolNames: string[] = Array.from(currTable.table.keys());
+            symbolNames.forEach((symbolName: string) => {
+                const currSymbol: Symbol = currTable.table.get(symbolName) as Symbol;
+                const currUpdatedSymbol: Symbol = currUpdatedTable.table.get(symbolName) as Symbol;
+
+                currSymbol.value = currUpdatedSymbol.value;
+            })
+        } else {
+            throw new Error(
+                'Unable to synchronize root tables. Either the scope type, container type, or symbol names do not match'
+            )
+        }
+    }
+
+
 }
