@@ -1,15 +1,14 @@
 int result;
 
-def int add(int x, int y) {
+def void add(int x, int y) {
     int i;
     i = x + y;
-
-    return x + y;
+    result = i;
+    return;
 }
 
 def int main() { 
-    add(10 + 10 * 2, 50);
-
-    print_str("\n");
+    add(100, 100);
+    print_int(result);
     return 0;
 }

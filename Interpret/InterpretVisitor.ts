@@ -22,6 +22,10 @@ import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
 import SymbolArray from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolArray";
 import SymbolScalar from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolScalar";
 
+/**
+ * NOTE:
+ * All of the returned values from functions will be stored in global scope.
+ */
 export default class InterpretVisitor implements interpretVisitorInterface{
 
     private globalScope: SymbolTable;
@@ -145,6 +149,9 @@ export default class InterpretVisitor implements interpretVisitorInterface{
             }
             
             funcDeclAST.acceptInterpretElement(this);
+            
+            const calledFunctionSymbol: SymbolFunction = this.getSymbolFromCurrentScope(funcCallAST.name) as SymbolFunction;
+            funcCallAST.value = calledFunctionSymbol.value as number | boolean;
         }
     }
 
@@ -212,8 +219,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         }
     }
 
-    interpretLoc(locAST: LocAST) {
-        
+    interpretLoc(locAST: LocAST) {  
         if (locAST.index) {
             locAST.index.acceptInterpretElement(this);
 
@@ -222,16 +228,18 @@ export default class InterpretVisitor implements interpretVisitorInterface{
 
             locAST.value = symbolToLoadIn.value[indexValue];
         } else {
-
             const symbolToLoadIn: SymbolScalar = this.getSymbolFromCurrentScope(locAST.name) as SymbolScalar;
             locAST.value = symbolToLoadIn.value;
         }
-
     }
 
-    
     private interpretIOFuncCalls(funcCallAST: FuncCallAST) {
-
+        if (funcCallAST.name === 'print_int' || funcCallAST.name === 'print_bool') {
+            funcCallAST.funcArguments[0].acceptInterpretElement(this);
+            console.log(funcCallAST.funcArguments[0].value);
+        } else {
+            console.log(funcCallAST.funcArguments[0].value);
+        }
     }
 
     private synchronizeGlobalScope(updatedScope: SymbolTable) {
