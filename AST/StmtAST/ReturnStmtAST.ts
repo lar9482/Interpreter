@@ -14,8 +14,7 @@ export default class ReturnStmtAST extends StmtAST
     implements 
     inferenceElement, 
     checkElement, 
-    miscAnalyzeElement,
-    interpretElement {
+    miscAnalyzeElement {
 
     returnValue: ExprAST | undefined;
 
@@ -38,7 +37,7 @@ export default class ReturnStmtAST extends StmtAST
         visitor.analyzeReturnStmt(this);
     }
 
-    acceptInterpretElement(visitor: interpretVisitorInterface) {
-        visitor.interpretReturnStmtAST(this);
+    acceptInterpretElement(visitor: interpretVisitorInterface, functionName: string) {
+        visitor.interpretReturnStmtAST(this, functionName);
     }
 }
