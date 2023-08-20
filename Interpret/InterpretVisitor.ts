@@ -124,10 +124,10 @@ export default class InterpretVisitor implements interpretVisitorInterface{
     }
 
     private synchronizeGlobalScope(updatedScope: SymbolTable) {
-        if (this.scopeStack.length === 0) {
+        this.globalScope.synchronizeRootTable(updatedScope);
 
-        } else {
-            const currScope: SymbolTable = this.scopeStack[this.scopeStack.length - 1];
-        }
+        this.scopeStack.forEach((scope: SymbolTable) => {
+            scope.synchronizeRootTable(this.globalScope);
+        }) 
     }
 }
