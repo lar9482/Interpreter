@@ -17,6 +17,7 @@ import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
 import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import LocAST from "../AST/ExprAST/LocAST";
 import SymbolScalar from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolScalar";
+import { BinaryOpType } from "../AST/ExprAST/ExprTypes/BinaryOpType";
 
 export default class InterpretVisitor implements interpretVisitorInterface{
 
@@ -41,6 +42,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         funcDeclAST.body.acceptInterpretElement(this);
 
         const updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
+        this.synchronizeGlobalScope(updatedFuncDeclScope);
     }
 
     interpretBlock(blockAST: BlockAST) {
@@ -57,6 +59,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         })
         
         const updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
+        this.synchronizeGlobalScope(updatedFuncDeclScope);
     }
 
     interpretReturnStmtAST(returnStmtAST: ReturnStmtAST) {
@@ -89,16 +92,18 @@ export default class InterpretVisitor implements interpretVisitorInterface{
 
             const funcDeclAST: FuncDeclAST = funcDeclSymbol.funcDeclNode as FuncDeclAST;
             const funcDeclScope: Map<string, Symbol> = funcDeclAST.symbols.table;
-
             const argNames: string[] = Array.from(funcDeclScope.keys());
+
             const funcCallArgs: ExprAST[] = funcCallAST.funcArguments;
 
-            //Evaluate the expressions and place them into the function declaration's scope for parameters.
+            //Evaluate the expressions and place them into the function declaration's scope 
+            //as evaluation for the passed in parameters.
             for (let i = 0; i < funcCallArgs.length; i++) {
-                const currArgName: string = argNames[i];
                 funcCallArgs[i].acceptInterpretElement(this);
 
-                const argSymbolValue: SymbolScalar = funcDeclScope.get(currArgName) as SymbolScalar;
+                const currArgName: string = argNames[i];
+                const argSymbolValue: Symbol = funcDeclScope.get(currArgName) as Symbol;
+
                 argSymbolValue.value = funcCallArgs[i].value;
             }
             
@@ -107,7 +112,52 @@ export default class InterpretVisitor implements interpretVisitorInterface{
     }
 
     interpretBinaryExpr(binaryExprAST: BinaryExprAST) {
-
+        binaryExprAST.left.acceptInterpretElement(this);
+        binaryExprAST.right.acceptInterpretElement(this);
+        
+        switch(binaryExprAST.operator) {
+            case BinaryOpType.ADDOP:
+                binaryExprAST.value = (binaryExprAST.left.value as number) + (binaryExprAST.right.value as number);
+                break;
+            case BinaryOpType.SUBOP:
+                binaryExprAST.value = (binaryExprAST.left.value as number) - (binaryExprAST.right.value as number);
+                break;
+            case BinaryOpType.MULOP:
+                binaryExprAST.value = (binaryExprAST.left.value as number) * (binaryExprAST.right.value as number);
+                break;
+            case BinaryOpType.DIVOP:
+                binaryExprAST.value = (binaryExprAST.left.value as number) / (binaryExprAST.right.value as number);
+                break;
+            case BinaryOpType.MODOP:
+                binaryExprAST.value = (binaryExprAST.left.value as number) % (binaryExprAST.right.value as number);
+                break;
+            case BinaryOpType.ANDOP:
+                binaryExprAST.value = (binaryExprAST.left.value as boolean) && (binaryExprAST.right.value as boolean);
+                break;
+            case BinaryOpType.OROP:
+                binaryExprAST.value = (binaryExprAST.left.value as boolean) || (binaryExprAST.right.value as boolean);
+                break;
+            case BinaryOpType.LEOP:
+                binaryExprAST.value = (binaryExprAST.left.value as boolean) <= (binaryExprAST.right.value as boolean);
+                break;
+            case BinaryOpType.LTOP:
+                binaryExprAST.value = (binaryExprAST.left.value as boolean) < (binaryExprAST.right.value as boolean);
+                break;
+            case BinaryOpType.GEOP:
+                binaryExprAST.value = (binaryExprAST.left.value as boolean) >= (binaryExprAST.right.value as boolean);
+                break;
+            case BinaryOpType.GTOP:
+                binaryExprAST.value = (binaryExprAST.left.value as boolean) > (binaryExprAST.right.value as boolean);
+                break;
+            case BinaryOpType.EQOP:
+                binaryExprAST.value = (binaryExprAST.left.value) == (binaryExprAST.right.value);
+                break;
+            case BinaryOpType.NEQOP:
+                binaryExprAST.value = (binaryExprAST.left.value) != (binaryExprAST.right.value);
+                break;
+            default:
+                throw new Error('Unable to execute binary operation.');
+        }
     }
 
     interpretUnaryExpr(unaryExprAST: UnaryExprAST) {
