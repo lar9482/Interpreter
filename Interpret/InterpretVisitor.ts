@@ -18,6 +18,7 @@ import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import LocAST from "../AST/ExprAST/LocAST";
 import SymbolScalar from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolScalar";
 import { BinaryOpType } from "../AST/ExprAST/ExprTypes/BinaryOpType";
+import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
 
 export default class InterpretVisitor implements interpretVisitorInterface{
 
@@ -161,7 +162,15 @@ export default class InterpretVisitor implements interpretVisitorInterface{
     }
 
     interpretUnaryExpr(unaryExprAST: UnaryExprAST) {
+        unaryExprAST.child.acceptInterpretElement(this);
 
+        switch (unaryExprAST.operator) {
+            case UnaryOpType.NEGOP: 
+                unaryExprAST.value = -(unaryExprAST.child.value as number);
+                break;
+            case UnaryOpType.NOTOP:
+                unaryExprAST.value = !(unaryExprAST.child.value as boolean);
+        }
     }
 
     interpretLoc(locAST: LocAST) {
