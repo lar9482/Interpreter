@@ -13,9 +13,17 @@ import checkElement from "../TypeCheckAnalysis/TypeCheckASTInterface/checkElemen
 import checkVisitorInterface from "../TypeCheckAnalysis/CheckVisitorInterface";
 import miscAnalyzeElement from "../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
 import miscAnalysisVisitorInterface from "../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
+import interpretElement from "../Interpret/InterpretASTInterface/interpretElement";
+import interpretVisitorInterface from "../Interpret/InterpretVisitorInterface";
 
-export default class ProgramAST extends AST
-    implements symbolScope, inferenceElement, checkElement, miscAnalyzeElement {
+export default class ProgramAST
+    extends AST
+
+    implements
+    symbolScope,
+    inferenceElement,
+    checkElement,
+    miscAnalyzeElement {
 
     public variables: VarDeclAST[];
     public functions: FuncDeclAST[];

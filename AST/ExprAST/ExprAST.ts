@@ -7,9 +7,14 @@ import { NodeType } from "../NodeType";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
 import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
+import interpretElement from "../../Interpret/InterpretASTInterface/interpretElement";
+import interpretVisitorInterface from "../../Interpret/InterpretVisitorInterface";
 
 export default abstract class ExprAST extends AST
-    implements inferenceElement, checkElement, miscAnalyzeElement {
+    implements inferenceElement, 
+    checkElement, 
+    miscAnalyzeElement,
+    interpretElement {
 
     decafType: DecafType;
     value: number | boolean | string;
@@ -31,5 +36,9 @@ export default abstract class ExprAST extends AST
 
     acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
         visitor.analyzeExpr(this);
+    }
+
+    acceptInterpretElement(visitor: interpretVisitorInterface) {
+        visitor.interpretExpr(this);
     }
 }

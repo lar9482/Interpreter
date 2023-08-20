@@ -8,6 +8,7 @@ import SymbolVisitor from './SymbolTableAnalysis/symbolVisitor';
 import TypeInferenceVisitor from './TypeInferenceAnalysis/InferenceVisitor';
 import TypeCheckVisitor from './TypeCheckAnalysis/CheckVisitor';
 import MiscAnalysisVisitor from './MiscStaticAnalysis/MiscAnalysisVisitor';
+import InterpretVisitor from './Interpret/InterpretVisitor';
 
 export default class Interpreter {
 
@@ -53,8 +54,9 @@ export default class Interpreter {
         }
     }
 
-    private static interpretProgram(AST: ProgramAST) {
-        console.log();
+    private static executeProgram(AST: ProgramAST) {
+        const executor: InterpretVisitor = new InterpretVisitor(AST);
+        executor.executeProgram();
     }
 
     static runProgram(programFile: string) {
@@ -62,6 +64,6 @@ export default class Interpreter {
         const tokenQueue: Token[] = Interpreter.lexProgram(programBuffer);  
         const AST: ProgramAST = Interpreter.parseProgram(tokenQueue);
         Interpreter.analyzeProgram(AST);
-        Interpreter.interpretProgram(AST);
+        Interpreter.executeProgram(AST);
     }
 }

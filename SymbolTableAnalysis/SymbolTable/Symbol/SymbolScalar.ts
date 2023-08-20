@@ -6,7 +6,7 @@ import AST from "../../../AST/AST";
 export default class SymbolScalar extends Symbol {
 
     scalarNode: AST;
-    value: number | boolean
+    value: number | boolean | string;
 
     constructor(symbolType: SymbolType, name: string, sourceLineNumber: number, returnType: DecafType,
         scalarNode: AST) {

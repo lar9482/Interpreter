@@ -1,3 +1,5 @@
+import interpretElement from "../../Interpret/InterpretASTInterface/interpretElement";
+import interpretVisitorInterface from "../../Interpret/InterpretVisitorInterface";
 import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
 import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
@@ -9,7 +11,11 @@ import { NodeType } from "../NodeType";
 import StmtAST from "./StmtAST";
 
 export default class ReturnStmtAST extends StmtAST
-    implements inferenceElement, checkElement, miscAnalyzeElement {
+    implements 
+    inferenceElement, 
+    checkElement, 
+    miscAnalyzeElement,
+    interpretElement {
 
     returnValue: ExprAST | undefined;
 
@@ -30,5 +36,9 @@ export default class ReturnStmtAST extends StmtAST
 
     acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
         visitor.analyzeReturnStmt(this);
+    }
+
+    acceptInterpretElement(visitor: interpretVisitorInterface) {
+        visitor.interpretReturnStmtAST(this);
     }
 }
