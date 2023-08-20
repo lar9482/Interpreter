@@ -8,6 +8,7 @@ import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import LocAST from "../AST/ExprAST/LocAST";
 import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
+import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 
 export default interface interpretVisitorInterface {
     //Base nodes for the visitor
@@ -17,6 +18,7 @@ export default interface interpretVisitorInterface {
     interpretAssignStmtAST: (assignStmtAST: AssignStmtAST) => void,
     interpretReturnStmtAST: (returnStmtAST: ReturnStmtAST, functionName: string) => void,
     interpretConditionalStmtAST: (conditionalStmtAST: ConditionalStmtAST) => void,
+    interpretWhileLoopStmtAST: (whileLoopStmtAST: WhileLoopStmtAST) => void,
 
     interpretExpr: (exprAST: ExprAST) => void,
     interpretBinaryExpr: (binaryExprAST: BinaryExprAST) => void

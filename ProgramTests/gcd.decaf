@@ -1,11 +1,18 @@
 def int gcd(int x, int y) {
-    while (y != 0) {
+    int result;
+    int holder;
+
+    result = x;
+    holder = y;
+    
+    while (holder != 0) {
         int temp;
-        temp = y;
-        y = x % y;
-        x = temp;
+        temp = holder;
+        holder = result % holder;
+        result = temp;
     }
-    return x;
+
+    return result;
 }
 
 def int main() 
@@ -15,6 +22,7 @@ def int main()
 
     first_int = 5444;
     second_int = 64;
+    print_int(gcd(first_int, second_int));
 
-    return gcd(first_int, second_int);
+    return 0;
 }

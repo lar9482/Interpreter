@@ -18,7 +18,6 @@ def void print_collatz_sequence(int num) {
 
 def void print_sequence_element(int num) {
     print_int(num);
-    print_str(" ");
 }
 
 def int main() {
