@@ -57,7 +57,6 @@ def void print_array() {
 
     while (i < len) {
         print_int(array[i]);
-        print_str("\n");
         i = i + 1;
     }
 
@@ -69,14 +68,10 @@ def int main() {
     allocate_array();
 
     print_array();
-    print_str("\n");
-
+    print_str("----------");
     sort_nums();
-
-    print_str("\n");
+    print_str("----------");
     print_array();
 
-
-    print_str("\n");
     return 0;
 }

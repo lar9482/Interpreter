@@ -1,3 +1,3 @@
 import Interpreter from "./Interpreter";
 
-Interpreter.runProgram("./ProgramTests/gcd.decaf");
+Interpreter.runProgram("./ProgramTests/sorting.decaf");
