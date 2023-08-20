@@ -1,18 +1,12 @@
 def int gcd(int x, int y) {
-    int result;
-    int holder;
-
-    result = x;
-    holder = y;
-    
-    while (holder != 0) {
+    while (y != 0) {
         int temp;
-        temp = holder;
-        holder = result % holder;
-        result = temp;
+        temp = y;
+        y = x % y;
+        x = temp;
     }
 
-    return result;
+    return x;
 }
 
 def int main() 

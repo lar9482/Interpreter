@@ -27,6 +27,7 @@ import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 /**
  * NOTE:
  * All of the returned values from functions will be stored in global scope.
+ * FOR NOW, THERE IS NO DEEP COPY OF SYMBOL TABLES. THIS MEANS RECURSION WILL DO WORK.
  */
 export default class InterpretVisitor implements interpretVisitorInterface{
 
