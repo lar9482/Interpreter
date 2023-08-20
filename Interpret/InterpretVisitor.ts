@@ -21,6 +21,7 @@ import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
 import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
 import SymbolArray from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolArray";
 import SymbolScalar from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolScalar";
+import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
 
 /**
  * NOTE:
@@ -72,6 +73,10 @@ export default class InterpretVisitor implements interpretVisitorInterface{
             } else if (stmtAST.type === NodeType.FUNCCALL) {
                 const funcCallAST: FuncCallAST = stmtAST as FuncCallAST;
                 funcCallAST.acceptInterpretElement(this);
+
+            } else if (stmtAST.type === NodeType.CONDITIONAL) {
+                const conditionalStmtAST: ConditionalStmtAST = stmtAST as ConditionalStmtAST;
+                conditionalStmtAST.acceptInterpretElement(this);
             }
         })
         
@@ -107,6 +112,17 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         }
     }
 
+    interpretConditionalStmtAST(conditionalStmtAST: ConditionalStmtAST) {
+        conditionalStmtAST.condition.acceptInterpretElement(this);
+        const conditionValue: boolean = conditionalStmtAST.condition.value as boolean;
+
+        if (conditionValue) {
+            conditionalStmtAST.ifBlock.acceptInterpretElement(this);
+        } else if (conditionalStmtAST.elseBlock) {
+            conditionalStmtAST.elseBlock.acceptInterpretElement(this);
+        }
+    }
+    
     interpretExpr(exprAST: ExprAST) {
         if (exprAST.type === NodeType.BINARYOP) {
             const binaryExprAST: BinaryExprAST = exprAST as BinaryExprAST;

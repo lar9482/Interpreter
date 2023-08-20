@@ -1,4 +1,3 @@
-import ProgramAST from "../AST/ProgramAST";
 import FuncDeclAST from "../AST/FuncDeclAST";
 import BlockAST from "../AST/BlockAST";
 import FuncCallAST from "../AST/ExprAST/FuncCallAST";
@@ -8,6 +7,7 @@ import ExprAST from "../AST/ExprAST/ExprAST";
 import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import LocAST from "../AST/ExprAST/LocAST";
 import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
+import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
 
 export default interface interpretVisitorInterface {
     //Base nodes for the visitor
@@ -16,6 +16,7 @@ export default interface interpretVisitorInterface {
 
     interpretAssignStmtAST: (assignStmtAST: AssignStmtAST) => void,
     interpretReturnStmtAST: (returnStmtAST: ReturnStmtAST, functionName: string) => void,
+    interpretConditionalStmtAST: (conditionalStmtAST: ConditionalStmtAST) => void,
 
     interpretExpr: (exprAST: ExprAST) => void,
     interpretBinaryExpr: (binaryExprAST: BinaryExprAST) => void

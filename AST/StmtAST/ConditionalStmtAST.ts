@@ -9,9 +9,14 @@ import checkElement from "../../TypeCheckAnalysis/TypeCheckASTInterface/checkEle
 import checkVisitorInterface from "../../TypeCheckAnalysis/CheckVisitorInterface";
 import miscAnalyzeElement from "../../MiscStaticAnalysis/MiscAnalysisASTInterface/analyzeElement";
 import miscAnalysisVisitorInterface from "../../MiscStaticAnalysis/MiscAnalysisVisitorInterface";
+import interpretElement from "../../Interpret/InterpretASTInterface/interpretElement";
+import interpretVisitorInterface from "../../Interpret/InterpretVisitorInterface";
 
 export default class ConditionalStmtAST extends StmtAST
-    implements inferenceElement, checkElement, miscAnalyzeElement {
+    implements inferenceElement, 
+    checkElement, 
+    miscAnalyzeElement,
+    interpretElement {
 
     condition: ExprAST;
     ifBlock: BlockAST;
@@ -39,5 +44,9 @@ export default class ConditionalStmtAST extends StmtAST
 
     acceptAnalyzeElement(visitor: miscAnalysisVisitorInterface) {
         visitor.analyzeConditionalStmt(this);
+    }
+
+    acceptInterpretElement(visitor: interpretVisitorInterface) {
+        visitor.interpretConditionalStmtAST(this);
     }
 }
