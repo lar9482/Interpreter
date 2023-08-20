@@ -59,7 +59,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
             } else if (stmtAST.type === NodeType.RETURNSTMT) {
                 const returnStmtAST: ReturnStmtAST = stmtAST as ReturnStmtAST;
                 returnStmtAST.acceptInterpretElement(this);
-                
+
             } else if (stmtAST.type === NodeType.FUNCCALL) {
                 const funcCallAST: FuncCallAST = stmtAST as FuncCallAST;
                 funcCallAST.acceptInterpretElement(this);
@@ -85,8 +85,6 @@ export default class InterpretVisitor implements interpretVisitorInterface{
 
             symbolToAssign.value = assignStmtAST.value.value as number | boolean;
         }
-
-        console.log();
     }
 
     interpretReturnStmtAST(returnStmtAST: ReturnStmtAST) {
@@ -201,6 +199,19 @@ export default class InterpretVisitor implements interpretVisitorInterface{
 
     interpretLoc(locAST: LocAST) {
         
+        if (locAST.index) {
+            locAST.index.acceptInterpretElement(this);
+
+            const indexValue: number = locAST.index.value as number;
+            const symbolToLoadIn: SymbolArray = this.getSymbolFromCurrentScope(locAST.name) as SymbolArray;
+
+            locAST.value = symbolToLoadIn.value[indexValue];
+        } else {
+
+            const symbolToLoadIn: SymbolScalar = this.getSymbolFromCurrentScope(locAST.name) as SymbolScalar;
+            locAST.value = symbolToLoadIn.value;
+        }
+
     }
 
     
