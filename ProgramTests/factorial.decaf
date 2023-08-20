@@ -10,7 +10,9 @@ def int factorial(int n) {
 def int main() 
 { 
     int n;
-    n = 10;
+    n = 5;
+    
+    print_int(factorial(n));
 
-    return factorial(n);
+    return 0;
 }

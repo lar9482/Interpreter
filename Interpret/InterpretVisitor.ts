@@ -22,6 +22,7 @@ import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
 import SymbolArray from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolArray";
 import SymbolScalar from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolScalar";
 import ConditionalStmtAST from "../AST/StmtAST/ConditionalStmtAST";
+import WhileLoopStmtAST from "../AST/StmtAST/WhileLoopStmtAST";
 
 /**
  * NOTE:
@@ -39,22 +40,23 @@ export default class InterpretVisitor implements interpretVisitorInterface{
 
     executeProgram() {
         const mainFuncSymbol: SymbolFunction = this.globalScope.lookupSymbolName('main') as SymbolFunction;
-        const mainFuncDeclAST: FuncDeclAST = cloneDeep(mainFuncSymbol.funcDeclNode as FuncDeclAST);
+        const mainFuncDeclAST: FuncDeclAST = mainFuncSymbol.funcDeclNode as FuncDeclAST
         
         mainFuncDeclAST.acceptInterpretElement(this);
     }
 
     interpretFuncDecl(funcDeclAST: FuncDeclAST) {
-        this.scopeStack.push(cloneDeep(funcDeclAST.symbols));
+        this.scopeStack.push(funcDeclAST.symbols);
 
         funcDeclAST.body.acceptInterpretElement(this);
 
-        const updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
-        this.synchronizeGlobalScope(updatedFuncDeclScope);
+        this.scopeStack.pop() as SymbolTable;
+        // const updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
+        // this.synchronizeGlobalScope(updatedFuncDeclScope);
     }
 
     interpretBlock(blockAST: BlockAST) {
-        this.scopeStack.push(cloneDeep(blockAST.symbols));
+        this.scopeStack.push(blockAST.symbols);
 
         blockAST.statements.forEach((stmtAST: AST) => {
             if (stmtAST.type === NodeType.ASSIGNMENT){
@@ -77,11 +79,16 @@ export default class InterpretVisitor implements interpretVisitorInterface{
             } else if (stmtAST.type === NodeType.CONDITIONAL) {
                 const conditionalStmtAST: ConditionalStmtAST = stmtAST as ConditionalStmtAST;
                 conditionalStmtAST.acceptInterpretElement(this);
+
+            } else if (stmtAST.type === NodeType.WHILELOOP) {
+                const whileLoopStmtAST: WhileLoopStmtAST = stmtAST as WhileLoopStmtAST;
+                whileLoopStmtAST.acceptInterpretElement(this);
             }
         })
         
-        let updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
-        this.synchronizeGlobalScope(updatedFuncDeclScope);
+        this.scopeStack.pop() as SymbolTable;
+        // const updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
+        // this.synchronizeGlobalScope(updatedFuncDeclScope);
     }
 
     interpretAssignStmtAST(assignStmtAST: AssignStmtAST) {
@@ -122,7 +129,16 @@ export default class InterpretVisitor implements interpretVisitorInterface{
             conditionalStmtAST.elseBlock.acceptInterpretElement(this);
         }
     }
-    
+
+    interpretWhileLoopStmtAST(whileLoopStmtAST: WhileLoopStmtAST) {
+        whileLoopStmtAST.condition.acceptInterpretElement(this);
+
+        while (whileLoopStmtAST.condition.value as boolean) {
+            whileLoopStmtAST.body.acceptInterpretElement(this);
+            whileLoopStmtAST.condition.acceptInterpretElement(this);
+        }
+    }
+
     interpretExpr(exprAST: ExprAST) {
         if (exprAST.type === NodeType.BINARYOP) {
             const binaryExprAST: BinaryExprAST = exprAST as BinaryExprAST;
@@ -147,7 +163,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         } else {
             const funcDeclSymbol: SymbolFunction = this.globalScope.lookupSymbolName(funcCallAST.name) as SymbolFunction;
 
-            const funcDeclAST: FuncDeclAST = cloneDeep(funcDeclSymbol.funcDeclNode as FuncDeclAST);
+            const funcDeclAST: FuncDeclAST = funcDeclSymbol.funcDeclNode as FuncDeclAST
             const funcDeclScope: Map<string, Symbol> = funcDeclAST.symbols.table;
             const argNames: string[] = Array.from(funcDeclScope.keys());
 
