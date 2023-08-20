@@ -1,14 +1,15 @@
 int result;
 
 def void add(int x, int y) {
-    int i;
-    i = x + y;
-    result = i;
-    return;
+    if (x > 10 && y > 10) {
+        result = 9999;
+    } else {
+        result = x + y;
+    }
 }
 
 def int main() { 
-    add(100, 100);
+    add(9, 9);
     print_int(result);
     return 0;
 }
