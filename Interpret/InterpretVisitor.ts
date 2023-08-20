@@ -1,3 +1,5 @@
+import { cloneDeep } from "lodash";
+
 import interpretVisitorInterface from "./InterpretVisitorInterface";
 import ProgramAST from "../AST/ProgramAST";
 import FuncDeclAST from "../AST/FuncDeclAST";
@@ -7,7 +9,6 @@ import SymbolFunction from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolFunc
 import SymbolTable from "../SymbolTableAnalysis/SymbolTable/SymbolTable";
 import Symbol from "../SymbolTableAnalysis/SymbolTable/Symbol/Symbol";
 
-import { cloneDeep } from "lodash";
 import AST from "../AST/AST";
 import { NodeType } from "../AST/NodeType";
 import FuncCallAST from "../AST/ExprAST/FuncCallAST";
@@ -35,7 +36,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
     private scopeStack: SymbolTable[];
 
     constructor(programAST: ProgramAST) {
-        this.globalScope = cloneDeep(programAST.symbols);
+        this.globalScope = programAST.symbols;
         this.scopeStack = [];
     }
 
@@ -203,7 +204,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
                 binaryExprAST.value = (binaryExprAST.left.value as number) * (binaryExprAST.right.value as number);
                 break;
             case BinaryOpType.DIVOP:
-                binaryExprAST.value = (binaryExprAST.left.value as number) / (binaryExprAST.right.value as number);
+                binaryExprAST.value = Math.ceil((binaryExprAST.left.value as number) / (binaryExprAST.right.value as number));
                 break;
             case BinaryOpType.MODOP:
                 binaryExprAST.value = (binaryExprAST.left.value as number) % (binaryExprAST.right.value as number);

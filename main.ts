@@ -1,3 +1,3 @@
 import Interpreter from "./Interpreter";
 
-Interpreter.runProgram("./ProgramTests/sorting.decaf");
+Interpreter.runProgram("./ProgramTests/is_prime.decaf");
