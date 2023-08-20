@@ -34,7 +34,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
 
     executeProgram() {
         const mainFuncSymbol: SymbolFunction = this.globalScope.lookupSymbolName('main') as SymbolFunction;
-        const mainFuncDeclAST: FuncDeclAST = mainFuncSymbol.funcDeclNode as FuncDeclAST
+        const mainFuncDeclAST: FuncDeclAST = cloneDeep(mainFuncSymbol.funcDeclNode as FuncDeclAST);
         
         mainFuncDeclAST.acceptInterpretElement(this);
     }
@@ -58,7 +58,12 @@ export default class InterpretVisitor implements interpretVisitorInterface{
 
             } else if (stmtAST.type === NodeType.RETURNSTMT) {
                 const returnStmtAST: ReturnStmtAST = stmtAST as ReturnStmtAST;
-                returnStmtAST.acceptInterpretElement(this);
+                const functionName: string = this.getParentTableFromCurrentTable(
+                    NodeType.FUNCDECL, 
+                    this.scopeStack[this.scopeStack.length - 1]
+                )?.scopeName as string;
+
+                returnStmtAST.acceptInterpretElement(this, functionName);
 
             } else if (stmtAST.type === NodeType.FUNCCALL) {
                 const funcCallAST: FuncCallAST = stmtAST as FuncCallAST;
@@ -66,7 +71,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
             }
         })
         
-        const updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
+        let updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
         this.synchronizeGlobalScope(updatedFuncDeclScope);
     }
 
@@ -87,8 +92,15 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         }
     }
 
-    interpretReturnStmtAST(returnStmtAST: ReturnStmtAST) {
-        console.log();
+    interpretReturnStmtAST(returnStmtAST: ReturnStmtAST, functionName: string) {
+        const functionSymbol: SymbolFunction = this.getSymbolFromCurrentScope(functionName) as SymbolFunction;
+
+        if (returnStmtAST.returnValue) {
+            returnStmtAST.returnValue.acceptInterpretElement(this);
+            functionSymbol.value = returnStmtAST.returnValue.value as number | boolean;
+        } else {
+            functionSymbol.value = undefined;
+        }
     }
 
     interpretExpr(exprAST: ExprAST) {
@@ -115,7 +127,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         } else {
             const funcDeclSymbol: SymbolFunction = this.globalScope.lookupSymbolName(funcCallAST.name) as SymbolFunction;
 
-            const funcDeclAST: FuncDeclAST = funcDeclSymbol.funcDeclNode as FuncDeclAST;
+            const funcDeclAST: FuncDeclAST = cloneDeep(funcDeclSymbol.funcDeclNode as FuncDeclAST);
             const funcDeclScope: Map<string, Symbol> = funcDeclAST.symbols.table;
             const argNames: string[] = Array.from(funcDeclScope.keys());
 
@@ -194,6 +206,9 @@ export default class InterpretVisitor implements interpretVisitorInterface{
                 break;
             case UnaryOpType.NOTOP:
                 unaryExprAST.value = !(unaryExprAST.child.value as boolean);
+                break;
+            default:
+                throw new Error('Unable to execute unary operation.');
         }
     }
 
@@ -232,5 +247,17 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         const symbol: Symbol = currentSymbolTable.lookupSymbolName(symbolName) as Symbol;
 
         return symbol;
+    }
+
+    private getParentTableFromCurrentTable(parentScopeType: NodeType, symbolTable: SymbolTable): SymbolTable | undefined {
+        let currSymbolTable: SymbolTable = symbolTable;
+
+        while (currSymbolTable !== undefined) {
+            if (currSymbolTable.scopeType === parentScopeType) {
+                return currSymbolTable;
+            } else {
+                currSymbolTable = currSymbolTable.parentTable as SymbolTable
+            }
+        }
     }
 }

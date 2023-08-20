@@ -15,7 +15,7 @@ export default interface interpretVisitorInterface {
     interpretBlock: (blockAST: BlockAST) => void,
 
     interpretAssignStmtAST: (assignStmtAST: AssignStmtAST) => void,
-    interpretReturnStmtAST: (returnStmtAST: ReturnStmtAST) => void,
+    interpretReturnStmtAST: (returnStmtAST: ReturnStmtAST, functionName: string) => void,
 
     interpretExpr: (exprAST: ExprAST) => void,
     interpretBinaryExpr: (binaryExprAST: BinaryExprAST) => void
