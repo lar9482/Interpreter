@@ -16,9 +16,11 @@ import ExprAST from "../AST/ExprAST/ExprAST";
 import BinaryExprAST from "../AST/ExprAST/BinaryExprAST";
 import UnaryExprAST from "../AST/ExprAST/UnaryExprAST";
 import LocAST from "../AST/ExprAST/LocAST";
-import SymbolScalar from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolScalar";
 import { BinaryOpType } from "../AST/ExprAST/ExprTypes/BinaryOpType";
 import { UnaryOpType } from "../AST/ExprAST/ExprTypes/UnaryOpType";
+import AssignStmtAST from "../AST/StmtAST/AssignStmtAST";
+import SymbolArray from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolArray";
+import SymbolScalar from "../SymbolTableAnalysis/SymbolTable/Symbol/SymbolScalar";
 
 export default class InterpretVisitor implements interpretVisitorInterface{
 
@@ -50,9 +52,14 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         this.scopeStack.push(cloneDeep(blockAST.symbols));
 
         blockAST.statements.forEach((stmtAST: AST) => {
-            if (stmtAST.type === NodeType.RETURNSTMT) {
+            if (stmtAST.type === NodeType.ASSIGNMENT){
+                const assignStmtAST: AssignStmtAST = stmtAST as AssignStmtAST;
+                assignStmtAST.acceptInterpretElement(this);
+
+            } else if (stmtAST.type === NodeType.RETURNSTMT) {
                 const returnStmtAST: ReturnStmtAST = stmtAST as ReturnStmtAST;
                 returnStmtAST.acceptInterpretElement(this);
+                
             } else if (stmtAST.type === NodeType.FUNCCALL) {
                 const funcCallAST: FuncCallAST = stmtAST as FuncCallAST;
                 funcCallAST.acceptInterpretElement(this);
@@ -61,6 +68,25 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         
         const updatedFuncDeclScope: SymbolTable = this.scopeStack.pop() as SymbolTable;
         this.synchronizeGlobalScope(updatedFuncDeclScope);
+    }
+
+    interpretAssignStmtAST(assignStmtAST: AssignStmtAST) {
+        assignStmtAST.value.acceptInterpretElement(this);
+        
+        if (assignStmtAST.location.index) {
+            assignStmtAST.location.index.acceptInterpretElement(this);
+            
+            const symbolToAssign: SymbolArray = this.getSymbolFromCurrentScope(assignStmtAST.location.name) as SymbolArray;
+            const indexValue: number = assignStmtAST.location.index.value as number;
+
+            symbolToAssign.value[indexValue] = assignStmtAST.value.value as number | boolean;
+        } else {
+            const symbolToAssign: SymbolScalar = this.getSymbolFromCurrentScope(assignStmtAST.location.name) as SymbolScalar;
+
+            symbolToAssign.value = assignStmtAST.value.value as number | boolean;
+        }
+
+        console.log();
     }
 
     interpretReturnStmtAST(returnStmtAST: ReturnStmtAST) {
@@ -174,7 +200,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
     }
 
     interpretLoc(locAST: LocAST) {
-
+        
     }
 
     
@@ -188,5 +214,12 @@ export default class InterpretVisitor implements interpretVisitorInterface{
         this.scopeStack.forEach((scope: SymbolTable) => {
             scope.synchronizeRootTable(this.globalScope);
         }) 
+    }
+
+    private getSymbolFromCurrentScope(symbolName: string): Symbol {
+        const currentSymbolTable: SymbolTable = this.scopeStack[this.scopeStack.length - 1];
+        const symbol: Symbol = currentSymbolTable.lookupSymbolName(symbolName) as Symbol;
+
+        return symbol;
     }
 }

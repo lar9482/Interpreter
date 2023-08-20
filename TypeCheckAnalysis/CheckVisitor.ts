@@ -308,7 +308,7 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
         }
     }
 
-    private getSymbolFromCurrentTable(symbolName: string, lineNumber: number) {
+    private getSymbolFromCurrentTable(symbolName: string, lineNumber: number): Symbol {
         const currentSymbolTable: SymbolTable = this.symbolTableStack[this.symbolTableStack.length - 1];
         const symbol: Symbol | undefined = currentSymbolTable.lookupSymbolName(symbolName);
 
@@ -319,7 +319,7 @@ export default class TypeCheckVisitor implements checkVisitorInterface {
         }
     }
 
-    private getParentTableFromCurrentTable(parentScopeType: NodeType, symbolTable: SymbolTable) {
+    private getParentTableFromCurrentTable(parentScopeType: NodeType, symbolTable: SymbolTable): SymbolTable | undefined {
         let currSymbolTable: SymbolTable = symbolTable;
 
         while (currSymbolTable !== undefined) {
