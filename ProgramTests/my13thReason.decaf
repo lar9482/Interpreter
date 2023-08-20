@@ -1,0 +1,75 @@
+def int squareRoot(int num) {
+    int i;
+    int approx;
+
+    i = 1;
+    approx = num / 2;
+
+    while (i <= 10) {
+        approx = (approx + (num / approx)) / 2;
+        approx = approx % num;
+        i = i + 1;
+    }
+
+    return approx;
+}
+
+def int factorial(int n) {
+    int result;
+    int i;
+
+    result = 1;
+    i = 1;
+
+    while (i < ( n + 1 )) {
+        result = result * i;
+        i = i + 1;
+    }
+
+    return result;
+}
+
+def bool is_prime(int x) {
+    int num;
+    bool result;
+
+    num = 2;
+    result = true;
+    
+    while (num < squareRoot(x)) {
+        if (x % num == 0) {
+            result = false;
+        }
+        num = num + 1;
+    }
+    
+    return result;
+}
+
+def void my13thReason() {
+    int i;
+    i = 0;
+
+    while (i < 13) {
+        print_str("Parse Trees");
+        i = i + 1;
+    }
+}
+
+def int main() {
+    int prime;
+    int num;
+
+    prime = 43;
+    num = 6;
+
+    print_str("Is this prime?");
+    print_bool(is_prime(prime));
+
+    print_str("Factorial:");
+    print_int(factorial(num));
+
+    my13thReason();
+
+    return 0;
+}

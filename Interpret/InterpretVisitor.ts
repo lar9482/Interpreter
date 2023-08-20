@@ -272,7 +272,7 @@ export default class InterpretVisitor implements interpretVisitorInterface{
             funcCallAST.funcArguments[0].acceptInterpretElement(this);
             console.log(funcCallAST.funcArguments[0].value);
         } else {
-            console.log(funcCallAST.funcArguments[0].value);
+            console.log((funcCallAST.funcArguments[0].value as string).replace(/^"|"$/g, ''));
         }
     }
 
