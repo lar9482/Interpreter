@@ -47,6 +47,12 @@ export default class SymbolTable {
         return undefined;
     }
 
+    /**
+     * 
+     * This method will be used for checking for symbol table as a 'NodeType' as an ancestor.
+     * This is pretty much how I will handle cases that involve break/continue stmts in order to test
+     * their relationship to a loop.
+     */
     isDescendantOf(containerType: NodeType): boolean {
         let currentTable: SymbolTable | undefined = this;
 
@@ -62,6 +68,12 @@ export default class SymbolTable {
         return false;
     }
 
+    /**
+     * This method will match the values of the symbols in the root parent table 
+     * to the root parent table of 'updatedTable'.
+     * 
+     * This method will be used for updating the global scope after function calls.
+     */
     synchronizeRootTable(updatedTable: SymbolTable) {
         let currTable: SymbolTable = this;
         let currUpdatedTable: SymbolTable = updatedTable;
