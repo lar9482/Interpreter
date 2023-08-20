@@ -1,11 +1,14 @@
 int result;
 
 def int add(int x, int y) {
+    int i;
+    i = 5 + 5;
+
     return x + y;
 }
 
 def int main() { 
-    add(10, 50);
+    add(10 + 10 * 2, 50);
 
     print_str("\n");
     return 0;
