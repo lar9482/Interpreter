@@ -1,0 +1,84 @@
+def int squareRoot(int num) {
+    int i;
+    int approx;
+
+    i = 1;
+    approx = num / 2;
+
+    while (i <= 10) {
+        approx = (approx + (num / approx)) / 2;
+        approx = approx % num;
+        i = i + 1;
+    }
+
+    return approx;
+}
+
+def int factorial(int n) {
+    int result;
+    int i;
+
+    result = 1;
+    i = 1;
+
+    while (i < ( n + 1 )) {
+        result = result * i;
+        i = i + 1;
+    }
+
+    return result;
+}
+
+def bool is_prime(int x) {
+    int num;
+    bool result;
+
+    num = 2;
+    result = true;
+    
+    while (num < squareRoot(x)) {
+        if (x % num == 0) {
+            result = false;
+        }
+        num = num + 1;
+    }
+    
+    return result;
+}
+
+int f[1000];
+def int fibonacci(int n) {
+    int i;
+    i = 2;
+
+    f[0] = 0;
+    f[1] = 1;
+
+    while (i <= n) {
+        f[i] = f[i-1] + f[i-2];
+        i = i + 1;
+    }
+
+    return f[n];
+}
+
+def int main() {
+    int prime;
+    int factorialNum;
+    int fibonacciNum;
+
+    prime = 43;
+    factorialNum = 6;
+    fibonacciNum = 50;
+
+    print_str("Is this prime?");
+    print_bool(is_prime(prime));
+
+    print_str("Factorial:");
+    print_int(factorial(factorialNum));
+
+    print_str("Fibonacci number:");
+    print_int(fibonacci(fibonacciNum));
+
+    return 0;
+}
