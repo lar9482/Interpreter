@@ -33,7 +33,6 @@ def void fizzbuzz(int n) {
 
 def int main() {
     fizzbuzz(10);
-    print_bool((true && false) || (true || false));
     return 0;
 }
 ```
