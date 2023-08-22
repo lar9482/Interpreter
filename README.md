@@ -2,7 +2,7 @@
 This is my first implementation of a programming language :)
 
 NOTE:
-As of writing this README.md, this language is more or less an implementation of Dr Mike Lam's Decaf programming language.
+As of writing this README.md, this language is more or less an implementation of Dr Mike Lam's Decaf programming language. I definitely want to expand on his language and add my own features.
 
 Please see [credit](#Credit-To-Lam).
 
@@ -43,6 +43,7 @@ def int main() {
 3. Copy this program into a text file {yourProgramName}.decaf
 4. Navigate to the root of the project and run the following command.
    * ts-node main.ts ./{yourSubDirectory}/{yourProgramName}.decaf
+   * https://www.youtube.com/watch?v=-XGhfFMdsek
 
 # Features
 
