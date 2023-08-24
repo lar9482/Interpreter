@@ -68,7 +68,7 @@ def int main() {
 
   ## Semantic Analysis
       This phase will take AST generated from the 'Syntactic Analysis' phase and check it for invalid 
-      features that not specified in the language by making multiple traversals.
+      features that was not specified in the grammar by making multiple traversals.
 
       First, it will build out symbol tables for the main program, the functions, and nested blocks
       in order to keep track of the program's scope. Basically, a reference to every variable and function
