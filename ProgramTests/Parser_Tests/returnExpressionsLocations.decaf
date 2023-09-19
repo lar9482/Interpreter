@@ -1,0 +1,25 @@
+def bool expression1() {
+    int x[1000];
+    int y[1000];
+
+    return (x[1 + 2 + 3 + 4]);
+}
+
+def bool expression2() {
+    int x[1000];
+    int y[1000];
+
+    return (x[1 + 2 + 3 + 4] + y[1 * 2 * 3 / 4]);
+}
+
+def bool expression3() {
+    int x[1000];
+    int y[1000];
+
+    return (x[1 + 2 + 3 + 4] + y[-(5 * 3) - (10 / 2)]);
+}
+
+
+def int expression4() {
+    return 1 + (5 * 3);
+}
