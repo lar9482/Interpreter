@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # IN-PROGRESS
 
 My attempt at writing an AST-walking interpreter for a toy programming language called Decaf.
@@ -142,5 +141,4 @@ def int main() {
 I owe so much credit to Dr. Mike Lam at James Madison University. I consulted Dr. Lam's Decaf programming language for his 'compilers' course as a bootstrap for my own. Moreover, the documentation for his language is fantastic. 
 
 Please see the documentation for the original language [here](https://w3.cs.jmu.edu/lam2mo/cs432/files/decaf_ref.pdf)
->>>>>>> 065e384e42529e115b86b719db3defd55e607e7e
 
