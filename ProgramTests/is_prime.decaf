@@ -1,46 +1,49 @@
+def int squareRoot(int num) {
+    int i;
+    int approx;
+
+    i = 1;
+    approx = num / 2;
+
+    while (i <= 10) {
+        approx = (approx + (num / approx)) / 2;
+        approx = approx % num;
+        i = i + 1;
+    }
+
+    return approx;
+}
+
 def bool is_prime(int x) {
     int num;
+    bool result;
+
     num = 2;
+    result = true;
     
-    while (num < x) {
+    while (num < squareRoot(x)) {
         if (x % num == 0) {
-            return false;
+            result = false;
         }
         num = num + 1;
     }
     
-    return true;
+    return result;
 }
 
 def void print_result(int num, bool result) {
     print_str("The number ");
     print_int(num);
-    print_str(" is prime:\n");
-
-    if (result) {
-        print_str("true\n\n");
-    }
-    else {
-        print_str("false\n\n");
-    }
+    print_str(" is prime");
+    print_bool(result);
 }
 
 
 def int main() 
 {     
-    int prime;
-    int not_prime;
-    bool result_prime;
-    bool result_not_prime;
+    int num;
+    num = 40;
 
-    prime = 41;
-    not_prime = 54;
-
-    result_prime = is_prime(prime);
-    result_not_prime = is_prime(not_prime);
-
-    print_result(prime, result_prime);
-    print_result(not_prime, result_not_prime);
-
-    return -1;
+    print_result(num, is_prime(num));
+    return 0;
 }
