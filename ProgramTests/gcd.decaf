@@ -5,6 +5,7 @@ def int gcd(int x, int y) {
         y = x % y;
         x = temp;
     }
+
     return x;
 }
 
@@ -15,6 +16,7 @@ def int main()
 
     first_int = 5444;
     second_int = 64;
+    print_int(gcd(first_int, second_int));
 
-    return gcd(first_int, second_int);
+    return 0;
 }

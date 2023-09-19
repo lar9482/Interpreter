@@ -1,0 +1,4 @@
+def int add(int x, int y)
+def bool test(bool condition1, bool condition2, bool condition3)
+def void voidFunction(void condition1, void condition2)
+def int main ()

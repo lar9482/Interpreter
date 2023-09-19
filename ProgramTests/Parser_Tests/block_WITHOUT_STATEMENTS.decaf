@@ -1,0 +1,21 @@
+def void variables(int parameter1, int parameter2) {
+    int condition1;
+    int condition2;
+
+    bool condition3;
+    bool condition4;
+
+    void invalidcondition1;
+    void invalidcondition2;
+}
+
+
+def int main()
+{
+	int a;
+    int b;
+	bool c;
+    bool d;
+    void e;
+    void f;
+}

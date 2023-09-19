@@ -1,0 +1,23 @@
+def bool expression6() {
+    return (true || false) && (true || false && !(true));
+}
+
+def int expression1() {
+    return 1 + (5 * 3);
+}
+
+def int expression2() {
+    return -(5 * 3) - (10 / 2);
+}
+
+def int expression3() {
+    return -(1 + 2 * -(3 / 4));
+}
+
+def int expression4() {
+    return (5 * 3) - (10 / 2);
+}
+
+def int expression5() {
+    return -5 * 3;
+}

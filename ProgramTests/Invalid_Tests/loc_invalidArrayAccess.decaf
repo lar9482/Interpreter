@@ -1,0 +1,7 @@
+def int main() {
+    int invalid[100];
+    invalid[] = 100;
+    invalid = 100;
+
+    return 0;
+}

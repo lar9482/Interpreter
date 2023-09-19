@@ -1,0 +1,29 @@
+def void fizzbuzz(int n) {
+
+    int num;
+    num = 1;
+
+    while (num < n) {
+        if (num % 3 == 0 || num % 5 == 0) {
+            if (num % 3 == 0) {
+                print_str("Fizz");
+            }
+
+            if (num % 5 == 0) {
+                print_str("Buzz");
+            }
+        } else {
+            print_int(num);
+        }
+        print_str("");
+
+        num = num + 1;
+    }
+}
+
+
+def int main() {
+    fizzbuzz(20);
+
+    return 0;
+}
