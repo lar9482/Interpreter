@@ -1,0 +1,4 @@
+
+def int notMain() {
+    return 0;
+}

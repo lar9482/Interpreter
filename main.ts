@@ -1,2 +1,4 @@
-const number: number = 5;
-console.log('Hello World');
+import Interpreter from "./Interpreter";
+
+const arg1: string = process.argv[2];
+Interpreter.runProgram(arg1);

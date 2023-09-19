@@ -1,11 +1,15 @@
-def int add(int x, int y) {
-    return x + y;
+int result;
+
+def void add(int x, int y) {
+    if (x > 10 && y > 10) {
+        result = 9999;
+    } else {
+        result = x + y;
+    }
 }
 
-def int main() 
-{ 
-    print_int(add(10, 10));
-
-    print_str("\n");
+def int main() { 
+    add(9, 9);
+    print_int(result);
     return 0;
 }

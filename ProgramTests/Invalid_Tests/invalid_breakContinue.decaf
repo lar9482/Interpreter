@@ -1,0 +1,26 @@
+def int main() {
+    int i;
+
+    while (i < 100) {
+        int j;
+        while (j < 100) {
+            if (j == 50) {
+                continue;
+            }
+
+            if (j == 90) {
+                break;
+            }
+        }
+
+        i = i + 1;
+    }
+
+    break;
+
+    if (i == 100) {
+        continue;
+    }
+    
+    return 0;
+}
