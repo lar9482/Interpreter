@@ -6,7 +6,18 @@ As of writing this README.md, this language is more or less an implementation of
 
 Please see [credit](#Credit-To-Lam).
 
-# Sample Program
+# How to run this project
+1. Clone this repo.
+2. Run 'npm install'
+3. Create a new file named {yourProgramName}.decaf and write your code
+4. Navigate to the root of the project and run the following command.
+   * ts-node main.ts ./{yourSubDirectory}/{yourProgramName}.decaf
+
+Example of the sample program being ran:
+
+https://www.youtube.com/watch?v=-XGhfFMdsek
+
+### Sample Program
 ```
 def void fizzbuzz(int n) {
 
@@ -36,14 +47,6 @@ def int main() {
     return 0;
 }
 ```
-
-### How to run this program.
-1. Clone this repo
-2. Run 'npm install'
-3. Copy this program into a text file {yourProgramName}.decaf
-4. Navigate to the root of the project and run the following command.
-   * ts-node main.ts ./{yourSubDirectory}/{yourProgramName}.decaf
-   * https://www.youtube.com/watch?v=-XGhfFMdsek
 
 # High level overview of how the interpreter works.
   ## Lexical Analysis
@@ -94,7 +97,7 @@ def int main() {
 
 ## Expressions
   - Support for binary expressions and unary expressions.
-  - Full precedence evaluation using infex notation.
+  - Full precedence evaluation using infix notation.
   - +, -, *, %, <, <=, >, >= operators for integers
   - &&, ||, ! for booleans.
   - ==, != for both booleans and integers.
@@ -116,6 +119,84 @@ def int main() {
       bool booleanVariable;
     ```
 
+## Functions
+  Example of how you can create a function.
+  The parameters are passed by value.
+  
+  NOTE: Unless your function returns a 'void' type, your function MUST have a return statement as the last statement. 
+    
+    ```
+      def void exampleFunctionWithVoid(int param1, bool param2) {
+          <your-block-of-code>
+      }
+
+      def int exampleFunctionWithNonVoid() {
+          <your-block-of-code>
+          return 0;
+      }
+     
+      def int main() {
+          exampleFunction(100, true);
+          exampleFunctionWithNonVoid();
+          return 0;
+      }
+     
+    ```
+
+## Statements
+   - Assignments
+     ```
+        def bool functionReturnType() {
+            return true;
+        }
+
+        def int main() {
+            int assign1;
+            bool assign2;
+
+            assign1 = 10;
+            assign2 = functionReturnType();
+        }
+     
+     ```
+
+   - Conditionals
+     ```
+     def int main() { 
+        int x;
+        x = 20;
+        if (x > 10) {
+            x = 1;
+        } else {
+            x = 0;
+        }
+
+        return x;
+     }
+     
+     ```
+     
+   - While loops
+     ```
+     def int main() {
+         int x;
+         x = 0;
+         while (x < 10) {
+            x = x + 1;
+         }
+         return 0;
+     }
+     ```
+
+  - Basic I/O
+      ```
+      def int main() {
+         print_int(10);  
+         print_bool(true); 
+         print_str("Hello World"); // NOTE: strings are enclosed in double quotes, not single quotes.
+      }
+      ```
+    
 ## Plans for later
   - Implement more types such as floats, strings, etc.
   - Implement common language constructs, like 'for' loops, 'do-while' loops, 'switch' statements, etc.
