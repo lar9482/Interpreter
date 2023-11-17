@@ -125,7 +125,7 @@ def int main() {
   
   NOTE: Unless your function returns a 'void' type, your function MUST have a return statement as the last statement. 
     
-    ```
+  ```
       def void exampleFunctionWithVoid(int param1, bool param2) {
           <your-block-of-code>
       }
@@ -141,7 +141,7 @@ def int main() {
           return 0;
       }
      
-    ```
+  ```
 
 ## Statements
    - Assignments
@@ -184,6 +184,7 @@ def int main() {
          while (x < 10) {
             x = x + 1;
          }
+     
          return 0;
      }
      ```
@@ -194,6 +195,8 @@ def int main() {
          print_int(10);  
          print_bool(true); 
          print_str("Hello World"); // NOTE: strings are enclosed in double quotes, not single quotes.
+
+         return 0;
       }
       ```
     
